@@ -4,6 +4,7 @@
 *.db
 /.metadata/
 *.swp
+*.out
 Obj
 gui/photonetwork_gui/.vs
 gui/photonetwork_gui/packages

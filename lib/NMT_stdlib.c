@@ -16,29 +16,21 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 /*--------------------------------------------------/
 /                   Local Imports                   /
 /--------------------------------------------------*/
-
-//------------------Structs & Enums----------------//
-typedef enum {OK, NOK} NMT_result;
-
-//--------------Global Definitions----------------//
-static const char *result_enum2str[] = {"OK","NOK"};
-
-//------------------Prototypes----------------------//
-char       **NMT_stdlib_split(char *string, char *param);
-int        NMT_stdlib_count(char *string, char *param);
-NMT_result NMT_stdlib_read_file(char *filepath, char *file_content);
+#include "NMT_stdlib.h"
 
 NMT_result NMT_stdlib_read_file(char *filepath, char *file_content)
 {
     //Input     : File Path, file_content pointer
-    //Output    : N/A
+    //Output    : Return OK/NOK Status
     //Function  : Read file and populate file_content with contents
 
-    NMT_result result = OK;
+    //Initialize Variables
     FILE *fp;
     int c; 
     int index = 0;
+    NMT_result result = OK;
     
+    //Main Part of Function
     if (access(filepath, F_OK) != -1)
     {
         fp = fopen(filepath, "r");
@@ -57,22 +49,22 @@ NMT_result NMT_stdlib_read_file(char *filepath, char *file_content)
     }
 }
 
-char **NMT_stdlib_split(char *string, char *param)
+void NMT_stdlib_split(char *string, char *param, char ***item_array, int *no_of_items)
 {
     //Input     : String and the value(s) to split from
-    //Output    : Array of split values
+    //Output    : Array of of split strings and the number of strings
     //Function  : Split string based on param(s) passed and return split array
 
     //Initialize Variables
-    int  param_count = NMT_stdlib_count(string, param);
-    int no_of_items = param_count + 1;
-    char **item_array;
     char *str;
     char *token;
-    int i = 0;
-    
+    int  i = 0;
+
+    //Get Number of items in array
+    *no_of_items = NMT_stdlib_count(string, param) + 1;
+
     //Memory Allocation
-    item_array = (char **)malloc(no_of_items);
+    *item_array = (char **)malloc(sizeof(char *) * *no_of_items);
     str = malloc(sizeof(string));
     
     //Main part of the function
@@ -80,12 +72,13 @@ char **NMT_stdlib_split(char *string, char *param)
     token = strtok(str, param);
     while(token != NULL)
     {
-        item_array[i++] = token;
+        (*item_array)[i] = (char *)malloc(sizeof(char) * sizeof(token));
+        strcpy((*item_array)[i++], token);
         token = strtok(NULL, param);
     }
 
-    //Free Allocated Memory and Exit Function
-    return item_array;
+    //Free Allocated Memory
+    free(str);
 }
 
 int NMT_stdlib_count(char *string, char *param)
@@ -116,3 +109,4 @@ int NMT_stdlib_count(char *string, char *param)
     //Exit the function
     return no_of_matches;
 }
+
