@@ -1,4 +1,4 @@
-/*NMT_stdlib.c:    Library of standard functions for 
+/*libNMT_stdlib.c: Library of standard functions for 
  *                 NM Technologies
 
 __author__      = "Nitin Mohan
@@ -65,7 +65,7 @@ void NMT_stdlib_split(char *string, char *param, char ***item_array, int *no_of_
 
     //Memory Allocation
     *item_array = (char **)malloc(sizeof(char *) * *no_of_items);
-    str = malloc(sizeof(string));
+    str = (char *)malloc(sizeof(char) * strlen(string) + 1);
     
     //Main part of the function
     strcpy(str, string);
