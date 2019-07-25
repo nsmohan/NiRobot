@@ -13,8 +13,8 @@ BINS		= $(OBJ_DIR)/libNMT_stdlib.so $(OUT_DIR)/lib_test
 
 all: $(BINS)
 
-$(OBJ_DIR)/libNMT_stdlib.so: $(LIB_DIR)/libNMT_stdlib.c $(INC_DIR)/NMT_stdlib.h
-	gcc $(CFLAGS) -fPIC -shared -o  $@ $(LIB_DIR)/libNMT_stdlib.c -lc
+$(OBJ_DIR)/libNMT_stdlib.so: $(LIB_DIR)/NMT_stdlib.c $(INC_DIR)/NMT_stdlib.h
+	gcc $(CFLAGS) -fPIC -shared -o  $@ $(LIB_DIR)/NMT_stdlib.c -lc
 
 $(OUT_DIR)/lib_test: $(BIN_DIR)/testlib.c
 	gcc $(CFLAGS) -L$(OBJ_DIR) -Wl,-rpath=$(OBJ_DIR) -o $@ $^  -lNMT_stdlib

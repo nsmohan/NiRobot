@@ -1,4 +1,4 @@
-/*libNMT_stdlib.c: Library of standard functions for 
+/*NMT_stdlib.c: Library of standard functions for 
  *                 NM Technologies
 
 __author__      = "Nitin Mohan
@@ -90,7 +90,6 @@ int NMT_stdlib_count(char *string, char *param)
     //Initialize Variables
     int counter;
     int no_of_matches = 0;
-
 
     //Main section of the function
     for (int i = 0; param[i] != '\0'; i++)

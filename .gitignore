@@ -5,6 +5,7 @@
 /.metadata/
 *.swp
 *.out
+*.so
 Obj
 output
 gui/photonetwork_gui/.vs
