@@ -25,11 +25,15 @@ NMT_result NMT_stdlib_read_file(char *filepath, char *file_content)
     //Function  : Read file and populate file_content with contents
 
     //Initialize Variables
+    size_t file_size = NMT_stdlib_get_file_size(filepath);
     FILE *fp;
     int c; 
     int index = 0;
     NMT_result result = OK;
     
+    //Allocate Memory
+    file_content = (char *)malloc(sizeof(char *) * file_size);
+
     //Main Part of Function
     if (access(filepath, F_OK) != -1)
     {
@@ -108,4 +112,25 @@ int NMT_stdlib_count(char *string, char *param)
     //Exit the function
     return no_of_matches;
 }
+
+size_t NMT_stdlib_get_file_size(char *filepath)
+{
+
+    //Input     : Path of the file
+    //Output    : Size of file
+    //Function  : Return the size of the file
+
+    //Initialize Variables
+    size_t size; 
+    FILE *fp;
+
+    //Main Part of the function
+    fp = fopen(filepath, "r");
+    fseek(fp, 0L, SEEK_END);
+    size = ftell(fp);
+    fseek(fp, 0L, SEEK_SET);
+
+    return size;
+}
+
 

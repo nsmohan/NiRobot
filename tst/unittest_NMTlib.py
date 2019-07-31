@@ -29,6 +29,7 @@ class NMT_stdlib_test(unittest.TestCase):
         #Description - Pass various strings to function with token to count\
         #              and ensure the correct value is returned.
 
+        #Get Function Name
         func_name = inspect.stack()[0][3] 
 
         #First element in tuple is string and the second is the char to count
@@ -51,6 +52,7 @@ class NMT_stdlib_test(unittest.TestCase):
         #Description - Pass various strings to function with parameter to split
         #              and ensure the correct value is returned.
 
+        #Get Function Name
         func_name = inspect.stack()[0][3] 
 
         #Initialize Variables
@@ -80,5 +82,43 @@ class NMT_stdlib_test(unittest.TestCase):
             split_param_struct = ""
             split_string_array = []
 
+    def test_NMT_stdlib_get_file_size(self):
+
+        #Description - Pass a file to the function and
+        #              the file size returned is correct
+
+
+        #Initialize Variables
+        file_name    = "/tmp/NMT_read_file_unittest.test"
+        file_content = "This is a test file which contains a test string.\n"
+
+        #Create File
+        f = open(file_name, "w")
+        f.write(file_content)
+        f.close()
+
+        #Test Execution
+        file_size = self.NMT_stdlib.NMT_stdlib_get_file_size(file_name)
+        self.assertEqual(file_size, len(file_content))
+
+    def test_NMT_stdlib_read_file(self):
+
+        #Description - Pass various strings to function with parameter to split
+        #              and ensure the correct value is returned.
+
+        #Initialize Variables
+        file_name    = "/tmp/NMT_read_file_unittest.test"
+        file_content = "This is a test file which contains a test string.\n"
+
+        #Create File
+        f = open(file_name, "w")
+        f.write(file_content)
+        f.close()
+
+        #Test Execution
+        file_content_c = POINTER(c_char)
+        file_content_c = create_string_buffer(str.encode(""))
+        self.NMT_stdlib.NMT_stdlib_read_file(file_name, file_content_c)
+        print file_content_c.value
 if __name__ == '__main__':
     unittest.main()
