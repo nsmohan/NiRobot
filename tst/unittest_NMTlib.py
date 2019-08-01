@@ -13,11 +13,13 @@ import inspect
 import unittest
 import re
 from ctypes import *
+import HtmlTestRunner
 
 #---------------------------------------------------#
 #                   Constants                       #
 #---------------------------------------------------#
-OBJ_PATH = "/home/nmohan/Documents/github/NiRobot/Obj/"
+OBJ_PATH = "/home/nmohan/github/NiRobot/Obj/"
+RESULT_PATH = "/home/nmohan/Test_Results/"
 
 class NMT_stdlib_test(unittest.TestCase):
     
@@ -108,17 +110,21 @@ class NMT_stdlib_test(unittest.TestCase):
 
         #Initialize Variables
         file_name    = "/tmp/NMT_read_file_unittest.test"
-        file_content = "This is a test file which contains a test string.\n"
+        test_string = "This is a test file which contains a test string.\n"
+        c_string = ""
+        file_content = POINTER(c_char)()
 
         #Create File
         f = open(file_name, "w")
-        f.write(file_content)
+        f.write(test_string)
         f.close()
 
         #Test Execution
-        file_content_c = POINTER(c_char)
-        file_content_c = create_string_buffer(str.encode(""))
-        self.NMT_stdlib.NMT_stdlib_read_file(file_name, file_content_c)
-        print file_content_c.value
+        self.NMT_stdlib.NMT_stdlib_read_file(file_name, byref(file_content))
+        for i in range(0, len(test_string)):
+            c_string += file_content[i]
+
+        self.assertEqual(c_string, test_string)
+
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(testRunner=HtmlTestRunner.HTMLTestRunner(output=RESULT_PATH))

@@ -18,7 +18,7 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 /--------------------------------------------------*/
 #include "NMT_stdlib.h"
 
-NMT_result NMT_stdlib_read_file(char *filepath, char *file_content)
+NMT_result NMT_stdlib_read_file(char *filepath, char **file_content)
 {
     //Input     : File Path, file_content pointer
     //Output    : Return OK/NOK Status
@@ -27,30 +27,25 @@ NMT_result NMT_stdlib_read_file(char *filepath, char *file_content)
     //Initialize Variables
     size_t file_size = NMT_stdlib_get_file_size(filepath);
     FILE *fp;
-    int c; 
-    int index = 0;
     NMT_result result = OK;
     
     //Allocate Memory
-    file_content = (char *)malloc(sizeof(char *) * file_size);
+    *file_content = (char *)malloc(sizeof(char *) * file_size + 1);
 
     //Main Part of Function
     if (access(filepath, F_OK) != -1)
     {
         fp = fopen(filepath, "r");
-        while((c = fgetc(fp)) != EOF)
-        {
-            file_content[index] = c;
-            index++;
-        }
-        file_content[index] = '\0';
-        return result;
+        fread(*file_content, sizeof(char), file_size, fp);
     }
     else
     {
         result = NOK;
-        return result;
     }
+
+    //Close the file and Exit the Function
+    fclose(fp);
+    return result;
 }
 
 void NMT_stdlib_split(char *string, char *param, char ***item_array, int *no_of_items)
@@ -102,9 +97,7 @@ int NMT_stdlib_count(char *string, char *param)
         for (int ii = 0; string[ii] != '\0'; ii++)
         {
             if (string[ii] == param[i])
-            {
                 counter++;
-            }
         }
         no_of_matches = no_of_matches + counter;
     }
@@ -130,6 +123,8 @@ size_t NMT_stdlib_get_file_size(char *filepath)
     size = ftell(fp);
     fseek(fp, 0L, SEEK_SET);
 
+    //Close the file and exit the function
+    fclose(fp);
     return size;
 }
 

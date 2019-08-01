@@ -6,14 +6,9 @@
 #include "NMT_stdlib.h"
 int main()
 {
-    char **item_array;
-    int no_of_items;
+    char *file_name = "/tmp/NMT_read_file_unittest.test";
+    char *file_content;
 
-    NMT_stdlib_split("Nitin-is-the-king-of-the-world-and he is going to be the master of c", "- ", &item_array, &no_of_items);
-
-    for (int i = 0; i < no_of_items; i++)
-    {
-        printf("%s\n", item_array[i]);
-    }
-    return 0;
+    NMT_stdlib_read_file(file_name, &file_content);
+    printf("%s\n", file_content);
 }

@@ -7,7 +7,7 @@ BIN_DIR		= bin
 OBJ_DIR		= Obj
 INC_DIR		= inc
 LIB_DIR		= lib
-OUT_DIR		= output
+OUT_DIR		= bld
 CFLAGS 		= -g -Wall -Wextra -I $(INC_DIR)
 BINS		= $(OBJ_DIR)/libNMT_stdlib.so $(OUT_DIR)/lib_test
 

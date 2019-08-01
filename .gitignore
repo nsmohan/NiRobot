@@ -1,4 +1,3 @@
-
 *.pyc
 *.log
 *.db
@@ -7,7 +6,7 @@
 *.out
 *.so
 Obj
-output
+bld
 gui/photonetwork_gui/.vs
 gui/photonetwork_gui/packages
 gui/photonetwork_gui/photonetwork_gui.sln
