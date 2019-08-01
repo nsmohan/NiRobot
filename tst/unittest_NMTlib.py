@@ -9,6 +9,7 @@ __copyright__          = "Copy Right 2019. NM Technologies"
 #---------------------------------------------------#
 #                   System Imports                  #
 #---------------------------------------------------#
+import os
 import inspect
 import unittest
 import re
@@ -110,7 +111,7 @@ class NMT_stdlib_test(unittest.TestCase):
 
         #Initialize Variables
         file_name    = "/tmp/NMT_read_file_unittest.test"
-        test_string = "This is a test file which contains a test string.\n"
+        test_string  = "This is a test file which contains a test string.\n"
         c_string = ""
         file_content = POINTER(c_char)()
 
@@ -125,6 +126,9 @@ class NMT_stdlib_test(unittest.TestCase):
             c_string += file_content[i]
 
         self.assertEqual(c_string, test_string)
+
+        #Clean-up
+        os.system("rm -rf %s"%file_name)
 
 if __name__ == '__main__':
     unittest.main(testRunner=HtmlTestRunner.HTMLTestRunner(output=RESULT_PATH))
