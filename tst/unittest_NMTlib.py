@@ -132,6 +132,27 @@ class NMT_stdlib_test(unittest.TestCase):
         #Clean-up
         os.system("rm -rf %s"%file_name)
 
+    def test_NMT_stdlib_write_file(self):
+        #Description - Write to a file and verify the contents
+        
+        #Initialize Varibles
+        file_name   = "/tmp/NMT_write_file_unittest.test"
+        write_string = "Testing the NMT_stdlib_write_function"
+
+        #Invoke the function
+        self.NMT_stdlib.NMT_stdlib_write_file(file_name, write_string)
+
+        #Get Actual Results
+        f = open(file_name, "r")
+        read_string = f.read().rstrip()
+        f.close()
+
+        #Verify Results
+        self.assertEqual(read_string, write_string)
+
+        #Clean-up
+        os.system("rm -rf %s"%file_name)
+
 class NMT_log_Test(unittest.TestCase):
 
     def setUp(self):

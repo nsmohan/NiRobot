@@ -50,6 +50,17 @@ NMT_result NMT_stdlib_read_file(char *filepath, char **file_content)
     return result;
 }
 
+void NMT_stdlib_write_file(char *filepath, char *file_content)
+{
+    //Initialize Variables
+    FILE *fp;
+
+    //Main Part of function
+    fp = fopen(filepath, "a");
+    fprintf(fp, "%s\n", file_content);
+    fclose(fp);
+}
+
 void NMT_stdlib_split(char *string, char *param, char ***item_array, int *no_of_items)
 {
     //Input     : String and the value(s) to split from
