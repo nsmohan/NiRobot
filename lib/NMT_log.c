@@ -36,23 +36,25 @@ NMT_result NMT_log_init_m(char *fname, char *config_file_path, bool verbosity)
     //Read Configuration File
     result = NMT_stdlib_read_file(config_file_path, &file_content);
 
-    //Split File Name string
-    NMT_stdlib_split(fname, "/", &fname_array, &no_of_items);
-
     //Initialize log settings based on file
     if (result == OK)
     {
+        //Split File Name string
+        NMT_stdlib_split(fname, "/", &fname_array, &no_of_items);
+
         //Populate log_settings struct from settings file
         NMT_log_parse_json(file_content);
 
         //Populate log_settings struct from func input
         log_settings.log_verbosity = verbosity;
         log_settings.out_file_name = fname_array[1];
+
+        //Free allocated memory
+        free(file_content);
+        free(fname_array);
     }
 
-    //Free allocated memory and Exit function
-    free(file_content);
-    free(fname_array);
+    //Exit function
     return result;
 }
 
