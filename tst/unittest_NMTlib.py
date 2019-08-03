@@ -13,14 +13,16 @@ import os
 import inspect
 import unittest
 import re
+import json
 from ctypes import *
 import HtmlTestRunner
 
 #---------------------------------------------------#
 #                   Constants                       #
 #---------------------------------------------------#
-OBJ_PATH = "/home/nmohan/github/NiRobot/Obj/"
+OBJ_PATH    = "/home/nmohan/github/NiRobot/Obj/"
 RESULT_PATH = "/home/nmohan/Test_Results/"
+DAT_PATH    = "/home/nmohan/github/NiRobot/tst/dat/"  
 
 class NMT_stdlib_test(unittest.TestCase):
     
@@ -130,5 +132,46 @@ class NMT_stdlib_test(unittest.TestCase):
         #Clean-up
         os.system("rm -rf %s"%file_name)
 
+class NMT_log_Test(unittest.TestCase):
+
+    def setUp(self):
+        self.NMT_log = CDLL(OBJ_PATH + "libNMT_log.so")
+
+    def test_NMT_log_init(self):
+        #Description - Test the log_init function and insure
+        #              the values and correct in the log settings structure
+
+        #Initialize Variables
+        test_file = DAT_PATH + "tst_log_settings.json"
+
+        #Read Settings file in Python
+        f = open(test_file, "r")
+        file_content = f.read()
+        f.close()
+
+        #Get Expected Values
+        log_settings_exp  = json.loads(file_content)
+        log_level_exp     = log_settings_exp["log_level"]
+        log_dir_exp       = log_settings_exp["log_dir"]
+        log_fname_exp     = __file__.split("/")[-1]
+        log_verbosity_exp = True
+
+        #Invoke Function
+        self.NMT_log.NMT_log_init_m(__file__, test_file, True)
+        log_settings_struct = logger.in_dll(self.NMT_log, 'log_settings')
+
+        #Compare Actual vs Expected
+        self.assertEqual(log_settings_struct.log_level, log_level_exp)
+        self.assertEqual(log_settings_struct.log_dir, log_dir_exp)
+        self.assertEqual(log_settings_struct.out_file_name, log_fname_exp)
+        self.assertEqual(log_settings_struct.log_verbosity, log_verbosity_exp)
+
+class logger(Structure):
+    _fields_ = [('log_level'     ,c_char_p),
+                ('log_dir'       ,c_char_p),
+                ('out_file_name' ,c_char_p),
+                ('log_verbosity' ,c_bool)]
+
 if __name__ == '__main__':
-    unittest.main(testRunner=HtmlTestRunner.HTMLTestRunner(output=RESULT_PATH))
+    unittest.main()
+    #unittest.main(testRunner=HtmlTestRunner.HTMLTestRunner(output=RESULT_PATH))

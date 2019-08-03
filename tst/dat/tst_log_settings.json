@@ -1,0 +1,5 @@
+{
+    "_comment" : "Logger Configuration File",
+    "log_level": "debug",
+    "log_dir"  : "/tmp"
+}

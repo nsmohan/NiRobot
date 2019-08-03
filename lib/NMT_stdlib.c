@@ -26,17 +26,19 @@ NMT_result NMT_stdlib_read_file(char *filepath, char **file_content)
 
     //Initialize Variables
     size_t file_size = NMT_stdlib_get_file_size(filepath);
+    size_t index;
     FILE *fp;
     NMT_result result = OK;
     
     //Allocate Memory
-    *file_content = (char *)malloc(sizeof(char *) * file_size + 1);
+    *file_content = (char *)malloc(sizeof(char)*file_size);
 
     //Main Part of Function
     if (access(filepath, F_OK) != -1)
     {
         fp = fopen(filepath, "r");
-        fread(*file_content, sizeof(char), file_size, fp);
+        index = fread(*file_content, sizeof(char), file_size, fp);
+        file_content[index] = '\0';
     }
     else
     {
