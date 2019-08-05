@@ -8,6 +8,7 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 /--------------------------------------------------*/
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <string.h>
 #include <stdbool.h>
 #include <unistd.h>
@@ -18,10 +19,7 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 /--------------------------------------------------*/
 #include "NMT_log.h"
 
-//------------------Prototypes----------------------//
-static void NMT_log_parse_json(char *file_content);
-
-NMT_result NMT_log_init_m(char *fname, char *config_file_path, bool verbosity)
+NMT_result NMT_log_init_m(char *fname, char *log_dir, bool verbosity)
 {
     //Input     : Path to input log configuration file and verbosity
     //Output    : Result of init
@@ -29,28 +27,21 @@ NMT_result NMT_log_init_m(char *fname, char *config_file_path, bool verbosity)
     
     //Initialize Variables
     NMT_result result   = OK;
-    char *file_content  = NULL;
     char **fname_array  = NULL;
     int  no_of_items    = 0;
-
-    //Read Configuration File
-    result = NMT_stdlib_read_file(config_file_path, &file_content);
 
     //Initialize log settings based on file
     if (result == OK)
     {
         //Split File Name string
-        NMT_stdlib_split(fname, "/", &fname_array, &no_of_items);
-
-        //Populate log_settings struct from settings file
-        NMT_log_parse_json(file_content);
+        NMT_stdlib_split(fname, "/.", &fname_array, &no_of_items);
 
         //Populate log_settings struct from func input
-        log_settings.log_verbosity = verbosity;
-        log_settings.out_file_name = fname_array[1];
+        log_settings.file_name = fname_array[1]; 
+        log_settings.log_dir = log_dir;
+        verbosity ? (log_settings.log_level = DEBUG) : (log_settings.log_level = WARNING);
 
         //Free allocated memory
-        free(file_content);
         free(fname_array);
     }
 
@@ -58,34 +49,45 @@ NMT_result NMT_log_init_m(char *fname, char *config_file_path, bool verbosity)
     return result;
 }
 
-void NMT_log_write_m(const char *fname, int line_no, const char *func_name, char *message, log_level level)
+void NMT_log_write_m(int line_no, const char *func_name, char *message, log_level level)
 {
+    //Initialize Varibles
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    char *log_to_write;
+    char time_now[100];
+    char *out_file_name;
+
+    //Allocate Memory
+    log_to_write = (char *)malloc(sizeof(line_no) + sizeof(func_name) + 
+                                                  sizeof(message) + sizeof(log_level_e2s[level]) + 
+                                                  sizeof(time_now)+ sizeof(log_settings.file_name));
+
+    out_file_name = (char *)malloc(sizeof(char *) * strlen(log_settings.log_dir) + 
+                                   strlen(log_settings.file_name) + 5);
+    //Fill Varibles with data
+    sprintf(time_now, "%d-%d-%d %d:%d:%d ",tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
+                                           tm.tm_hour, tm.tm_min, tm.tm_sec);
+
+    sprintf(log_to_write, "%s -- %s -- %s -- %s -- %d -- %s",
+            time_now, log_level_e2s[level], log_settings.file_name,
+            func_name, line_no, message);
+
+    sprintf(out_file_name, "%s/%s.log", log_settings.log_dir, log_settings.file_name);
+
+    //Main part of the function
     if (level == DEBUG)
     {
-        printf("The level is debug\n");
+        puts(log_to_write);
+        NMT_stdlib_write_file(out_file_name, log_to_write);
     }
-}
-
-static void NMT_log_parse_json(char *file_content)
-{
-    //Input     : file_content and structure pointer
-    //Output    : N/A
-    //Function  : populate network_settings struct with network_settings content
-
-    //Initialize 
-    struct json_object *parsed_json;
-    struct json_object *jobj_log_level;
-    struct json_object *jobj_log_dir;
-
-    //Parse json file_contents
-    parsed_json = json_tokener_parse(file_content);
-
-    //Get contents by json key
-    json_object_object_get_ex(parsed_json, "log_level", &jobj_log_level);
-    json_object_object_get_ex(parsed_json, "log_dir",     &jobj_log_dir);
-
-    //Save contents to the structure
-    log_settings.log_level = json_object_get_string(jobj_log_level);
-    log_settings.log_dir   = json_object_get_string(jobj_log_dir);
+    else
+    {
+        NMT_stdlib_write_file(out_file_name, log_to_write);
+    }
+    
+    //Free Memory
+    free(log_to_write);
+    free(out_file_name);
 }
 

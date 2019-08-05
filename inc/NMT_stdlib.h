@@ -11,7 +11,7 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 typedef enum {OK, NOK} NMT_result;                              //Standard return of function
 
 //--------------Global Definitions----------------//
-extern const char *result_enum2str[] = {"OK","NOK"};            //Convert NMT_result to string
+const char *result_e2s[] = {"OK","NOK"};                        //Convert NMT_result to string
 
 //------------------Prototypes----------------------//
 extern void       NMT_stdlib_split(char *string,                //In  - String to Split

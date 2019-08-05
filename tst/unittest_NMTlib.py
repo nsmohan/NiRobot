@@ -9,6 +9,7 @@ __copyright__          = "Copy Right 2019. NM Technologies"
 #---------------------------------------------------#
 #                   System Imports                  #
 #---------------------------------------------------#
+import sys
 import os
 import inspect
 import unittest
@@ -156,42 +157,69 @@ class NMT_stdlib_test(unittest.TestCase):
 class NMT_log_Test(unittest.TestCase):
 
     def setUp(self):
-        self.NMT_log = CDLL(OBJ_PATH + "libNMT_log.so")
-
+        self.NMT_log   = CDLL(OBJ_PATH + "libNMT_log.so")
+        self.log_fname = __file__.split("/")[-1].split(".")[0]
+        self.log_dir   = "/tmp"
+    
     def test_NMT_log_init(self):
         #Description - Test the log_init function and insure
         #              the values and correct in the log settings structure
 
-        #Initialize Variables
-        test_file = DAT_PATH + "tst_log_settings.json"
-
-        #Read Settings file in Python
-        f = open(test_file, "r")
-        file_content = f.read()
-        f.close()
-
-        #Get Expected Values
-        log_settings_exp  = json.loads(file_content)
-        log_level_exp     = log_settings_exp["log_level"]
-        log_dir_exp       = log_settings_exp["log_dir"]
-        log_fname_exp     = __file__.split("/")[-1]
-        log_verbosity_exp = True
-
-        #Invoke Function
-        self.NMT_log.NMT_log_init_m(__file__, test_file, True)
+        #Init log_settings struct in python
         log_settings_struct = logger.in_dll(self.NMT_log, 'log_settings')
 
+
+        #Test 1 - Verbosity = False ? log_level == DEBUG
+        self.NMT_log.NMT_log_init_m(__file__, self.log_dir, True)
+
         #Compare Actual vs Expected
-        self.assertEqual(log_settings_struct.log_level, log_level_exp)
-        self.assertEqual(log_settings_struct.log_dir, log_dir_exp)
-        self.assertEqual(log_settings_struct.out_file_name, log_fname_exp)
-        self.assertEqual(log_settings_struct.log_verbosity, log_verbosity_exp)
+        self.assertEqual(log_settings_struct.log_level, 0) #DEBUG = 0 
+        self.assertEqual(log_settings_struct.log_dir, self.log_dir)
+        self.assertEqual(log_settings_struct.file_name, self.log_fname)
+
+        #Test 2 - Verbosity = False ? log_level == WARNING
+        self.NMT_log.NMT_log_init_m(__file__, self.log_dir, False)
+
+        #Compare Actual vs Exppected
+        self.assertEqual(log_settings_struct.log_level, 1) #WARNING = 1 
+        self.assertEqual(log_settings_struct.log_dir, self.log_dir)
+        self.assertEqual(log_settings_struct.file_name, self.log_fname)
+
+    def test_NMT_log_write_debug(self):
+        #Description - Test the log_write function by passing different inputs
+        #              and verifying that outputs are as expected
+
+        #Init Inputs
+        line_number = 10
+        func_name   = "Test_Function"
+        message     = "Test Message"
+        log_level   = 0
+
+        #Init log_settings struct in python
+        log_settings_struct = logger.in_dll(self.NMT_log, 'log_settings')
+
+        #Test 1 - Verbosity = False ? log_level == DEBUG
+        self.NMT_log.NMT_log_init_m(__file__, self.log_dir, True)
+        self.NMT_log.NMT_log_write_m(line_number, func_name, message, 0)
+
+        file_name = "%s/%s.log"%(self.log_dir, self.log_fname)
+        f = open(file_name, "r")
+        file_content = f.read().split("--")
+        f.close()
+
+        self.assertEqual(file_content[1].strip(), "DEBUG")
+        self.assertEqual(file_content[2].strip(), self.log_fname)
+        self.assertEqual(file_content[3].strip(), func_name)
+        self.assertEqual(int(file_content[4].strip()), line_number)
+        self.assertEqual(file_content[5].strip(), message)
+
+        #Clean-up
+        os.system("rm -rf %s"%file_name)
 
 class logger(Structure):
-    _fields_ = [('log_level'     ,c_char_p),
-                ('log_dir'       ,c_char_p),
-                ('out_file_name' ,c_char_p),
-                ('log_verbosity' ,c_bool)]
+    _fields_ = [('log_level' ,c_int),
+                ('log_dir'   ,c_char_p),
+                ('file_name' ,c_char_p)]
 
 if __name__ == '__main__':
     unittest.main()

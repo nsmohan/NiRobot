@@ -17,19 +17,24 @@ typedef enum {DEBUG, WARNING, ERROR} log_level;
 
 struct NMT_log_settings 
 {
-    const char *log_level;
-    const char *log_dir;
-    char *out_file_name;
-    bool  log_verbosity; 
+    log_level log_level;
+    char      *log_dir;
+    char      *file_name;
 };
 
 //--------------Global Definitions----------------//
 struct NMT_log_settings log_settings;
-static const char *log_level_enum2str[] = {"DEBUG", "WARNING", "ERROR"};
+const char* log_level_e2s[] = {"DEBUG", "WARNING", "ERROR"};
 
 //------------------Prototypes----------------------//
-extern NMT_result NMT_log_init_m(char *fname, char *config_file_path, bool verbosity);
-extern void NMT_log_write_m(const char *fname, int line_no, const char *func_name, char *message, log_level level);
+extern NMT_result NMT_log_init_m(char *fname,           //In - Source file name
+                                 char *log_dir,         //In - Directory to log in
+                                 bool verbosity);       //In - Verbosity setting
+
+extern void NMT_log_write_m(int line_no,                //In - Line number func called
+                            const char *func_name,      //In - Function this log was called from
+                            char *message,              //In - Message to log
+                            log_level level);           //In - Log level setting
 
 //------------------------Defines----------------//
 #define NMT_log_init(...)  NMT_log_init_m(__FILE__, __VA_ARGS__)
