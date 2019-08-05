@@ -194,9 +194,9 @@ class NMT_log_Test(unittest.TestCase):
         func_name   = "Test_Function"
         message     = "Test Message"
 
-        #Test 1 - Verbosity = False ? log_level == DEBUG
-        #Test 2 - Verbosity = False ? log_level == WARNING
-        #Test 3 - Verbosity = False ? log_level == ERROR
+        #Test 1 - Verbosity = True ? log_level == DEBUG
+        #Test 2 - Verbosity = True ? log_level == WARNING
+        #Test 3 - Verbosity = True ? log_level == ERROR
         log_level   = ["DEBUG", "WARNING", "ERROR"]
 
         #Init log_settings struct in python
