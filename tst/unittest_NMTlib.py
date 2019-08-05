@@ -193,28 +193,33 @@ class NMT_log_Test(unittest.TestCase):
         line_number = 10
         func_name   = "Test_Function"
         message     = "Test Message"
-        log_level   = 0
+
+        #Test 1 - Verbosity = False ? log_level == DEBUG
+        #Test 2 - Verbosity = False ? log_level == WARNING
+        #Test 3 - Verbosity = False ? log_level == ERROR
+        log_level   = ["DEBUG", "WARNING", "ERROR"]
 
         #Init log_settings struct in python
         log_settings_struct = logger.in_dll(self.NMT_log, 'log_settings')
 
-        #Test 1 - Verbosity = False ? log_level == DEBUG
-        self.NMT_log.NMT_log_init_m(__file__, self.log_dir, True)
-        self.NMT_log.NMT_log_write_m(line_number, func_name, message, 0)
+        for level in range(0, len(log_level)):
+            self.NMT_log.NMT_log_init_m(__file__, self.log_dir, True)
+            self.NMT_log.NMT_log_write_m(line_number, func_name, message, level)
 
-        file_name = "%s/%s.log"%(self.log_dir, self.log_fname)
-        f = open(file_name, "r")
-        file_content = f.read().split("--")
-        f.close()
+            file_name = "%s/%s.log"%(self.log_dir, self.log_fname)
+            f = open(file_name, "r")
+            file_content = f.read().split("--")
+            f.close()
 
-        self.assertEqual(file_content[1].strip(), "DEBUG")
-        self.assertEqual(file_content[2].strip(), self.log_fname)
-        self.assertEqual(file_content[3].strip(), func_name)
-        self.assertEqual(int(file_content[4].strip()), line_number)
-        self.assertEqual(file_content[5].strip(), message)
+            #Compare Actual vs Exppected
+            self.assertEqual(file_content[1].strip(), log_level[level])
+            self.assertEqual(file_content[2].strip(), self.log_fname)
+            self.assertEqual(file_content[3].strip(), func_name)
+            self.assertEqual(int(file_content[4].strip()), line_number)
+            self.assertEqual(file_content[5].strip(), message)
 
-        #Clean-up
-        os.system("rm -rf %s"%file_name)
+            #Clean-up
+            os.system("rm -rf %s"%file_name)
 
 class logger(Structure):
     _fields_ = [('log_level' ,c_int),
