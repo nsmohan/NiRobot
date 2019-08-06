@@ -17,6 +17,7 @@ import re
 import json
 from ctypes import *
 import HtmlTestRunner
+import select
 
 #---------------------------------------------------#
 #                   Constants                       #
@@ -185,7 +186,7 @@ class NMT_log_Test(unittest.TestCase):
         self.assertEqual(log_settings_struct.log_dir, self.log_dir)
         self.assertEqual(log_settings_struct.file_name, self.log_fname)
 
-    def test_NMT_log_write_debug(self):
+    def test_NMT_log_write_verbose(self):
         #Description - Test the log_write function by passing different inputs
         #              and verifying that outputs are as expected
 
@@ -193,33 +194,71 @@ class NMT_log_Test(unittest.TestCase):
         line_number = 10
         func_name   = "Test_Function"
         message     = "Test Message"
-
         #Test 1 - Verbosity = True ? log_level == DEBUG
         #Test 2 - Verbosity = True ? log_level == WARNING
         #Test 3 - Verbosity = True ? log_level == ERROR
         log_level   = ["DEBUG", "WARNING", "ERROR"]
+        verbosity   = [True, False]
 
         #Init log_settings struct in python
         log_settings_struct = logger.in_dll(self.NMT_log, 'log_settings')
 
-        for level in range(0, len(log_level)):
-            self.NMT_log.NMT_log_init_m(__file__, self.log_dir, True)
-            self.NMT_log.NMT_log_write_m(line_number, func_name, message, level)
+        for v in verbosity:
+            for level in range(0, len(log_level)):
 
-            file_name = "%s/%s.log"%(self.log_dir, self.log_fname)
-            f = open(file_name, "r")
-            file_content = f.read().split("--")
-            f.close()
+                std_obj = stdout_redirect()
+                self.NMT_log.NMT_log_init_m(__file__, self.log_dir, v)
+                self.NMT_log.NMT_log_write_m(line_number, func_name, message, level)
 
-            #Compare Actual vs Exppected
-            self.assertEqual(file_content[1].strip(), log_level[level])
-            self.assertEqual(file_content[2].strip(), self.log_fname)
-            self.assertEqual(file_content[3].strip(), func_name)
-            self.assertEqual(int(file_content[4].strip()), line_number)
-            self.assertEqual(file_content[5].strip(), message)
+                file_name = "%s/%s.log"%(self.log_dir, self.log_fname)
+                f = open(file_name, "r")
+                file_content = f.read().split("--")
+                f.close()
 
-            #Clean-up
-            os.system("rm -rf %s"%file_name)
+                
+                #Compare Actual vs Exppected --File
+                self.assertEqual(file_content[1].strip(), log_level[level])
+                self.assertEqual(file_content[2].strip(), self.log_fname)
+                self.assertEqual(file_content[3].strip(), func_name)
+                self.assertEqual(int(file_content[4].strip()), line_number)
+                self.assertEqual(file_content[5].strip(), message)
+
+                #Compare Actual vs Exppected --stdout
+
+                if not v and log_level == "DEBUG":
+                    self.assertisNone(captured_output)
+                else:
+                    captured_output = std_obj.capture_output().split("--")
+                    self.assertEqual(captured_output[1].strip(), log_level[level])
+                    self.assertEqual(captured_output[1].strip(), log_level[level])
+                    self.assertEqual(captured_output[2].strip(), self.log_fname)
+                    self.assertEqual(captured_output[3].strip(), func_name)
+                    self.assertEqual(int(captured_output[4].strip()), line_number)
+                    self.assertEqual(captured_output[5].strip(), message)
+
+                #Clean-up
+                os.system("rm -rf %s"%file_name)
+                std_obj.set_default()
+
+class stdout_redirect(object):
+
+    def __init__(self):
+        sys.stdout.write(' \b')
+        self.pipe_out, self.pipe_in = os.pipe()
+        self.stdout = os.dup(1)               # save a copy of stdout
+        os.dup2(self.pipe_in, 1)              # replace stdout with our write pipe
+
+    def capture_output(self):
+        out = ''
+        r = True
+        while bool(r):
+                r, _, _ = select.select([self.pipe_out], [], [], 0)
+                if self.pipe_out in r:
+                    out += os.read(self.pipe_out, 1024)
+        return out
+    
+    def set_default(self):
+        os.dup2(self.stdout, 1)
 
 class logger(Structure):
     _fields_ = [('log_level' ,c_int),
