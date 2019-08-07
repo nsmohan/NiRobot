@@ -76,7 +76,7 @@ void NMT_log_write_m(int line_no, const char *func_name, char *message, log_leve
     sprintf(out_file_name, "%s/%s.log", log_settings.log_dir, log_settings.file_name);
 
     //Main part of the function
-    if (log_settings.log_level == DEBUG || level >= WARNING)
+    if (level >= log_settings.log_level)
         puts(log_to_write);
     NMT_stdlib_write_file(out_file_name, log_to_write);
     

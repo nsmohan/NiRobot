@@ -18,6 +18,7 @@ import json
 from ctypes import *
 import HtmlTestRunner
 import select
+from datetime import datetime
 
 #---------------------------------------------------#
 #                   Constants                       #
@@ -215,20 +216,29 @@ class NMT_log_Test(unittest.TestCase):
                 file_content = f.read().split("--")
                 f.close()
 
-                
+                #Get captured output from stdout
+                captured_output = std_obj.capture_output().split("--")
+
+                #Get current time for comparison later
+                current_time = datetime.now().replace(microsecond=0)
+
                 #Compare Actual vs Exppected --File
+                log_time = datetime.strptime(file_content[0].strip(), "%Y-%m-%d %H:%M:%S")
+                self.assertEqual(log_time, current_time)
                 self.assertEqual(file_content[1].strip(), log_level[level])
                 self.assertEqual(file_content[2].strip(), self.log_fname)
                 self.assertEqual(file_content[3].strip(), func_name)
                 self.assertEqual(int(file_content[4].strip()), line_number)
                 self.assertEqual(file_content[5].strip(), message)
 
+                print (v, level)
                 #Compare Actual vs Exppected --stdout
-
-                if not v and log_level == "DEBUG":
-                    self.assertisNone(captured_output)
+                if not v and level == 0:
+                    self.assertEqual(captured_output, [''])
                 else:
-                    captured_output = std_obj.capture_output().split("--")
+                    log_time = datetime.strptime(captured_output[0].strip().replace("\x08", ""), 
+                               "%Y-%m-%d %H:%M:%S")
+                    self.assertEqual(log_time, current_time)
                     self.assertEqual(captured_output[1].strip(), log_level[level])
                     self.assertEqual(captured_output[1].strip(), log_level[level])
                     self.assertEqual(captured_output[2].strip(), self.log_fname)
@@ -239,6 +249,9 @@ class NMT_log_Test(unittest.TestCase):
                 #Clean-up
                 os.system("rm -rf %s"%file_name)
                 std_obj.set_default()
+
+    def tearDown(self):
+        os.system("rm -rf /tmp/*.log")
 
 class stdout_redirect(object):
 
