@@ -3,21 +3,21 @@
 #__copyright__   = "Copy Right 2018. NM Technologies"
 
 
-BIN_DIR		= bin
-OBJ_DIR		= Obj
+BIN_DIR     = bin
+OBJ_DIR     = Obj
 OBJ_DIR_ARM = Obj_arm
-INC_DIR		= inc
-LIB_DIR		= lib
-OUT_DIR		= bld
+INC_DIR     = inc
+LIB_DIR     = lib
+OUT_DIR     = bld
 OUT_DIR_ARM = bld_arm
-CFLAGS 		= -g -Wall -Wextra -I $(INC_DIR)
-SFLAGS		= -fPIC -shared
+CFLAGS      = -g -Wall -Wextra -I $(INC_DIR)
+SFLAGS      = -fPIC -shared
 RPATH       = -L$(OBJ_DIR) -Wl,-rpath=$(OBJ_DIR)
 
-BINS		= $(OUT_DIR)/regdump \
+BINS        = $(OUT_DIR)/regdump \
               $(OUT_DIR)/mtdr \
 
-OBJS		= $(OBJ_DIR)/libNMT_stdlib.so \
+OBJS        = $(OBJ_DIR)/libNMT_stdlib.so \
               $(OBJ_DIR)/libNMT_log.so \
               $(OBJ_DIR)/libPCA9685.so \
 
