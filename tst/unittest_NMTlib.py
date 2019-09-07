@@ -279,5 +279,4 @@ class logger(Structure):
                 ('file_name' ,c_char_p)]
 
 if __name__ == '__main__':
-    unittest.main()
-    #unittest.main(testRunner=HtmlTestRunner.HTMLTestRunner(output=RESULT_PATH))
+    unittest.main(testRunner=HtmlTestRunner.HTMLTestRunner(output=RESULT_PATH))

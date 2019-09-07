@@ -1,5 +1,4 @@
-/*MTDR.c:     Motor Driver. Responsible for directly generating the signals to control the motors
-              and provide an API for the application layer. 
+/*mtdr.c:       Motor Driver
 
 __author__      = "Nitin Mohan
 __copyright__   = "Copy Right 2019. NM Technologies" */
@@ -8,30 +7,59 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 /                   System Imports                  /
 /--------------------------------------------------*/
 #include <stdio.h>
-#include <wiringPi.h>
 #include <stdlib.h>
-
 
 /*--------------------------------------------------/
 /                   Local Imports                   /
 /--------------------------------------------------*/
+#include "NMT_log.h"
+#include "PCA9685.h"
 
-/*--------------------------------------------------/
-/                   Constants                       /
-/--------------------------------------------------*/
-#define PWM_pin 1
+//---------------------Macros----------------------//
+#define LOG_DIR    "/tmp"
+#define MAX_ANGLE  180.00
+#define MIN_ANGLE  0.00
+#define MG995_FREQ 50.00
 
-int main(int argc, char *argv[]){
+//------------------Prototypes-------------------//
+double calc_on_time(double angle);
 
-    int f;
-    double duty_cycle;
+/*-------Start of Program--------------*/
+int main()
+{
 
-    if (wiringPiSetup() == -1){
-        printf("Error: Setting up Wiring Pi Failed!\n");
-        return -1;
-    }
+    PCA9685_settings settings;
 
-    pinMode(PWM_pin, PWM_OUTPUT);
-    pwmWrite(PWM_pin, 512);
+    NMT_log_init(LOG_DIR, true);
+
+    settings.freq = 50;
+    settings.duty_cycle = 12.5;
+    settings.delay_time = 0;
+
+    PCA9685_init(&settings);
+    PCA9685_setPWM(&settings, CHANNEL_15);
+    PCA9685_setPWM(&settings, CHANNEL_0);
     return 0;
+}
+
+double calc_on_time(double angle)
+{
+    //Input     : Angle of rotation
+    //Output    : On time in milliseconds
+    //Function  : Convert the angle of rotation needed to on_time in ms
+
+    NMT_log_write(DEBUG, "> angle: %f",angle);
+            
+    //Initialize Varibles
+    double on_time;
+
+    //Ensure the provided angle is within limits
+    angle = (angle > MAX_ANGLE ? MAX_ANGLE : (angle < MIN_ANGLE ? MIN_ANGLE : angle));
+
+    //on_time (ms) =  (angle (degrees)/9) + 0.5
+    on_time = (angle/9) + 0.5;
+
+    //Exit the function
+    NMT_log_write(DEBUG, "< on_time: %f",on_time);
+    return on_time;
 }

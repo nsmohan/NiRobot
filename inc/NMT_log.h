@@ -8,6 +8,11 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 #define _NMT_log_
 
 /*--------------------------------------------------/
+/                   System Imports                  /
+/--------------------------------------------------*/
+#include <stdbool.h>
+
+/*--------------------------------------------------/
 /                   Local Imports                   / 
 /--------------------------------------------------*/
 #include "NMT_stdlib.h"
@@ -33,11 +38,13 @@ extern NMT_result NMT_log_init_m(char *fname,           //In - Source file name
 
 extern void NMT_log_write_m(int line_no,                //In - Line number func called
                             const char *func_name,      //In - Function this log was called from
+                            log_level level,            //In - Log level setting
                             char *message,              //In - Message to log
-                            log_level level);           //In - Log level setting
+                            ...) __attribute__ 
+                            ((format (printf, 4, 5)));
 
-//------------------------Defines----------------//
+//--------------------Macros---------------------//
 #define NMT_log_init(...)  NMT_log_init_m(__FILE__, __VA_ARGS__)
-#define NMT_log_write(...) NMT_log_write_m(__FILE__, __LINE__, __func__,  __VA_ARGS__) 
+#define NMT_log_write(...) NMT_log_write_m(__LINE__, __func__,  __VA_ARGS__) 
 
 #endif

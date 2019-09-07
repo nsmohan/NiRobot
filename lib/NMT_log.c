@@ -6,13 +6,14 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 /*--------------------------------------------------/
 /                   System Imports                  /
 /--------------------------------------------------*/
+#define  _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
-#include <stdbool.h>
 #include <unistd.h>
 #include <json-c/json.h>
+#include <stdarg.h>
 
 /*--------------------------------------------------/
 /                   Local Imports                   /
@@ -49,19 +50,27 @@ NMT_result NMT_log_init_m(char *fname, char *log_dir, bool verbosity)
     return result;
 }
 
-void NMT_log_write_m(int line_no, const char *func_name, char *message, log_level level)
+void NMT_log_write_m(int line_no, const char *func_name, log_level level, char *message, ...)
 {
     //Initialize Varibles
-    time_t t = time(NULL);
-    struct tm tm = *localtime(&t);
-    char *log_to_write;
-    char time_now[100];
-    char *out_file_name;
+    time_t  t       = time(NULL);
+    struct  tm tm   = *localtime(&t);
+    va_list args;
+    char    *log_to_write;
+    char    time_now[100];
+    char    *out_file_name;
+    char    *string;
+
+    //Get varible arguments
+    va_start(args, message);
+    if(0 > vasprintf(&string, message, args)) string = NULL;
+    va_end(args);
 
     //Allocate Memory
-    log_to_write = (char *)malloc(sizeof(line_no) + sizeof(func_name) + 
-                                                  sizeof(message) + sizeof(log_level_e2s[level]) + 
-                                                  sizeof(time_now)+ sizeof(log_settings.file_name));
+    log_to_write = (char *)malloc(sizeof(line_no) + sizeof(time_now) + 
+                                 (sizeof(char *) * (strlen(func_name) + 
+                                  strlen(string) + strlen(log_level_e2s[level]) + 
+                                  strlen(log_settings.file_name) + 4)));
 
     out_file_name = (char *)malloc(sizeof(char *) * strlen(log_settings.log_dir) + 
                                    strlen(log_settings.file_name) + 5);
@@ -69,9 +78,9 @@ void NMT_log_write_m(int line_no, const char *func_name, char *message, log_leve
     sprintf(time_now, "%d-%d-%d %d:%d:%d ",tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
                                            tm.tm_hour, tm.tm_min, tm.tm_sec);
 
-    sprintf(log_to_write, "%s -- %s -- %s -- %s -- %d -- %s",
+    sprintf(log_to_write, "%s-%s-%s->%s-%d-%s",
             time_now, log_level_e2s[level], log_settings.file_name,
-            func_name, line_no, message);
+            func_name, line_no, string);
 
     sprintf(out_file_name, "%s/%s.log", log_settings.log_dir, log_settings.file_name);
 
@@ -81,6 +90,7 @@ void NMT_log_write_m(int line_no, const char *func_name, char *message, log_leve
     NMT_stdlib_write_file(out_file_name, log_to_write);
     
     //Free Memory
+    free(string);
     free(log_to_write);
     free(out_file_name);
 }
