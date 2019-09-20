@@ -29,6 +29,4 @@ extern NMT_result PCA9685_chgFreq(PCA9685_settings *settings);                  
 
 extern NMT_result PCA9685_setPWM(PCA9685_settings *settings,                        //In - PCA9685 struct
                                  pwm_channel channel);                              //In - PWM Channel
-
-extern NMT_result PCA9685_regDump(PCA9685_settings *settings);                                       //In - PCA9685 struct
 #endif

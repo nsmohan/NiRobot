@@ -16,13 +16,15 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 #include "PCA9685.h"
 
 //---------------------Macros----------------------//
-#define LOG_DIR    "/tmp"
-#define MAX_ANGLE  180.00
-#define MIN_ANGLE  0.00
-#define MG995_FREQ 50.00
+#define LOG_DIR       "/tmp"
+#define MAX_ANGLE     270.00
+#define MIN_ANGLE     0.00
+#define LD27MG_FREQ   50.00
+#define LD27MG_OFFSET 0.5
+#define LD27MG_SLOPE  (1/135)
 
 //------------------Prototypes-------------------//
-double calc_on_time(double angle);
+static double mtdr_get_duty_cycle(double angle);
 
 /*-------Start of Program--------------*/
 int main()
@@ -32,8 +34,8 @@ int main()
 
     NMT_log_init(LOG_DIR, true);
 
-    settings.freq = 50;
-    settings.duty_cycle = 12.5;
+    settings.freq = LD27MG_FREQ;
+    settings.duty_cycle = get_duty_cycle(90.00);
     settings.delay_time = 0;
 
     PCA9685_init(&settings);
@@ -42,7 +44,7 @@ int main()
     return 0;
 }
 
-double calc_on_time(double angle)
+static double mtdr_get_duty_cycle(double angle)
 {
     //Input     : Angle of rotation
     //Output    : On time in milliseconds
@@ -52,14 +54,20 @@ double calc_on_time(double angle)
             
     //Initialize Varibles
     double on_time;
+    double off_time;
+    double duty_cycle;
 
     //Ensure the provided angle is within limits
     angle = (angle > MAX_ANGLE ? MAX_ANGLE : (angle < MIN_ANGLE ? MIN_ANGLE : angle));
 
-    //on_time (ms) =  (angle (degrees)/9) + 0.5
-    on_time = (angle/9) + 0.5;
+    //on_time  (ms) = (angle (degrees * SLOPE) + OFFSET
+    //off_time (ms) = (1/FREQ) * 1000
+    on_time  = (angle * LD27MG_SLOPE) + LD27MG_OFFSET;
+    off_time = ((1/LD27MG_FREQ) * 1000)
+
+    duty_cycle = ((on_time/off_time) * 100);
 
     //Exit the function
-    NMT_log_write(DEBUG, "< on_time: %f",on_time);
-    return on_time;
+    NMT_log_write(DEBUG, "< on_time: %.2fms off_time: %.2fms duty_cycle: %.2f ms",on_time, off_time, duty_cycle);
+    return duty_cycle;
 }
