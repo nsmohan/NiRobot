@@ -20,6 +20,7 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 /*--------------------------------------------------/
 /                   Constants                       /
 /--------------------------------------------------*/
+#define MY_NAME "PCA9685_PWM_DRIVER"
 
 //I2C address of PCA9685
 #define I2C_ADDRESS 0x40
@@ -67,6 +68,9 @@ NMT_result PCA9685_init(PCA9685_settings *settings)
     //Mode-2: Outputs configured as totem pole-structure
     wiringPiI2CWriteReg8(settings->fd, MODE1, MODE1_INIT);
     wiringPiI2CWriteReg8(settings->fd, MODE2, MODE2_INIT);
+
+    //Set the init done flag
+    (result == OK) ? (settings->init_done = true) : (settings->init_done = false);
 
     NMT_log_write(DEBUG, "< %s fd: %d",result_e2s[result], settings->fd);
     return result;

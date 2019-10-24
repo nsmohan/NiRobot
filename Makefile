@@ -20,6 +20,7 @@ BINS        = $(OUT_DIR)/regdump \
 OBJS        = $(OBJ_DIR)/libNMT_stdlib.so \
               $(OBJ_DIR)/libNMT_log.so \
               $(OBJ_DIR)/libPCA9685.so \
+              $(OBJ_DIR)/librs.so
 
 PCA9685_LIBS  = -lNMT_stdlib \
                 -lNMT_log \
@@ -48,6 +49,10 @@ NMT_LOG_LIBS  = -lc \
              
 NMT_STD_LIBS  = -lc
 
+RS_LIBS       = -lNMT_stdlib \
+                -ljson-c \
+                -lc 
+
 all: $(OBJS) \
      $(BINS)
 
@@ -56,6 +61,9 @@ $(OBJ_DIR)/libNMT_stdlib.so: $(LIB_DIR)/NMT_stdlib.c $(INC_DIR)/NMT_stdlib.h
 
 $(OBJ_DIR)/libNMT_log.so: $(LIB_DIR)/NMT_log.c $(INC_DIR)/NMT_log.h
 	gcc $(CFLAGS) $(SFLAGS) $(RPATH) -o  $@ $< $(NMT_LOG_LIBS)
+
+$(OBJ_DIR)/librs.so: $(LIB_DIR)/rs.c
+	gcc $(CFLAGS) $(SFLAGS) $(RPATH) -o  $@ $< $(RS_LIBS)
 
 $(OBJ_DIR)/libPCA9685.so: $(LIB_DIR)/PCA9685.c $(INC_DIR)/PCA9685.h
 	gcc $(CFLAGS) $(SFLAGS) $(RPATH) -o  $@ $< $(PCA9685_LIBS)

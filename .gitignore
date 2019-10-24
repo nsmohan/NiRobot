@@ -3,6 +3,7 @@
 *.db
 /.metadata/
 *.swp
+*.swo
 *.out
 *.so
 Obj

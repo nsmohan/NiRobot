@@ -75,10 +75,10 @@ void NMT_log_write_m(int line_no, const char *func_name, log_level level, char *
     out_file_name = (char *)malloc(sizeof(char *) * strlen(log_settings.log_dir) + 
                                    strlen(log_settings.file_name) + 5);
     //Fill Varibles with data
-    sprintf(time_now, "%d-%d-%d %d:%d:%d ",tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
+    sprintf(time_now, "%d-%d-%d %d:%d:%d",tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
                                            tm.tm_hour, tm.tm_min, tm.tm_sec);
 
-    sprintf(log_to_write, "%s-%s-%s->%s-%d-%s",
+    sprintf(log_to_write, "%s->%s->%s->%s->%d->%s",
             time_now, log_level_e2s[level], log_settings.file_name,
             func_name, line_no, string);
 

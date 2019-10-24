@@ -6,6 +6,7 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 #ifndef _PCA9685_
 #define _PCA9685_
 
+#include <stdbool.h>
 #include "NMT_stdlib.h"
 
 //------------------Structs & Enums----------------//
@@ -14,12 +15,17 @@ typedef enum {CHANNEL_0,  CHANNEL_1,  CHANNEL_2,  CHANNEL_3,
               CHANNEL_8,  CHANNEL_9,  CHANNEL_10, CHANNEL_11,
               CHANNEL_12, CHANNEL_13, CHANNEL_14, CHANNEL_15} pwm_channel;
 
+const char* pwm_channel_e2s[] = {"CHANNEL_0", "CHANNEL_1", "CHANNEL_2",  "CHANNEL_3",
+                                 "CHANNEL_4", "CHANNEL_5", "CHANNEL_6",  "CHANNEL_7",
+                                 "CHANNEL_8", "CHANNEL_9", "CHANNEL_10", "CHANNEL_11",
+                                 "CHANNEL_12","CHANNEL_13","CHANNEL_14", "CHANNEL_15"};
 typedef struct PCA9685_settings
 {
     int    fd;
     float  freq;
     double duty_cycle;
     double delay_time;
+    bool   init_done;
 }PCA9685_settings;
 
 //------------------Prototypes----------------------//

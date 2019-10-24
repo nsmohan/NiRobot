@@ -17,7 +17,6 @@ import re
 import json
 from ctypes import *
 import HtmlTestRunner
-import select
 from datetime import datetime
 
 #---------------------------------------------------#
@@ -26,6 +25,14 @@ from datetime import datetime
 OBJ_PATH    = "/home/nmohan/github/NiRobot/Obj/"
 RESULT_PATH = "/home/nmohan/Test_Results/"
 DAT_PATH    = "/home/nmohan/github/NiRobot/tst/dat/"  
+LIB_PATH    = "/home/nmohan/github/NiRobot/lib/"
+
+#---------------------------------------------------#
+#                   Local Imports                   #
+#---------------------------------------------------#
+sys.path.append(LIB_PATH)
+import NMT_stdlib_py
+from NMT_log import logger
 
 class NMT_stdlib_test(unittest.TestCase):
     
@@ -207,17 +214,18 @@ class NMT_log_Test(unittest.TestCase):
         for v in verbosity:
             for level in range(0, len(log_level)):
 
-                std_obj = stdout_redirect()
+                std_obj = NMT_stdlib_py.stdout_redirect()
                 self.NMT_log.NMT_log_init_m(__file__, self.log_dir, v)
-                self.NMT_log.NMT_log_write_m(line_number, func_name, message, level)
+                self.NMT_log.NMT_log_write_m(line_number, func_name, level, message)
 
                 file_name = "%s/%s.log"%(self.log_dir, self.log_fname)
                 f = open(file_name, "r")
-                file_content = f.read().split("--")
+                file_content = f.read().split("->")
                 f.close()
 
                 #Get captured output from stdout
-                captured_output = std_obj.capture_output().split("--")
+                captured_output = std_obj.capture_output().split("->")
+                print captured_output
 
                 #Get current time for comparison later
                 current_time = datetime.now().replace(microsecond=0)
@@ -231,7 +239,6 @@ class NMT_log_Test(unittest.TestCase):
                 self.assertEqual(int(file_content[4].strip()), line_number)
                 self.assertEqual(file_content[5].strip(), message)
 
-                print (v, level)
                 #Compare Actual vs Exppected --stdout
                 if not v and level == 0:
                     self.assertEqual(captured_output, [''])
@@ -253,30 +260,6 @@ class NMT_log_Test(unittest.TestCase):
     def tearDown(self):
         os.system("rm -rf /tmp/*.log")
 
-class stdout_redirect(object):
-
-    def __init__(self):
-        sys.stdout.write(' \b')
-        self.pipe_out, self.pipe_in = os.pipe()
-        self.stdout = os.dup(1)               # save a copy of stdout
-        os.dup2(self.pipe_in, 1)              # replace stdout with our write pipe
-
-    def capture_output(self):
-        out = ''
-        r = True
-        while bool(r):
-                r, _, _ = select.select([self.pipe_out], [], [], 0)
-                if self.pipe_out in r:
-                    out += os.read(self.pipe_out, 1024)
-        return out
-    
-    def set_default(self):
-        os.dup2(self.stdout, 1)
-
-class logger(Structure):
-    _fields_ = [('log_level' ,c_int),
-                ('log_dir'   ,c_char_p),
-                ('file_name' ,c_char_p)]
-
 if __name__ == '__main__':
-    unittest.main(testRunner=HtmlTestRunner.HTMLTestRunner(output=RESULT_PATH))
+    unittest.main()
+    #unittest.main(testRunner=HtmlTestRunner.HTMLTestRunner(output=RESULT_PATH))

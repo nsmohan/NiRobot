@@ -1,0 +1,8 @@
+{
+    "_comment" : "Robot Operation Settings",
+    "log_dir"  : "/var/log/NiRobot",
+    "hw": [{
+                    "hw_name"    : "PCA9685_PWM_DRIVER",
+                    "hw_sim_mode": true
+          }]
+}
