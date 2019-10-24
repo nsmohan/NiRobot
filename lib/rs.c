@@ -20,6 +20,7 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 /--------------------------------------------------*/
 #define RS_SETTINGS_PATH "/home/nmohan/github/NiRobot/config/rs.json"
 
+//------------------Structs & Enums----------------//
 typedef struct rs_hw
 {
     char **hw_name;
@@ -27,6 +28,7 @@ typedef struct rs_hw
     int  array_len;
 }rs_hw;
 
+/*------------------Prototypes----------------------*/
 static NMT_result rs_parse_json(char *data_to_parse, rs_hw *hw);
 
 NMT_result rs_get_mode(char *hw_name, bool *sim_mode)
