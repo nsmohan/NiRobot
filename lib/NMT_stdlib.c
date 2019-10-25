@@ -140,5 +140,3 @@ size_t NMT_stdlib_get_file_size(char *filepath)
     fclose(fp);
     return size;
 }
-
-

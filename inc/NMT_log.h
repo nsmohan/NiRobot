@@ -23,8 +23,8 @@ typedef enum {DEBUG, WARNING, ERROR} log_level;
 struct NMT_log_settings 
 {
     log_level log_level;
-    char      *log_dir;
     char      *file_name;
+    char      *log_dir;
 };
 
 //--------------Global Definitions----------------//

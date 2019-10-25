@@ -50,6 +50,7 @@ NMT_LOG_LIBS  = -lc \
 NMT_STD_LIBS  = -lc
 
 RS_LIBS       = -lNMT_stdlib \
+                -lNMT_log \
                 -ljson-c \
                 -lc 
 

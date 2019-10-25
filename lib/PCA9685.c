@@ -47,6 +47,10 @@ static NMT_result PCA9685_setFreq(PCA9685_settings *settings);
 
 NMT_result PCA9685_init(PCA9685_settings *settings)
 {
+    //Input     : PCA9685 settings structure
+    //Output    : fd (Pointer to access IC via I2C)
+    //Function  : Intialize the PCA9685 device based on the settings provided
+
     //Initialize Varibles
     NMT_result result = OK;
 
@@ -78,6 +82,10 @@ NMT_result PCA9685_init(PCA9685_settings *settings)
 
 NMT_result PCA9685_chgFreq(PCA9685_settings *settings)
 {
+    //Input     : PCA9685 settings structure
+    //Output    : N/A
+    //Function  : Changed the frequency to the one provided in the input struct
+
     //Initialize Varibles
     NMT_result result = OK;
     int orig_reg_value;
@@ -109,6 +117,10 @@ NMT_result PCA9685_chgFreq(PCA9685_settings *settings)
 
 static NMT_result PCA9685_setFreq(PCA9685_settings *settings)
 {
+    //Input     : PCA9685 settings structure
+    //Output    : N/A
+    //Function  : Set the frequency to the one provided in the input struct
+
     //Initialize Varibles
     NMT_result result = OK;
 
@@ -136,6 +148,10 @@ static NMT_result PCA9685_setFreq(PCA9685_settings *settings)
 
 NMT_result PCA9685_setPWM(PCA9685_settings *settings, pwm_channel channel)
 {
+    //Input     : PCA9685 settings structure and PWM channel
+    //Output    : N/A
+    //Function  : Set PWM duty cycle on the desired channel
+
     //Initialize Varibles
     NMT_result result = OK;
 

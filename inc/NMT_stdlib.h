@@ -12,6 +12,7 @@ typedef enum {OK, NOK} NMT_result;                              //Standard retur
 
 //--------------Global Definitions----------------//
 const char *result_e2s[] = {"OK","NOK"};                        //Convert NMT_result to string
+#define btoa(x) ((x)?"true":"false")
 
 //------------------Prototypes----------------------//
 extern void       NMT_stdlib_split(char *string,                //In  - String to Split
@@ -30,5 +31,5 @@ extern NMT_result NMT_stdlib_read_file(char *filepath,          //In  - Path to 
                                        char **file_content);    //Out - Content of file
 
 extern void NMT_stdlib_write_file(char *filepath,               //In  - Path to file
-                                  char *file_content);          //In - Content to write
+                                  char *file_content);          //In  - Content to write
 #endif
