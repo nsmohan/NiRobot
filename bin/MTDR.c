@@ -1,4 +1,4 @@
-/*mtdr.c:       Motor Driver
+/*MTDR.c:       Motor Driver
 
 __author__      = "Nitin Mohan
 __copyright__   = "Copy Right 2019. NM Technologies" */
@@ -7,14 +7,14 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 /                   System Imports                  /
 /--------------------------------------------------*/
 #include <stdio.h>
-#include <stdlib.h>
+#include <string.h>
 #include <getopt.h>
 
 /*--------------------------------------------------/
 /                   Local Imports                   /
 /--------------------------------------------------*/
 #include "NMT_log.h"
-#include "PCA9685.h"
+#include "MTDR.h"
 
 //---------------------Macros----------------------//
 #define LOG_DIR       "/var/log/NiRobot"
@@ -24,15 +24,9 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 #define LD27MG_OFFSET 0.5
 #define LD27MG_SLOPE  (1/135)
 
-//------------------Prototypes-------------------//
-typedef enum
-{
-    CAM_HOZ_MTR = CHANNEL_15,
-    CAM_VER_MTR = CHANNEL_14
-
-} motors;
-
-
+/*--------------------------------------------------/
+/                   Structures                      /
+/--------------------------------------------------*/
 static struct option long_options[] =
 {
     {"motor",     required_argument, NULL, 'm'},
@@ -41,43 +35,39 @@ static struct option long_options[] =
     {NULL, 0, NULL, 0}
 };
 
+//------------------Prototypes-------------------//
 static double mtdr_get_duty_cycle(double angle);
+NMT_result mtdr_m2c(char *motor, PCA9685_PWM_CHANNEL *channel);
 static void print_usage(int es);
-NMT_result mtdr_move_motor(PCA9685_settings *settings, motors motor, double angle);
 
 /*-------Start of Program--------------*/
 int main(int argc, char *argv[])
 {
-    
-
-    //Initialize Variables
-    PCA9685_settings settings = {0};
-    int longindex             = 0;
-    double angle              = 1;      //Default value for the angle is set to 1
-    bool verbosity            = false;
+    /* Initialize General Variables */
     int opt;
-
-    //Initialize PCA9685 Driver
-    settings.freq = LD27MG_FREQ;
-    settings.delay_time = 0;
-
-    //PCA9685_init(&settings);
+    NMT_result result = OK;
+    int longindex     = 0;
+    bool verbosity    = false;
+    double angle      = 1.0;      //Default value for the angle is set to 1
+    char   motor[50];
 
     //Parse input arguments and take appropriate action
-    if (argc >= 3)
+    if (argc >= 2)
     {
         while ((opt = getopt_long(argc, argv, "m:a:hv", long_options, &longindex)) != -1)
         {
             switch (opt)
             {
                 case 'a':
+                    angle = atoi(optarg);
+                    break;
                 case 'm':
-                    printf("%s\n", optarg);
-                    //mtdr_move_motor(settings, optarg)
+                    strcpy(motor, optarg);
                     break;
                 case 'v':
                     printf("Program will run in verbose mode .........\n");
                     verbosity = true;
+                    break;
                 case 'h':
                     printf("Help Menu\n");
                     print_usage(0);
@@ -88,9 +78,20 @@ int main(int argc, char *argv[])
                     break;
             }
         }
-        NMT_log_init(LOG_DIR, verbosity);
+
+        /* Initialize the logger */
+        if(result == OK)
+        {
+            result = NMT_log_init(LOG_DIR, verbosity);
+        }
+
+        /* Move the actual Motor */
+        if(result == OK)
+        {
+            result = mtdr_move_motor(motor, angle);
+        }
     }
-    else if (argc > 5)
+    else if (argc > 3)
     {
         printf("Too many arguments provided\n");
         print_usage(1);
@@ -100,29 +101,86 @@ int main(int argc, char *argv[])
         printf("Error: No Arguments provided\n");
         print_usage(1);
     }
-    return 0;
-
-
+    return result;
 }
 
 static void print_usage(int es)
 {
-    printf("--angle/-a Angle to move to || --motor/-m motor to move || -h\n");
+    printf("--angle/-a Angle to move to ||/&& --motor/-m motor to move \
+            ||/&& -v verbosity || -h\n");
     exit(es);
-
 }
-NMT_result mtdr_move_motor(PCA9685_settings *settings, motors motor, double angle)
+
+NMT_result mtdr_m2c(char *motor, PCA9685_PWM_CHANNEL *channel)
+{
+    //Input     : String with motor name
+    //Output    : Channel the motor name corresponds to
+    //Function  : Convert motor string to appropriate channel
+
+    NMT_log_write(DEBUG, "> motor=%s", motor);
+
+    /* Initialize Variables */
+    NMT_result result = OK;
+    int motor_size = sizeof(MTDR_motors)/sizeof(MTDR_motors[0]);
+
+    /* Search for the name in struct */
+    for (int i = 0; i < motor_size; i++)
+    {
+        if (!strcmp(motor, MTDR_motors[i].motor))
+        {
+            *channel = MTDR_motors[i].channel;
+            result = OK;
+            NMT_log_write(DEBUG, "< channel=%s result=%s",
+                          PCA9685_PWM_CHANNEL_e2s[*channel], result_e2s[result]);
+            return result;
+        }
+    }
+
+    /*Exit the function */
+    result = NOK;
+    NMT_log_write(DEBUG, "< result=%s",result_e2s[result]);
+    return result;
+}
+
+NMT_result mtdr_move_motor(char *motor, double angle)
 {
     //Input     : Settings Object, motor to move, angle
     //Output    : N/A
     //Function  : Call appropriate function to move the motor to desired position 
 
-    //Init Variables
+    NMT_log_write(DEBUG, "> motor=%s angle=%f", motor, angle);
+    /* Initialize varibles */
     NMT_result result = OK;
+    PCA9685_PWM_CHANNEL channel;
+    PCA9685_settings    settings = {0};
+    settings.freq                = LD27MG_FREQ;
+    settings.delay_time          = 0;
 
-    settings->duty_cycle = mtdr_get_duty_cycle(angle);
-    //result = PCA9685_setPWM(&settings, motor);
+    /* Get corresponding channel to motor string */
+    result = mtdr_m2c(motor, &channel);
 
+    /* Initialize the PCA9685 Driver */
+    if (result == OK)
+    {
+        result = PCA9685_init(&settings);
+    }
+    else
+    {
+        NMT_log_write(ERROR, "Unable to find motor=%s in list of known motors", motor);
+    }
+
+    /* Set PWM for the corresponding channel */
+    if (result == OK)
+    {
+        settings.duty_cycle = mtdr_get_duty_cycle(angle);
+        result = PCA9685_setPWM(&settings, channel);
+    }
+    else
+    {
+        NMT_log_write(ERROR, "PCA9685 Hardware Failure");
+    }
+
+    NMT_log_write(DEBUG, "< result=%s",result_e2s[result]);
     return result;
 }
 

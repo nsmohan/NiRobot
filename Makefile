@@ -19,8 +19,8 @@ BINS        = $(OUT_DIR)/regdump \
 
 OBJS        = $(OBJ_DIR)/libNMT_stdlib.so \
               $(OBJ_DIR)/libNMT_log.so \
-              $(OBJ_DIR)/libPCA9685.so \
-              $(OBJ_DIR)/librs.so
+              $(OBJ_DIR)/librs.so \
+              $(OBJ_DIR)/libPCA9685.so
 
 PCA9685_LIBS  = -lNMT_stdlib \
                 -lNMT_log \
@@ -28,7 +28,8 @@ PCA9685_LIBS  = -lNMT_stdlib \
                 -lwiringPi \
                 -lcrypt \
                 -lm \
-                -lrt
+                -lrt \
+                -lrs
 
 REG_DUMP_LIBS = -lNMT_stdlib \
                 -lwiringPi \
@@ -63,7 +64,7 @@ $(OBJ_DIR)/libNMT_stdlib.so: $(LIB_DIR)/NMT_stdlib.c $(INC_DIR)/NMT_stdlib.h
 $(OBJ_DIR)/libNMT_log.so: $(LIB_DIR)/NMT_log.c $(INC_DIR)/NMT_log.h
 	gcc $(CFLAGS) $(SFLAGS) $(RPATH) -o  $@ $< $(NMT_LOG_LIBS)
 
-$(OBJ_DIR)/librs.so: $(LIB_DIR)/rs.c
+$(OBJ_DIR)/librs.so: $(LIB_DIR)/RSXA.c $(INC_DIR)/RSXA.h
 	gcc $(CFLAGS) $(SFLAGS) $(RPATH) -o  $@ $< $(RS_LIBS)
 
 $(OBJ_DIR)/libPCA9685.so: $(LIB_DIR)/PCA9685.c $(INC_DIR)/PCA9685.h
@@ -72,7 +73,7 @@ $(OBJ_DIR)/libPCA9685.so: $(LIB_DIR)/PCA9685.c $(INC_DIR)/PCA9685.h
 $(OUT_DIR)/regdump: $(BIN_DIR)/register_dump.c
 	gcc $(CFLAGS) $(RPATH) -o $@ $^ $(REG_DUMP_LIBS)
 
-$(OUT_DIR)/mtdr: $(BIN_DIR)/mtdr.c
+$(OUT_DIR)/mtdr: $(BIN_DIR)/MTDR.c $(INC_DIR)/MTDR.h
 	gcc $(CFLAGS) $(RPATH) -o $@ $^ $(MTDR_LIBS)
 
 clean:

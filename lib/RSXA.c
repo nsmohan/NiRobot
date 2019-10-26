@@ -1,4 +1,4 @@
-/*robot_settings.c: Library to read the robot_settings configuration file
+/*RSXA.c: Library to read the robot_settings configuration file
 
 __author__      = "Nitin Mohan
 __copyright__   = "Copy Right 2019. NM Technologies" */
@@ -13,44 +13,44 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 /*--------------------------------------------------/
 /                   Local Imports                   /
 /--------------------------------------------------*/
-#include "rs.h"
+#include "RSXA.h"
 #include "NMT_stdlib.h"
 #include "NMT_log.h"
 
 /*--------------------------------------------------/
 /                   Constants                       /
 /--------------------------------------------------*/
-#define RS_SETTINGS_PATH "/home/nmohan/github/NiRobot/config/rs.json"
+#define RS_SETTINGS_PATH "/home/nmohan/github/NiRobot/config/RSXA.json"
 
 //------------------Structs & Enums----------------//
-typedef struct rs_hw
+typedef struct RSXA_hw
 {
     char **hw_name;
     bool *hw_sim_mode;
     int  array_len;
-}rs_hw;
+}RSXA_hw;
 
 /*------------------Prototypes----------------------*/
-static NMT_result rs_parse_json(char *data_to_parse, rs_hw *hw);
+static NMT_result RSXA_parse_json(char *data_to_parse, RSXA_hw *hw);
 
-NMT_result rs_get_mode(char *hw_name, bool *sim_mode)
+NMT_result RSXA_get_mode(char *hw_name, bool *sim_mode)
 {
     //Input     : Name of hardware to check 
     //Output    : Mode bit
-    //Function  : Read rs_hw structure and set the rs_mode flag
+    //Function  : Read RSXA_hw structure and set the sim_mode flag
 
     NMT_log_write(DEBUG, "> hw_name: %s", hw_name);
 
     //Initialize Variables
     NMT_result result = OK;
-    rs_hw hw          = {0};
+    RSXA_hw hw          = {0};
     char *file_content;
 
     /* Read and parse the Json settings file */
     result = NMT_stdlib_read_file(RS_SETTINGS_PATH, &file_content);
 
     if (result == OK)
-        result = rs_parse_json(file_content, &hw);
+        result = RSXA_parse_json(file_content, &hw);
         
     /* Search for the hardware name of interest */
     if (result == OK)
@@ -76,7 +76,7 @@ NMT_result rs_get_mode(char *hw_name, bool *sim_mode)
 
 }
 
-static NMT_result rs_parse_json(char *data_to_parse, rs_hw *hw)
+static NMT_result RSXA_parse_json(char *data_to_parse, RSXA_hw *hw)
 {
     //Input     : Data to be parsed and the structure to be populated with data
     //Output    : Structure with the parsed json data 
@@ -141,7 +141,7 @@ static NMT_result rs_parse_json(char *data_to_parse, rs_hw *hw)
     }
     else
     {
-        NMT_log_write(ERROR, "Invalid array length; array_len %d", array_len);
+        NMT_log_write(ERROR, "Invalid array length (array_len=%d)", array_len);
     }
 
     /* Exit the function */

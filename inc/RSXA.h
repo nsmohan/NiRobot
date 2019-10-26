@@ -18,6 +18,6 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 /--------------------------------------------------*/
 
 /*------------------Prototypes----------------------*/
-extern NMT_result rs_get_mode(char *hw_name,        //Input - Name of hardware to look for
-                              bool *sim_mode);     //Output - True if in simulation else false
+extern NMT_result RSXA_get_mode(char *hw_name,     //Input - Name of hardware to look for
+                              bool *sim_mode);    //Output - True if in simulation else false
 
