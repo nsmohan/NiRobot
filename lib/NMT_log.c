@@ -38,7 +38,7 @@ NMT_result NMT_log_init_m(char *fname, char *log_dir, bool verbosity)
         NMT_stdlib_split(fname, "/.", &fname_array, &no_of_items);
 
         //Populate log_settings struct from func input
-        log_settings.file_name = fname_array[1]; 
+        log_settings.file_name = fname_array[no_of_items - 2]; 
         log_settings.log_dir = log_dir;
         verbosity ? (log_settings.log_level = DEBUG) : (log_settings.log_level = WARNING);
 

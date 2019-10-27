@@ -90,6 +90,7 @@ void NMT_stdlib_split(char *string, char *param, char ***item_array, int *no_of_
     }
 
     //Free Allocated Memory
+    *no_of_items = i;
     free(str);
 }
 
