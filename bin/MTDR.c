@@ -22,7 +22,7 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 #define MIN_ANGLE     0.00
 #define LD27MG_FREQ   50.00
 #define LD27MG_OFFSET 0.5
-#define LD27MG_SLOPE  (1/135)
+#define LD27MG_SLOPE  135
 
 /*--------------------------------------------------/
 /                   Structures                      /
@@ -202,12 +202,12 @@ static double mtdr_get_duty_cycle(double angle)
 
     //on_time  (ms) = (angle (degrees * SLOPE) + OFFSET
     //off_time (ms) = (1/FREQ) * 1000
-    on_time  = (angle * LD27MG_SLOPE) + LD27MG_OFFSET;
+    on_time  = (angle/LD27MG_SLOPE) + LD27MG_OFFSET;
     off_time = ((1/LD27MG_FREQ) * 1000);
 
     duty_cycle = ((on_time/off_time) * 100);
 
     //Exit the function
-    NMT_log_write(DEBUG, "< on_time: %.2fms off_time: %.2fms duty_cycle: %.2f ms",on_time, off_time, duty_cycle);
+    NMT_log_write(DEBUG, "< on_time: %.2fms off_time: %.2fms duty_cycle: %.2f%%",on_time, off_time, duty_cycle);
     return duty_cycle;
 }
