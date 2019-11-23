@@ -29,15 +29,17 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 /--------------------------------------------------*/
 static struct option long_options[] =
 {
-    {"motor",     required_argument, NULL, 'm'},
-    {"angle",     required_argument, NULL, 'a'},
-    {"help",      no_argument,       NULL,  0},
+    {"motor",                required_argument, NULL, 'm'},
+    {"angle",                required_argument, NULL, 'a'},
+    {"current_position",     no_argument,       NULL, 'c'},
+    {"help",                 no_argument,       NULL,  0},
     {NULL, 0, NULL, 0}
 };
 
 //------------------Prototypes-------------------//
 static double mtdr_get_duty_cycle(double angle);
 NMT_result mtdr_m2c(char *motor, PCA9685_PWM_CHANNEL *channel);
+static double mtdr_get_angle(double duty_cycle);
 static void print_usage(int es);
 
 /*-------Start of Program--------------*/
@@ -45,21 +47,24 @@ int main(int argc, char *argv[])
 {
     /* Initialize General Variables */
     int opt;
-    NMT_result result = OK;
-    int longindex     = 0;
-    bool verbosity    = false;
-    double angle      = 1.0;      //Default value for the angle is set to 1
+    NMT_result result         = OK;
+    int longindex             = 0;
+    bool verbosity            = false;
+    bool get_current_position = false;
+    bool angle_provided       = false;
+    double angle              = 0;
     char   motor[50];
 
     //Parse input arguments and take appropriate action
     if (argc >= 2)
     {
-        while ((opt = getopt_long(argc, argv, "m:a:hv", long_options, &longindex)) != -1)
+        while ((opt = getopt_long(argc, argv, "m:a:chv", long_options, &longindex)) != -1)
         {
             switch (opt)
             {
                 case 'a':
                     angle = atoi(optarg);
+                    angle_provided = true;
                     break;
                 case 'm':
                     strcpy(motor, optarg);
@@ -67,6 +72,9 @@ int main(int argc, char *argv[])
                 case 'v':
                     printf("Program will run in verbose mode .........\n");
                     verbosity = true;
+                    break;
+                case 'c':
+                    get_current_position = true;
                     break;
                 case 'h':
                     printf("Help Menu\n");
@@ -86,9 +94,21 @@ int main(int argc, char *argv[])
         }
 
         /* Move the actual Motor */
-        if(result == OK)
+        if(result == OK && angle_provided)
         {
             result = mtdr_move_motor(motor, angle);
+        }
+
+        /* Get Motors current postion */
+        if(result == OK && get_current_position)
+        {
+            double current_angle;
+            result = mtdr_get_current_position(motor, &current_angle);
+
+            if (result == OK)
+            {
+                printf("%.2f\n", current_angle);
+            }
         }
     }
     else if (argc > 3)
@@ -107,7 +127,7 @@ int main(int argc, char *argv[])
 static void print_usage(int es)
 {
     printf("--angle/-a Angle to move to ||/&& --motor/-m motor to move \
-            ||/&& -v verbosity || -h\n");
+             || --get_current_position/-c get current angle ||/&& -v verbosity || -h\n");
     exit(es);
 }
 
@@ -142,13 +162,59 @@ NMT_result mtdr_m2c(char *motor, PCA9685_PWM_CHANNEL *channel)
     return result;
 }
 
+NMT_result mtdr_get_current_position(char *motor, double *angle)
+{
+    //Input     : Name of the motor
+    //Output    : Angle of the motor
+    //Function  : Get the duty_cycle of PWM channel based 
+    //            on motor name and calcualte angle
+    
+    NMT_log_write(DEBUG, "> motor=%s", motor);
+
+    /* Initialize varibles */
+    NMT_result result = OK;
+    PCA9685_PWM_CHANNEL channel;
+    PCA9685_settings    settings = {0};
+
+    /* Get corresponding channel to motor string */
+    result = mtdr_m2c(motor, &channel);
+
+    /* Initialize the PCA9685 Driver */
+    if (result == OK)
+    {
+        result = PCA9685_init(&settings);
+    }
+    else
+    {
+        NMT_log_write(ERROR, "Unable to find motor=%s in list of known motors", motor);
+    }
+
+    /* Get duty cycle */
+    if (result == OK)
+    {
+        result = PCA9685_getPWM(&settings, channel);
+    }
+    else
+    {
+        NMT_log_write(ERROR, "PCA9685 Hardware Failure");
+    }
+
+    if (result == OK)
+    {
+        *angle = mtdr_get_angle(settings.duty_cycle);
+    }
+
+    NMT_log_write(DEBUG, "< angle=%.2f result=%s", *angle, result_e2s[result]);
+    return result;
+}
 NMT_result mtdr_move_motor(char *motor, double angle)
 {
-    //Input     : Settings Object, motor to move, angle
+    //Input     : Name of the motor and angle
     //Output    : N/A
     //Function  : Call appropriate function to move the motor to desired position 
 
     NMT_log_write(DEBUG, "> motor=%s angle=%f", motor, angle);
+
     /* Initialize varibles */
     NMT_result result = OK;
     PCA9685_PWM_CHANNEL channel;
@@ -209,5 +275,30 @@ static double mtdr_get_duty_cycle(double angle)
 
     //Exit the function
     NMT_log_write(DEBUG, "< on_time: %.2fms off_time: %.2fms duty_cycle: %.2f%%",on_time, off_time, duty_cycle);
+    return duty_cycle;
+}
+
+static double mtdr_get_angle(double duty_cycle)
+{
+    //Input     : Duty Cycle
+    //Output    : Angle
+    //Function  : Convert duty_cycle to Angle
+
+    NMT_log_write(DEBUG, "> angle: %f",duty_cycle);
+            
+    //Initialize Varibles
+    double on_time;
+    double off_time;
+    double angle;
+
+    //off_time (ms) = (1/FREQ) * 1000
+    off_time = ((1/LD27MG_FREQ) * 1000);
+    on_time = (duty_cycle/100) * off_time;
+
+    angle = (on_time - LD27MG_OFFSET) * LD27MG_SLOPE;
+
+    //Exit the function
+    NMT_log_write(DEBUG, "< on_time: %.2fms off_time: %.2fms angle: %.2f%%",on_time, off_time, angle);
+
     return duty_cycle;
 }

@@ -189,38 +189,94 @@ NMT_result PCA9685_setPWM(PCA9685_settings *settings, PCA9685_PWM_CHANNEL channe
 
     /* Check if we're in simulation mode */
     result = RSXA_get_mode(HW_NAME, &sim_mode);
-    NMT_log_write(DEBUG, "hw_name=%s sim_mode=%s", HW_NAME, btoa(sim_mode));
-
-    //Check if we have a valid slave address
-    if (settings->fd < 0)
-        return result = NOK;
-
-    //Cap max delay to 100 and min to 0
-    settings->duty_cycle = (settings->duty_cycle > 100 ? 100 : (settings->duty_cycle < 0 ? 0 : settings->duty_cycle));
-    settings->delay_time = (settings->delay_time > 100 ? 100 : (settings->delay_time < 0 ? 0 : settings->delay_time));
-
-    //Calculate number of tics for time on & off
-    int tics_to_on       = (((settings->delay_time/100)*MAX_TICS) + 0.5) - 1;
-    int tics_on_duration = (((settings->duty_cycle/100)*MAX_TICS) + 0.5);
-    int tics_to_off      = tics_to_on + tics_on_duration; 
-
-    //Calculate the register address
-    int channel_reg_on  = (channel * 4) + LED0_ON_L;
-    int channel_reg_off = channel_reg_on + 2;
-
-    NMT_log_write(DEBUG,
-            "tics_to_on:%d tics_on_duration:%d tics_to_off:%d channel_reg_on:%X channel_reg_off:%X", 
-                  tics_to_on, tics_on_duration, tics_to_off, channel_reg_on, channel_reg_off);
-
-    if (!sim_mode)
+    if (result == OK)
     {
-        //Write to the registers
-        wiringPiI2CWriteReg16(settings->fd, channel_reg_on,  tics_to_on);
-        wiringPiI2CWriteReg16(settings->fd, channel_reg_off, tics_to_off);
+        NMT_log_write(DEBUG, "hw_name=%s sim_mode=%s", HW_NAME, btoa(sim_mode));
+
+        //Check if we have a valid slave address
+        if (settings->fd < 0)
+            return result = NOK;
+
+        //Cap max delay to 100 and min to 0
+        settings->duty_cycle = (settings->duty_cycle > 100 ? 100 : 
+                (settings->duty_cycle < 0 ? 0 : settings->duty_cycle));
+        settings->delay_time = (settings->delay_time > 100 ? 100 : 
+                (settings->delay_time < 0 ? 0 : settings->delay_time));
+
+        //Calculate number of tics for time on & off
+        int tics_to_on       = (((settings->delay_time/100)*MAX_TICS) + 0.5) - 1;
+        int tics_on_duration = (((settings->duty_cycle/100)*MAX_TICS) + 0.5);
+        int tics_to_off      = tics_to_on + tics_on_duration; 
+
+        //Calculate the register address
+        int channel_reg_on  = (channel * 4) + LED0_ON_L;
+        int channel_reg_off = channel_reg_on + 2;
+
+        NMT_log_write(DEBUG, "tics_to_on:%d tics_on_duration:%d tics_to_off:%d  \
+                              channel_reg_on:%X channel_reg_off:%X", 
+                              tics_to_on, tics_on_duration, tics_to_off, 
+                              channel_reg_on, channel_reg_off);
+        if (!sim_mode)
+        {
+            //Write to the registers
+            wiringPiI2CWriteReg16(settings->fd, channel_reg_on,  tics_to_on);
+            wiringPiI2CWriteReg16(settings->fd, channel_reg_off, tics_to_off);
+        }
     }
 
     NMT_log_write(DEBUG, "< %s", result_e2s[result]);
 
     //Exit function
     return result;
+}
+
+NMT_result PCA9685_getPWM(PCA9685_settings *settings, PCA9685_PWM_CHANNEL channel)
+{
+    //Input     : PCA9685 settings structure and PWM channel
+    //Output    : N/A
+    //Function  : Get PWM duty cycle on the desired channel
+
+    //Initialize Varibles
+    NMT_result result = OK;
+    bool sim_mode     = false; 
+    int tics_on_duration;
+
+    NMT_log_write(DEBUG, "> channel=%s", PCA9685_PWM_CHANNEL_e2s[channel]);
+
+    /* Check if we're in simulation mode */
+    result = RSXA_get_mode(HW_NAME, &sim_mode);
+
+    if(result == OK)
+    {
+        NMT_log_write(DEBUG, "hw_name=%s sim_mode=%s", HW_NAME, btoa(sim_mode));
+
+        //Check if we have a valid slave address
+        if (settings->fd < 0)
+            return result = NOK;
+
+        if (!sim_mode)
+        {
+            //Calculate the register address
+            int channel_reg_on  = (channel * 4) + LED0_ON_L;
+            int channel_reg_off = channel_reg_on + 2;
+            
+            //Write to the registers
+            int tics_to_on  = wiringPiI2CReadReg16(settings->fd, channel_reg_on);
+            int tics_to_off = wiringPiI2CReadReg16(settings->fd, channel_reg_off);
+            tics_on_duration = tics_to_off - tics_to_on;
+
+        }
+        else
+        {
+            tics_on_duration = 500;
+        }
+
+        /* Calculate the duty cycle */
+        settings->duty_cycle = ((tics_on_duration - 0.5)/MAX_TICS) * 100;
+    }
+
+    //Exit the function
+    NMT_log_write(DEBUG, "< duty_cycle=%f", settings->duty_cycle);
+    return result;
+
 }
