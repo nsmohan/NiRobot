@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
 
 static void print_usage(int es)
 {
-    printf("--angle/-a Angle to move to ||/&& --motor/-m motor to move \
+    printf("--angle/-a Angle to move to ||/&& --motor/-m motor to move \n \
              || --get_current_position/-c get current angle ||/&& -v verbosity || -h\n");
     exit(es);
 }
@@ -300,5 +300,5 @@ static double mtdr_get_angle(double duty_cycle)
     //Exit the function
     NMT_log_write(DEBUG, "< on_time: %.2fms off_time: %.2fms angle: %.2f%%",on_time, off_time, angle);
 
-    return duty_cycle;
+    return angle;
 }

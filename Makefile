@@ -3,13 +3,14 @@
 #__copyright__   = "Copy Right 2018. NM Technologies"
 
 
-BIN_DIR     = bin
-OBJ_DIR     = Obj
-OBJ_DIR_ARM = Obj_arm
-INC_DIR     = inc
-LIB_DIR     = lib
-OUT_DIR     = bld
-OUT_DIR_ARM = bld_arm
+PROJ_DIR    = /home/nmohan/github/NiRobot
+BIN_DIR     = $(PROJ_DIR)/bin
+OBJ_DIR     = $(PROJ_DIR)/Obj
+OBJ_DIR_ARM = $(PROJ_DIR)/Obj_arm
+INC_DIR     = $(PROJ_DIR)/inc
+LIB_DIR     = $(PROJ_DIR)/lib
+OUT_DIR     = $(PROJ_DIR)/bld
+OUT_DIR_ARM = $(PROJ_DIR)/bld_arm
 CFLAGS      = -g -Wall -Wextra -I $(INC_DIR)
 SFLAGS      = -fPIC -shared
 RPATH       = -L$(OBJ_DIR) -Wl,-rpath=$(OBJ_DIR)
