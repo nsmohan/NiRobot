@@ -6,6 +6,7 @@
 *.swo
 *.out
 *.so
+*.lock
 Obj
 bld
 gui/photonetwork_gui/.vs
