@@ -40,10 +40,12 @@ REG_DUMP_LIBS = -lNMT_stdlib \
 
 MTDR_LIBS     = -lNMT_stdlib \
                 -lNMT_log \
+                -lwiringPi \
                 -lPCA9685 \
                 -lcrypt \
                 -lm \
-                -lrt
+                -lrt \
+                -lrs
 
 NMT_LOG_LIBS  = -lc \
                 -ljson-c \

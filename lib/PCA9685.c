@@ -21,10 +21,6 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 /*--------------------------------------------------/
 /                   Constants                       /
 /--------------------------------------------------*/
-#define HW_NAME "PCA9685_PWM_DRIVER"
-
-//I2C address of PCA9685
-#define I2C_ADDRESS 0x40
 
 //Address of Mode Registers
 #define MODE1       0x00
@@ -59,23 +55,8 @@ NMT_result PCA9685_init(PCA9685_settings *settings)
     NMT_log_write(DEBUG, "> freq: %f duty_cycle: %f delay_time: %f",settings->freq, settings->duty_cycle,
                                                                     settings->delay_time);
     /* Check if we're in simulation mode */
-    result = RSXA_get_mode(HW_NAME, &sim_mode);
-    NMT_log_write(DEBUG, "hw_name=%s sim_mode=%s", HW_NAME, btoa(sim_mode));
-
-    if ((result == OK) && (!sim_mode))
-    {
-        //Initialize I2C Communication
-        wiringPiSetup();
-        settings->fd = wiringPiI2CSetup(I2C_ADDRESS);
-    }
-    else
-    {
-        settings->fd = 1;
-    }
-
-    //Check if found the slave address
-    if (settings->fd < 0)
-        return result = NOK;
+    result = RSXA_get_mode(PCA9685_HW_NAME, &sim_mode);
+    NMT_log_write(DEBUG, "hw_name=%s sim_mode=%s", PCA9685_HW_NAME, btoa(sim_mode));
 
     //Set prescale freq
     PCA9685_setFreq(settings, sim_mode);
@@ -92,7 +73,7 @@ NMT_result PCA9685_init(PCA9685_settings *settings)
         (result == OK) ? (settings->init_done = true) : (settings->init_done = false);
     }
 
-    NMT_log_write(DEBUG, "< %s fd: %d",result_e2s[result], settings->fd);
+    NMT_log_write(DEBUG, " < %s fd: %d",result_e2s[result], settings->fd);
     return result;
 }
 
@@ -109,15 +90,11 @@ NMT_result PCA9685_chgFreq(PCA9685_settings *settings)
     int sleep_reg_value;
 
     /* Check if we're in simulation mode */
-    result = RSXA_get_mode(HW_NAME, &sim_mode);
-    NMT_log_write(DEBUG, "hw_name=%s sim_mode=%s", HW_NAME, btoa(sim_mode));
+    result = RSXA_get_mode(PCA9685_HW_NAME, &sim_mode);
+    NMT_log_write(DEBUG, "hw_name=%s sim_mode=%s", PCA9685_HW_NAME, btoa(sim_mode));
 
     if ((result == OK) && (!sim_mode))
     {
-        //Check if we have a valid slave address
-        if (settings->fd < 0)
-            return result = NOK;
-
         //Read current register value and set bit to put chip into sleep mode
         orig_reg_value  = wiringPiI2CReadReg8(settings->fd, MODE1);
         sleep_reg_value = orig_reg_value | WAKE_UP;
@@ -136,6 +113,7 @@ NMT_result PCA9685_chgFreq(PCA9685_settings *settings)
     }
 
     //Exit Function
+    NMT_log_write(DEBUG, "result=%s", result_e2s[result]);
     return result;
 }
 
@@ -167,7 +145,7 @@ static NMT_result PCA9685_setFreq(PCA9685_settings *settings, bool sim_mode)
         wiringPiI2CWriteReg8(settings->fd, PRE_SCALE, pre_scale);
     }
 
-    NMT_log_write(DEBUG, "< %s pre_scale: %d",result_e2s[result], pre_scale);
+    NMT_log_write(DEBUG, " < %s pre_scale: %d",result_e2s[result], pre_scale);
 
     //Exit Function
     return result;
@@ -188,14 +166,10 @@ NMT_result PCA9685_setPWM(PCA9685_settings *settings, PCA9685_PWM_CHANNEL channe
                   channel);
 
     /* Check if we're in simulation mode */
-    result = RSXA_get_mode(HW_NAME, &sim_mode);
+    result = RSXA_get_mode(PCA9685_HW_NAME, &sim_mode);
     if (result == OK)
     {
-        NMT_log_write(DEBUG, "hw_name=%s sim_mode=%s", HW_NAME, btoa(sim_mode));
-
-        //Check if we have a valid slave address
-        if (settings->fd < 0)
-            return result = NOK;
+        NMT_log_write(DEBUG, "hw_name=%s sim_mode=%s", PCA9685_HW_NAME, btoa(sim_mode));
 
         //Cap max delay to 100 and min to 0
         settings->duty_cycle = (settings->duty_cycle > 100 ? 100 : 
@@ -224,7 +198,7 @@ NMT_result PCA9685_setPWM(PCA9685_settings *settings, PCA9685_PWM_CHANNEL channe
         }
     }
 
-    NMT_log_write(DEBUG, "< %s", result_e2s[result]);
+    NMT_log_write(DEBUG, " < %s", result_e2s[result]);
 
     //Exit function
     return result;
@@ -244,15 +218,11 @@ NMT_result PCA9685_getPWM(PCA9685_settings *settings, PCA9685_PWM_CHANNEL channe
     NMT_log_write(DEBUG, "> channel=%s", PCA9685_PWM_CHANNEL_e2s[channel]);
 
     /* Check if we're in simulation mode */
-    result = RSXA_get_mode(HW_NAME, &sim_mode);
+    result = RSXA_get_mode(PCA9685_HW_NAME, &sim_mode);
 
     if(result == OK)
     {
-        NMT_log_write(DEBUG, "hw_name=%s sim_mode=%s", HW_NAME, btoa(sim_mode));
-
-        //Check if we have a valid slave address
-        if (settings->fd < 0)
-            return result = NOK;
+        NMT_log_write(DEBUG, "hw_name=%s sim_mode=%s", PCA9685_HW_NAME, btoa(sim_mode));
 
         if (!sim_mode)
         {
@@ -264,7 +234,6 @@ NMT_result PCA9685_getPWM(PCA9685_settings *settings, PCA9685_PWM_CHANNEL channe
             int tics_to_on  = wiringPiI2CReadReg16(settings->fd, channel_reg_on);
             int tics_to_off = wiringPiI2CReadReg16(settings->fd, channel_reg_off);
             tics_on_duration = tics_to_off - tics_to_on;
-
         }
         else
         {
@@ -276,7 +245,8 @@ NMT_result PCA9685_getPWM(PCA9685_settings *settings, PCA9685_PWM_CHANNEL channe
     }
 
     //Exit the function
-    NMT_log_write(DEBUG, "< duty_cycle=%f", settings->duty_cycle);
+    NMT_log_write(DEBUG, " < duty_cycle=%f result=%s", settings->duty_cycle, result_e2s[result]);
     return result;
 
 }
+
