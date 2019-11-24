@@ -32,5 +32,6 @@ const struct
 };
 
 //------------------Prototypes----------------------//
-NMT_result mtdr_move_motor(char *motor, double angle);
+NMT_result mtdr_move_motor(char *motor, double angle, PCA9685_settings *settings);
+NMT_result mtdr_get_current_position(char *motor, double *angle, PCA9685_settings *settings);
 
