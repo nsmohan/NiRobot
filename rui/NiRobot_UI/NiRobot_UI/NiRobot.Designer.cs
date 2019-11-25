@@ -34,6 +34,7 @@
             this.left_button = new System.Windows.Forms.Button();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.hwgbox = new System.Windows.Forms.GroupBox();
+            this.hw_init = new System.Windows.Forms.Button();
             this.hw_real_mode = new System.Windows.Forms.Button();
             this.hw_sim_mode = new System.Windows.Forms.Button();
             this.hw_status_label = new System.Windows.Forms.Label();
@@ -45,7 +46,6 @@
             this.down_button = new System.Windows.Forms.Button();
             this.up_button = new System.Windows.Forms.Button();
             this.right_button = new System.Windows.Forms.Button();
-            this.hw_init = new System.Windows.Forms.Button();
             this.hwgbox.SuspendLayout();
             this.ccgbox.SuspendLayout();
             this.SuspendLayout();
@@ -105,6 +105,19 @@
             this.hwgbox.TabIndex = 5;
             this.hwgbox.TabStop = false;
             this.hwgbox.Text = "Hardware";
+            // 
+            // hw_init
+            // 
+            this.hw_init.BackColor = System.Drawing.SystemColors.Control;
+            this.hw_init.Enabled = false;
+            this.hw_init.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.hw_init.Location = new System.Drawing.Point(50, 198);
+            this.hw_init.Name = "hw_init";
+            this.hw_init.Size = new System.Drawing.Size(75, 23);
+            this.hw_init.TabIndex = 11;
+            this.hw_init.Text = "Initialized";
+            this.hw_init.UseVisualStyleBackColor = false;
+            this.hw_init.Click += new System.EventHandler(this.hw_init_Click);
             // 
             // hw_real_mode
             // 
@@ -174,6 +187,7 @@
             this.ccgbox.Controls.Add(this.up_button);
             this.ccgbox.Controls.Add(this.left_button);
             this.ccgbox.Controls.Add(this.right_button);
+            this.ccgbox.Enabled = false;
             this.ccgbox.Location = new System.Drawing.Point(292, 48);
             this.ccgbox.Name = "ccgbox";
             this.ccgbox.Size = new System.Drawing.Size(364, 173);
@@ -224,19 +238,6 @@
             this.right_button.Text = "Right";
             this.right_button.UseVisualStyleBackColor = true;
             this.right_button.Click += new System.EventHandler(this.right_button_Click);
-            // 
-            // hw_init
-            // 
-            this.hw_init.BackColor = System.Drawing.SystemColors.Control;
-            this.hw_init.Enabled = false;
-            this.hw_init.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.hw_init.Location = new System.Drawing.Point(80, 245);
-            this.hw_init.Name = "hw_init";
-            this.hw_init.Size = new System.Drawing.Size(75, 23);
-            this.hw_init.TabIndex = 11;
-            this.hw_init.Text = "Initialize";
-            this.hw_init.UseVisualStyleBackColor = false;
-            this.hw_init.Click += new System.EventHandler(this.hw_init_Click);
             // 
             // NiRobot
             // 

@@ -18,14 +18,9 @@ namespace NiRobot_UI
     public partial class NiRobot : Form
     {
         /* Global Varibles */
-        SshClient nirobot_ssh;
-        SftpClient nirobot_sftp;
         RSXA_Settings robot_settings;
-        string bin_path = "/home/nmohan/github/NiRobot/bld/";
-        string rsxa = "/home/nmohan/github/NiRobot/config/RSXA.json";
-        string camera_horizontal_ct = "CAM_HRZN_MTR";
-        string camera_vertical_ct = "CAM_VERT_MTR";
-        string camera_control = "mtdr";
+        int default_movement = 10;
+
 
         /* Structs and Enums */
         enum direction {UP, DOWN, LEFT, RIGHT, CUSTOM};
@@ -60,58 +55,41 @@ namespace NiRobot_UI
 
         private void ip_connect_button_Click(object sender, EventArgs e)
         {
-            //Input     : N/A - Button Click
-            //Output    : N/A - Button Click
-            //Function  : Create SSH and SCP Connection with robot
-
             /* Initialize Varibles */
             string ip_address = ip_combo_box.Text;
-            const int    ip_port    = 22;
-            const string username   = "nmohan";
-            const string password   = "nibot";
+            const int ip_port = 22;
+            const string username = "nmohan";
+            const string password = "nibot";
 
-            /*Initialize SSH and SFTP Objects */
-            nirobot_ssh = new SshClient(ip_address, ip_port, username, password);
-            nirobot_sftp = new SftpClient(ip_address, ip_port, username, password);
+            /* Connnect to Robot */
+            nibot_connect(username,
+                          password,
+                          ip_address,
+                          ip_port);
 
-            /* Try to Connect */
-            try
-            {
-                nirobot_ssh.Connect();
-                nirobot_sftp.Connect();
-            }
-            catch 
-            {
-                MessageBox.Show("Unable to connect! Please check IP Address!");
+            /* Set Button States (Connect/Disconnect) */
+            ip_connect_button.Enabled = false;
+            ip_disconnect_button.Enabled = true;
+            hwgbox.Enabled = true;
+            ccgbox.Enabled = true;
                 
-            }
-
-            /* If we're connected to the robot we proceed */
-            if (nirobot_ssh.IsConnected && nirobot_sftp.IsConnected)
+            /* Update ComboBox and App Settings */
+            if (!ip_combo_box.Items.Contains(ip_address))
             {
-                /* Set Button States (Connect/Disconnect) */
-                ip_connect_button.Enabled = false;
-                ip_disconnect_button.Enabled = true;
-                hwgbox.Enabled = true;
-                hw_init.Enabled = true;
-
-                /* Update ComboBox and App Settings */
-                if (!ip_combo_box.Items.Contains(ip_address))
-                {
-                    ip_combo_box.Items.Add(ip_address);
-                    Properties.Settings.Default.ip_address.Add(ip_address);
-                    Properties.Settings.Default.Save();
-                }
-                
-                /* Get File Settings */
-                robot_settings = new RSXA_Settings(nirobot_sftp, rsxa);
-
-                /* Populate Hardware List box */
-                foreach (var hw_name in robot_settings.rsxa_settings.Keys)
-                {
-                    hw_list.Items.Add(hw_name);
-                }
+                ip_combo_box.Items.Add(ip_address);
+                Properties.Settings.Default.ip_address.Add(ip_address);
+                Properties.Settings.Default.Save();
             }
+                
+            /* Get File Settings */
+            robot_settings = new RSXA_Settings(nirobot_sftp);
+
+            /* Populate Hardware List box */
+            foreach (var hw_name in robot_settings.rsxa_settings.Keys)
+            {
+                hw_list.Items.Add(hw_name);
+            }
+            
                 
            }
 
@@ -121,8 +99,7 @@ namespace NiRobot_UI
             //Output    : N/A - Button Click
             //Function  : Move the robot to the left
 
-            int degrees = 10;
-            move_camera(camera_horizontal_ct, direction.LEFT, degrees);
+            Move_camera(camera_horizontal_ct, direction.LEFT, default_movement);
         }
 
         private void right_button_Click(object sender, EventArgs e)
@@ -130,9 +107,7 @@ namespace NiRobot_UI
             //Input     : N/A - Button Click
             //Output    : N/A - Button Click
             //Function  : Move the robot to the Right
-
-            int degrees = 10;
-            move_camera(camera_horizontal_ct, direction.RIGHT, degrees);
+            Move_camera(camera_horizontal_ct, direction.RIGHT, default_movement);
         }
 
         private void up_button_Click(object sender, EventArgs e)
@@ -141,8 +116,16 @@ namespace NiRobot_UI
             //Output    : N/A - Button Click
             //Function  : Move the robot to the UP
 
-            int degrees = 10;
-            move_camera(camera_vertical_ct, direction.UP, degrees);
+            Move_camera(camera_vertical_ct, direction.UP, default_movement);
+        }
+
+        private void down_button_Click(object sender, EventArgs e)
+        {
+            //Input     : N/A - Button Click
+            //Output    : N/A - Button Click
+            //Function  : Move the robot to the DOWN
+
+            Move_camera(camera_vertical_ct, direction.DOWN, default_movement);
         }
 
         private void home_button_Click(object sender, EventArgs e)
@@ -152,74 +135,8 @@ namespace NiRobot_UI
             //Function  : Move the robot to the HOME Postion
 
             int degrees = 90;
-            move_camera(camera_horizontal_ct, direction.CUSTOM, degrees);
-            move_camera(camera_vertical_ct, direction.CUSTOM, degrees);
-        }
-
-        private void down_button_Click(object sender, EventArgs e)
-        {
-            //Input     : N/A - Button Click
-            //Output    : N/A - Button Click
-            //Function  : Move the robot to the DOWN
-
-            int degrees = 10;
-            move_camera(camera_vertical_ct, direction.DOWN, degrees);
-        }
-
-        private void move_camera(string motor, direction direc, int degrees)
-        {
-            //Input     : N/A - Button Click
-            //Output    : N/A - Button Click
-            //Function  : Move specified motor in specified direction
-
-            /* Initialize Varibles */
-            string robot_command;
-            string mtdr = $"{bin_path}{camera_control} --motor {motor}";
-            double angle;
-            SshCommand result;
-
-            
-            if (direc == direction.CUSTOM)
-            {
-                angle = degrees;
-            }
-            else
-            {
-                /* Get Current Position */
-                robot_command = $"{mtdr} -c";
-                Console.WriteLine(robot_command);
-                result = nirobot_ssh.RunCommand(robot_command);
-
-                if (result.ExitStatus == 0)
-                {
-                    /* Convert String to a double */
-                    angle = Convert.ToDouble(result.Result);
-
-                    if (direc == direction.UP || direc == direction.LEFT)
-                    {
-                        angle = angle + degrees;
-                    }
-                    else if (direc == direction.DOWN || direc == direction.RIGHT)
-                    {
-                        angle = angle - degrees;
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Unable to get current Postion");
-                    return;
-                }
-            }
-
-            /* Move the actual Motor*/
-            angle = (angle > 180 ? 180 : (angle < 0 ? 0 : angle));
-            robot_command = $"{mtdr} --angle {angle}";
-            Console.WriteLine(robot_command);
-            result = nirobot_ssh.RunCommand(robot_command);
-            if (result.ExitStatus != 0)
-                {
-                    MessageBox.Show("Unable to Move Motor");
-                }
+            Move_camera(camera_horizontal_ct, direction.CUSTOM, degrees);
+            Move_camera(camera_vertical_ct, direction.CUSTOM, degrees);
         }
 
         private void ip_disconnect_button_Click(object sender, EventArgs e)
@@ -243,16 +160,36 @@ namespace NiRobot_UI
 
         private void hw_list_SelectedIndexChanged(object sender, EventArgs e)
         {
+            //Input     : N/A - Button Click
+            //Output    : N/A - Button Click
+            //Function  : Check Settings for the hw_name selected
+
             string hw_name;
             bool sim_mode;
 
+
             hw_name = hw_list.GetItemText(hw_list.SelectedItem).ToString();
-            sim_mode = robot_settings.rsxa_settings[hw_name];
-            set_hw_button_states(sim_mode);
+
+            if (!string.IsNullOrEmpty(hw_name))
+            {
+                sim_mode = robot_settings.rsxa_settings[hw_name];
+                set_hw_button_states(sim_mode);
+                hw_status status = get_hw_status(hw_name);
+
+                if (status  == hw_status.INITIALIZED)
+                {
+                    hw_init.Enabled = false;
+                    hw_init.BackColor = Color.FromArgb(192, 255, 192);
+                }
+            }
         }
 
         private void set_hw_button_states(bool sim_mode)
         {
+            //Input     : N/A - Button Click
+            //Output    : N/A - Button Click
+            //Function  : Set Button states for (Sim and Real mode)
+
             if (sim_mode)
             {
                 /*Sim Button States */
@@ -293,7 +230,7 @@ namespace NiRobot_UI
         {
             string hw_name = hw_list.GetItemText(hw_list.SelectedItem);
             robot_settings.rsxa_settings[hw_name] = sim_mode;
-            robot_settings.Update_RSXA_Settings(nirobot_sftp, rsxa, hw_name);
+            robot_settings.Update_RSXA_Settings(nirobot_sftp, hw_name);
         }
 
         private void hw_init_Click(object sender, EventArgs e)
@@ -305,64 +242,6 @@ namespace NiRobot_UI
             {
                 MessageBox.Show("Error! Unable to Intialize Driver");
             }
-        }
-    }
-
-    public class RSXA_Settings
-    {
-        /* Global Varibles */
-        public IDictionary<string, bool> rsxa_settings = new Dictionary<string, bool>();
-        private dynamic rsxa_obj;
-        private string tmp_dir = @"C:\Windows\Temp\RSXA.json";
-
-        /* Constructor */
-        public RSXA_Settings(SftpClient nirobot_sftp, string rsxa)
-        {
-            //Input     : NiRobot SCP Oboject and RSXA settings file
-            //Output    : N/A - Constructor
-            //Function  : Download the RSXA File from robot and read the settings
-
-            /* Download the file from the robot over via SFTP */
-            using (Stream tmp_file = File.Create(tmp_dir))
-            {
-                nirobot_sftp.DownloadFile(rsxa, tmp_file);
-            }
-
-            /* Parse the contents of the file */
-            using (StreamReader rsxa_stream = new StreamReader(tmp_dir))
-            {
-                rsxa_obj = JsonConvert.DeserializeObject(rsxa_stream.ReadToEnd());
-
-                foreach (var hw in rsxa_obj.hw)
-                {
-                    this.rsxa_settings.Add(new KeyValuePair<string, bool>((string)hw.hw_name, (bool)hw.hw_sim_mode));
-                }
-            }
-        }
-
-        public void Update_RSXA_Settings(SftpClient nirobot_sftp, string rsxa, string hw_name)
-        {
-
-            foreach (var hw in rsxa_obj.hw)
-            {
-                if (hw.hw_name == hw_name)
-                {
-                    hw.hw_sim_mode = this.rsxa_settings[hw_name];
-                }
-            }
-
-            using (StreamWriter file = File.CreateText(tmp_dir))
-            {
-                JsonSerializer serializer = new JsonSerializer();
-                serializer.Formatting = Formatting.Indented;
-                serializer.Serialize(file, rsxa_obj);
-            }
-
-            /* Upload the file via SFTP to robot */
-            using (Stream rsxa_local = File.OpenRead(tmp_dir))
-            {
-                nirobot_sftp.UploadFile(rsxa_local, rsxa);
-            } 
         }
     }
 }
