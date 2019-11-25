@@ -52,6 +52,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="mtdr.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="nibot_connect.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="NiRobot.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -60,6 +66,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RSXA.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <EmbeddedResource Include="NiRobot.resx">
       <DependentUpon>NiRobot.cs</DependentUpon>
     </EmbeddedResource>
