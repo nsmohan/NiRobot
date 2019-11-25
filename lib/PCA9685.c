@@ -245,8 +245,47 @@ NMT_result PCA9685_getPWM(PCA9685_settings *settings, PCA9685_PWM_CHANNEL channe
     }
 
     //Exit the function
-    NMT_log_write(DEBUG, " < duty_cycle=%f result=%s", settings->duty_cycle, result_e2s[result]);
+    NMT_log_write(DEBUG, "< duty_cycle=%f result=%s", settings->duty_cycle, result_e2s[result]);
     return result;
 
 }
 
+NMT_result PCA9685_get_init_status(PCA9685_settings *settings, bool *initialized)
+{
+    //Input     : PCA9685 settings structure
+    //Output    : N/A
+    //Function  : Read the MODE1, MODE2 and PRE_SCALE Register
+
+    //Initialize Varibles
+    NMT_result result = OK;
+    bool sim_mode     = false; 
+    float freq       = 0.0;
+    int mode_1_reg    = 0;
+    int mode_2_reg    = 0;
+    int pre_scale     = 0;
+
+    NMT_log_write(DEBUG, "> fd=%d", settings->fd);
+
+    /* Check if we're in simulation mode */
+    result = RSXA_get_mode(PCA9685_HW_NAME, &sim_mode);
+
+    if ((result == OK) && (!sim_mode))
+    {
+        /* Get Register Values */
+        mode_1_reg  = wiringPiI2CReadReg8(settings->fd, MODE1);
+        mode_2_reg  = wiringPiI2CReadReg8(settings->fd, MODE2);
+        pre_scale   = wiringPiI2CReadReg8(settings->fd, PRE_SCALE);
+
+        /* Calcualte the Frequency */
+        freq = (OSC_CLOCK/(MAX_TICS * (pre_scale + 1)));
+
+        /* Check if PCA9685 Driver is Initialized and set the status flag */
+        if ((MODE1_INIT == mode_1_reg) && (MODE2_INIT == mode_2_reg) && (settings->freq == freq))
+        {
+            *initialized = true;
+        }
+    }
+
+    NMT_log_write(DEBUG, " < freq=%.2f mode1=0x%x mode2=0x%02x", freq, mode_1_reg, mode_2_reg);
+    return result;
+}

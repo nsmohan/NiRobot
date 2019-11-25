@@ -29,16 +29,18 @@ typedef struct PCA9685_settings
 }PCA9685_settings;
 
 //------------------Prototypes----------------------//
-extern NMT_result PCA9685_init(PCA9685_settings *settings);                         //In - PCA9685 struct
+extern NMT_result PCA9685_init(PCA9685_settings *settings);                         //In  - PCA9685 struct
 
-extern NMT_result PCA9685_chgFreq(PCA9685_settings *settings);                      //In - PCA9685 struct
+extern NMT_result PCA9685_chgFreq(PCA9685_settings *settings);                      //In  - PCA9685 struct
 
-extern NMT_result PCA9685_setPWM(PCA9685_settings *settings,                        //In - PCA9685 struct
-                                 PCA9685_PWM_CHANNEL channel);                      //In - PWM Channel
+extern NMT_result PCA9685_setPWM(PCA9685_settings *settings,                        //In  - PCA9685 struct
+                                 PCA9685_PWM_CHANNEL channel);                      //In  - PWM Channel
 
-extern NMT_result PCA9685_getPWM(PCA9685_settings *settings,                        //In - PCA9685 struct
-                                 PCA9685_PWM_CHANNEL channel);                      //In - PWM Channel
+extern NMT_result PCA9685_getPWM(PCA9685_settings *settings,                        //In  - PCA9685 struct
+                                 PCA9685_PWM_CHANNEL channel);                      //In  - PWM Channel
 
+extern NMT_result PCA9685_get_init_status(PCA9685_settings *settings,               //In  - PCA9685 struct
+                                          bool *initialized);                       //Out - Driver State
 //------------------Global Macros----------------------//
 #define PCA9685_HW_NAME "PCA9685_PWM_DRIVER"
 

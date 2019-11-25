@@ -2,7 +2,11 @@
     "_comment" : "Robot Operation Settings",
     "log_dir"  : "/var/log/NiRobot",
     "hw": [{
-                    "hw_name"    : "PCA9685_PWM_DRIVER",
-                    "hw_sim_mode": true
+            "hw_name"    : "PCA9685_PWM_DRIVER",
+            "hw_sim_mode": true
+          },
+          {
+            "hw_name"    : "LD27MG_MOTORS",
+            "hw_sim_mode": true
           }]
 }
