@@ -1,0 +1,8 @@
+{
+    "_comment" : "Simulation Data",
+    "hw": [{
+            "file_name" : "PCA9685.c",
+            "func_name" : "PCA9685_getPWM",
+            "parm_name" : "tics_on_duration" : {param_value : 1000} 
+            }
+          }]
