@@ -12,6 +12,7 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 #include <string>
 #include <algorithm>
 #include <getopt.h>
+#include <unistd.h>
 /*--------------------------------------------------/
 /                   Local Imports                   /
 /--------------------------------------------------*/
@@ -119,6 +120,7 @@ static NMT_result camera_control_move_camera(string dir_str_input)
 
         /* Move Horizontal Camera to Home Postion */
         result = camera_control.CAM_MTR_CTRL_MOVE_CAMERA(direction, CAM_HRZN_MTR, HOME_ANGLE);
+        usleep(1000);
 
         if (result == OK)
         {

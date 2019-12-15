@@ -1,4 +1,4 @@
-/*MTDR.c:       Motor Driver
+/*MTDR.c:       Camera Motor Driver
 
 __author__      = "Nitin Mohan
 __copyright__   = "Copy Right 2019. NM Technologies" */
@@ -21,7 +21,7 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 
 //---------------------Macros----------------------//
 #define LOG_DIR       "/var/log/NiRobot"
-#define MAX_ANGLE     270.00
+#define MAX_ANGLE     180.00
 #define MIN_ANGLE     0.00
 #define LD27MG_FREQ   50.00
 #define LD27MG_OFFSET 0.5

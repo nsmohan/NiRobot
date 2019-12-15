@@ -7,7 +7,6 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 /                   System Imports                  /
 /--------------------------------------------------*/
 #include <iostream>
-#include <algorithm>
 #include <string>
 
 /*--------------------------------------------------/

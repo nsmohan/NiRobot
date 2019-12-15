@@ -16,7 +16,7 @@ SFLAGS      = -fPIC -shared
 RPATH       = -L$(OBJ_DIR) -Wl,-rpath=$(OBJ_DIR)
 
 BINS        = $(OUT_DIR)/regdump \
-              $(OUT_DIR)/move_camera
+              $(OUT_DIR)/camera_control
 
 OBJS        = $(OBJ_DIR)/libNMT_stdlib.so \
               $(OBJ_DIR)/libNMT_log.so \
@@ -97,7 +97,7 @@ $(OBJ_DIR)/libcam_motor_ctrl.so: $(LIB_DIR)/CAM_MOTOR_CTRL.cpp $(INC_DIR)/CAM_MO
 $(OUT_DIR)/regdump: $(BIN_DIR)/register_dump.c
 	gcc $(CFLAGS) $(RPATH) -o $@ $^ $(REG_DUMP_LIBS)
 
-$(OUT_DIR)/move_camera: $(BIN_DIR)/CAMERA_CTRL.cpp
+$(OUT_DIR)/camera_control: $(BIN_DIR)/CAMERA_CTRL.cpp
 	g++ $(CFLAGS) $(RPATH) -o $@ $^ $(CAM_CTRL_BIN)
 
 #$(OUT_DIR)/mtdr: $(BIN_DIR)/MTDR.c $(INC_DIR)/MTDR.h
