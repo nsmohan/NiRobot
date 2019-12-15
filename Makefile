@@ -16,12 +16,14 @@ SFLAGS      = -fPIC -shared
 RPATH       = -L$(OBJ_DIR) -Wl,-rpath=$(OBJ_DIR)
 
 BINS        = $(OUT_DIR)/regdump \
-              $(OUT_DIR)/mtdr \
+              $(OUT_DIR)/move_camera
 
 OBJS        = $(OBJ_DIR)/libNMT_stdlib.so \
               $(OBJ_DIR)/libNMT_log.so \
               $(OBJ_DIR)/librs.so \
-              $(OBJ_DIR)/libPCA9685.so
+              $(OBJ_DIR)/libPCA9685.so \
+              $(OBJ_DIR)/libmtdr.so \
+              $(OBJ_DIR)/libcam_motor_ctrl.so
 
 PCA9685_LIBS  = -lNMT_stdlib \
                 -lNMT_log \
@@ -47,11 +49,24 @@ MTDR_LIBS     = -lNMT_stdlib \
                 -lrt \
                 -lrs
 
+CAM_CTRL_LIBS = -lNMT_stdlib \
+                -lNMT_log \
+                -lwiringPi \
+                -lmtdr \
+                -lPCA9685 \
+                -lcrypt \
+                -lm \
+                -lrt \
+                -lrs
+
 NMT_LOG_LIBS  = -lc \
                 -ljson-c \
                 -lNMT_stdlib \
              
 NMT_STD_LIBS  = -lc
+
+CAM_CTRL_BIN  =  -lNMT_log \
+                 -lcam_motor_ctrl
 
 RS_LIBS       = -lNMT_stdlib \
                 -lNMT_log \
@@ -73,11 +88,20 @@ $(OBJ_DIR)/librs.so: $(LIB_DIR)/RSXA.c $(INC_DIR)/RSXA.h
 $(OBJ_DIR)/libPCA9685.so: $(LIB_DIR)/PCA9685.c $(INC_DIR)/PCA9685.h
 	gcc $(CFLAGS) $(SFLAGS) $(RPATH) -o  $@ $< $(PCA9685_LIBS)
 
+$(OBJ_DIR)/libmtdr.so: $(LIB_DIR)/MTDR.c $(INC_DIR)/MTDR.h
+	gcc $(CFLAGS) $(SFLAGS) $(RPATH) -o  $@ $< $(MTDR_LIBS)
+
+$(OBJ_DIR)/libcam_motor_ctrl.so: $(LIB_DIR)/CAM_MOTOR_CTRL.cpp $(INC_DIR)/CAM_MOTOR_CTRL.hpp
+	g++ $(CFLAGS) $(SFLAGS) $(RPATH) -o  $@ $< $(CAM_CTRL_LIBS)
+
 $(OUT_DIR)/regdump: $(BIN_DIR)/register_dump.c
 	gcc $(CFLAGS) $(RPATH) -o $@ $^ $(REG_DUMP_LIBS)
 
-$(OUT_DIR)/mtdr: $(BIN_DIR)/MTDR.c $(INC_DIR)/MTDR.h
-	gcc $(CFLAGS) $(RPATH) -o $@ $^ $(MTDR_LIBS)
+$(OUT_DIR)/move_camera: $(BIN_DIR)/CAMERA_CTRL.cpp
+	g++ $(CFLAGS) $(RPATH) -o $@ $^ $(CAM_CTRL_BIN)
+
+#$(OUT_DIR)/mtdr: $(BIN_DIR)/MTDR.c $(INC_DIR)/MTDR.h
+#	gcc $(CFLAGS) $(RPATH) -o $@ $^ $(MTDR_LIBS)
 
 clean:
 	rm all $(OBJS) $(BINS)

@@ -3,6 +3,8 @@
 __author__      = "Nitin Mohan
 __copyright__   = "Copy Right 2019. NM Technologies" */
 
+#ifndef _RSXA_
+#define _RSXA_
 /*--------------------------------------------------/
 /                   System Imports                  /
 /--------------------------------------------------*/
@@ -18,6 +20,15 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 /--------------------------------------------------*/
 
 /*------------------Prototypes----------------------*/
-extern NMT_result RSXA_get_mode(char *hw_name,     //Input - Name of hardware to look for
-                              bool *sim_mode);    //Output - True if in simulation else false
+#ifdef __cplusplus
+    extern "C" 
+    {
+        extern NMT_result RSXA_get_mode(char *hw_name,     //Input - Name of hardware to look for
+                                      bool *sim_mode);    //Output - True if in simulation else false
 
+    }
+#else
+    extern NMT_result RSXA_get_mode(char *hw_name,     //Input - Name of hardware to look for
+                                  bool *sim_mode);    //Output - True if in simulation else false
+#endif
+#endif
