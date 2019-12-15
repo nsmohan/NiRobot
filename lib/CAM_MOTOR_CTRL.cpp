@@ -30,6 +30,10 @@ NMT_result Camera_Motor_Ctrl::CAM_MTR_CTRL_MOVE_CAMERA(CAM_MOTOR_CTRL_DIRECTIONS
                                                        double angle_to_move, 
                                                        double default_angle)
 {
+    //Input     : Direction to move, (Optional) -> motor, angle_to_move, default_angle
+    //Output    : N/A
+    //Function  : Move camera according to the direction input provided
+
     /*Initialize Varibles */
     NMT_result result = OK;
     double     angle;
@@ -70,12 +74,12 @@ NMT_result Camera_Motor_Ctrl::CAM_MTR_CTRL_MOVE_CAMERA(CAM_MOTOR_CTRL_DIRECTIONS
             case UP:
                 motor = this->vertical_motor;
                 result = MTDR_get_current_position((char *)motor.c_str(), &angle, &settings);
-                angle_to_move = default_angle + angle;
+                angle_to_move = angle + default_angle;
                 break;
             case DOWN:
                 motor = this->vertical_motor;
                 result = MTDR_get_current_position((char *)motor.c_str(), &angle, &settings);
-                angle_to_move = default_angle - angle;
+                angle_to_move = angle - default_angle;
                 break;
             case LEFT:
                 motor = this->horizontal_motor;
@@ -85,11 +89,11 @@ NMT_result Camera_Motor_Ctrl::CAM_MTR_CTRL_MOVE_CAMERA(CAM_MOTOR_CTRL_DIRECTIONS
             case RIGHT:
                 motor = this->horizontal_motor;
                 result = MTDR_get_current_position((char *)motor.c_str(), &angle, &settings);
-                angle_to_move = default_angle - angle;
+                angle_to_move = angle - default_angle;
                 break;
             case CUSTOM:
-           /* Do Nothing */
-           break;
+                /* Do Nothing */
+                break;
         }
     }
 

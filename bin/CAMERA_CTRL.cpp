@@ -1,4 +1,6 @@
-/* CAM_CTRL.cpp: Camera Control Interfcae
+/* CAM_CTRL.cpp: External Interface to allow for camera control. 
+ *               User is able to move the motor (UP, DOWN,LEFT,RIGHT,HOME)
+ *               HOME = 90/90
 
 __author__      = "Nitin Mohan
 __copyright__   = "Copy Right 2019. NM Technologies" */
