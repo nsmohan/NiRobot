@@ -23,7 +23,7 @@ namespace NiRobot_UI
 
 
         /* Structs and Enums */
-        enum direction {UP, DOWN, LEFT, RIGHT, CUSTOM};
+        enum direction {UP, DOWN, LEFT, RIGHT, HOME};
 
         public NiRobot()
         {
@@ -99,7 +99,7 @@ namespace NiRobot_UI
             //Output    : N/A - Button Click
             //Function  : Move the robot to the left
 
-            Move_camera(camera_horizontal_ct, direction.LEFT, default_movement);
+            Move_camera(direction.LEFT);
         }
 
         private void right_button_Click(object sender, EventArgs e)
@@ -107,7 +107,7 @@ namespace NiRobot_UI
             //Input     : N/A - Button Click
             //Output    : N/A - Button Click
             //Function  : Move the robot to the Right
-            Move_camera(camera_horizontal_ct, direction.RIGHT, default_movement);
+            Move_camera(direction.RIGHT);
         }
 
         private void up_button_Click(object sender, EventArgs e)
@@ -116,7 +116,7 @@ namespace NiRobot_UI
             //Output    : N/A - Button Click
             //Function  : Move the robot to the UP
 
-            Move_camera(camera_vertical_ct, direction.UP, default_movement);
+            Move_camera(direction.UP);
         }
 
         private void down_button_Click(object sender, EventArgs e)
@@ -125,7 +125,7 @@ namespace NiRobot_UI
             //Output    : N/A - Button Click
             //Function  : Move the robot to the DOWN
 
-            Move_camera(camera_vertical_ct, direction.DOWN, default_movement);
+            Move_camera(direction.DOWN);
         }
 
         private void home_button_Click(object sender, EventArgs e)
@@ -133,10 +133,7 @@ namespace NiRobot_UI
             //Input     : N/A - Button Click
             //Output    : N/A - Button Click
             //Function  : Move the robot to the HOME Postion
-
-            int degrees = 90;
-            Move_camera(camera_horizontal_ct, direction.CUSTOM, degrees);
-            Move_camera(camera_vertical_ct, direction.CUSTOM, degrees);
+            Move_camera(direction.HOME);
         }
 
         private void ip_disconnect_button_Click(object sender, EventArgs e)
@@ -167,21 +164,14 @@ namespace NiRobot_UI
             string hw_name;
             bool sim_mode;
 
-
             hw_name = hw_list.GetItemText(hw_list.SelectedItem).ToString();
 
             if (!string.IsNullOrEmpty(hw_name))
             {
                 sim_mode = robot_settings.rsxa_settings[hw_name];
                 set_hw_button_states(sim_mode);
-                hw_status status = get_hw_status(hw_name);
-
-                if (status  == hw_status.INITIALIZED)
-                {
-                    hw_init.Enabled = false;
-                    hw_init.BackColor = Color.FromArgb(192, 255, 192);
-                }
             }
+
         }
 
         private void set_hw_button_states(bool sim_mode)
@@ -235,13 +225,6 @@ namespace NiRobot_UI
 
         private void hw_init_Click(object sender, EventArgs e)
         {
-            string robot_command = $"{bin_path}{camera_control} -i";
-            SshCommand result = nirobot_ssh.RunCommand(robot_command);
-
-            if(result.ExitStatus != 0)
-            {
-                MessageBox.Show("Error! Unable to Intialize Driver");
-            }
         }
     }
 }
