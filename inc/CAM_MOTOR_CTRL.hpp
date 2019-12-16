@@ -1,3 +1,6 @@
+#ifndef DEF_CAM_MOTOR_CTRL
+#define DEF_CAM_MOTOR_CTRL
+
 /*CAM_MOTOR_CTRL.hpp: Header File for Camera Control Interface
 
 __author__      = "Nitin Mohan
@@ -47,3 +50,4 @@ class Camera_Motor_Ctrl
                                             double angle_to_move = 0.00, 
                                             double default_angle = MOTOR_SENSITIVITY);
 };
+#endif

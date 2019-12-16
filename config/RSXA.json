@@ -8,5 +8,17 @@
           {
             "hw_name"    : "LD27MG_MOTORS",
             "hw_sim_mode": true
+          },
+          { "hw_name"    : "HCxSR04_Front",
+            "hw_sim_mode": true
+          },
+          { "hw_name"    : "HCxSR04_Back",
+            "hw_sim_mode": true
+          },
+          { "hw_name"    : "HCxSR04_Left",
+            "hw_sim_mode": true
+          },
+          { "hw_name"    : "HCxSR04_Right",
+            "hw_sim_mode": true
           }]
 }

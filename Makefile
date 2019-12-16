@@ -16,14 +16,15 @@ SFLAGS      = -fPIC -shared
 RPATH       = -L$(OBJ_DIR) -Wl,-rpath=$(OBJ_DIR)
 
 BINS        = $(OUT_DIR)/regdump \
-              $(OUT_DIR)/camera_control
+              $(OUT_DIR)/camera_control \
 
 OBJS        = $(OBJ_DIR)/libNMT_stdlib.so \
               $(OBJ_DIR)/libNMT_log.so \
               $(OBJ_DIR)/librs.so \
               $(OBJ_DIR)/libPCA9685.so \
               $(OBJ_DIR)/libmtdr.so \
-              $(OBJ_DIR)/libcam_motor_ctrl.so
+              $(OBJ_DIR)/libcam_motor_ctrl.so \
+              $(OBJ_DIR)/HCxSR04.so
 
 PCA9685_LIBS  = -lNMT_stdlib \
                 -lNMT_log \
@@ -73,6 +74,14 @@ RS_LIBS       = -lNMT_stdlib \
                 -ljson-c \
                 -lc 
 
+HCxSR04_LIBS  = -lNMT_log \
+                -lNMT_stdlib \
+                -lrs \
+                -lwiringPi \
+                -lcrypt \
+                -lm \
+                -lrt
+
 all: $(OBJS) \
      $(BINS)
 
@@ -100,8 +109,8 @@ $(OUT_DIR)/regdump: $(BIN_DIR)/register_dump.c
 $(OUT_DIR)/camera_control: $(BIN_DIR)/CAMERA_CTRL.cpp
 	g++ $(CFLAGS) $(RPATH) -o $@ $^ $(CAM_CTRL_BIN)
 
-#$(OUT_DIR)/mtdr: $(BIN_DIR)/MTDR.c $(INC_DIR)/MTDR.h
-#	gcc $(CFLAGS) $(RPATH) -o $@ $^ $(MTDR_LIBS)
+$(OBJ_DIR)/HCxSR04.so: $(LIB_DIR)/HCxSR04.cpp $(INC_DIR)/HCxSR04.hpp
+	g++ $(CFLAGS) $(SFLAGS) $(RPATH) -o  $@ $< $(HCxSR04_Driver)
 
 clean:
 	rm all $(OBJS) $(BINS)
