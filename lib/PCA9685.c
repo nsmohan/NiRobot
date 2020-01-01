@@ -68,12 +68,9 @@ NMT_result PCA9685_init(PCA9685_settings *settings)
         //Mode-2: Outputs configured as totem pole-structure
         wiringPiI2CWriteReg8(settings->fd, MODE1, MODE1_INIT);
         wiringPiI2CWriteReg8(settings->fd, MODE2, MODE2_INIT);
-
-        //Set the init done flag
-        (result == OK) ? (settings->init_done = true) : (settings->init_done = false);
     }
 
-    NMT_log_write(DEBUG, " < %s fd: %d",result_e2s[result], settings->fd);
+    NMT_log_write(DEBUG, "< result=%s fd: %d",result_e2s[result], settings->fd);
     return result;
 }
 
@@ -113,7 +110,7 @@ NMT_result PCA9685_chgFreq(PCA9685_settings *settings)
     }
 
     //Exit Function
-    NMT_log_write(DEBUG, "result=%s", result_e2s[result]);
+    NMT_log_write(DEBUG, "< result=%s", result_e2s[result]);
     return result;
 }
 
@@ -145,7 +142,7 @@ static NMT_result PCA9685_setFreq(PCA9685_settings *settings, bool sim_mode)
         wiringPiI2CWriteReg8(settings->fd, PRE_SCALE, pre_scale);
     }
 
-    NMT_log_write(DEBUG, " < %s pre_scale: %d",result_e2s[result], pre_scale);
+    NMT_log_write(DEBUG, "< %s pre_scale: %d",result_e2s[result], pre_scale);
 
     //Exit Function
     return result;
@@ -186,8 +183,7 @@ NMT_result PCA9685_setPWM(PCA9685_settings *settings, PCA9685_PWM_CHANNEL channe
         int channel_reg_on  = (channel * 4) + LED0_ON_L;
         int channel_reg_off = channel_reg_on + 2;
 
-        NMT_log_write(DEBUG, "tics_to_on:%d tics_on_duration:%d tics_to_off:%d  \
-                              channel_reg_on:%X channel_reg_off:%X", 
+        NMT_log_write(DEBUG, "tics_to_on:%d tics_on_duration:%d tics_to_off:%d channel_reg_on:%X channel_reg_off:%X", 
                               tics_to_on, tics_on_duration, tics_to_off, 
                               channel_reg_on, channel_reg_off);
         if (!sim_mode)
@@ -280,12 +276,13 @@ NMT_result PCA9685_get_init_status(PCA9685_settings *settings, bool *initialized
         freq = (OSC_CLOCK/(MAX_TICS * (pre_scale + 1)));
 
         /* Check if PCA9685 Driver is Initialized and set the status flag */
+        NMT_log_write(DEBUG, "freq=%.2f mode1=0x%x mode2=0x%02x", freq, mode_1_reg, mode_2_reg);
         if ((MODE1_INIT == mode_1_reg) && (MODE2_INIT == mode_2_reg) && (settings->freq == freq))
         {
             *initialized = true;
         }
     }
 
-    NMT_log_write(DEBUG, " < freq=%.2f mode1=0x%x mode2=0x%02x", freq, mode_1_reg, mode_2_reg);
+    NMT_log_write(DEBUG, "< initialized=%s result=%s", btoa(initialized), result_e2s[result]);
     return result;
 }

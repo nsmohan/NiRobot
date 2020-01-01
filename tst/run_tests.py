@@ -33,7 +33,6 @@ class TestRunner(object):
             print "Running ..........python %s%s"%(TST_PATH, test)
             os.system("python %s%s"%(TST_PATH, test))
 
-
 if __name__ == '__main__':
 
     #Parse arguments
@@ -42,3 +41,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     TestRunner(args.pattern)
+    os.system("rm -rf %s/*.pyc"%TST_PATH)

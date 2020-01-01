@@ -222,10 +222,15 @@ class NMT_log_Test(unittest.TestCase):
                 f = open(file_name, "r")
                 file_content = f.read().split("->")
                 f.close()
+                
+                #Split Line and Message and add to file_content
+                line_message = file_content[-1]
+                file_content.remove(line_message)
+                line_message = line_message.split(":")
+                file_content.extend([line_message[0], line_message[1]])
 
                 #Get captured output from stdout
                 captured_output = std_obj.capture_output().split("->")
-                print captured_output
 
                 #Get current time for comparison later
                 current_time = datetime.now().replace(microsecond=0)
@@ -243,8 +248,16 @@ class NMT_log_Test(unittest.TestCase):
                 if not v and level == 0:
                     self.assertEqual(captured_output, [''])
                 else:
-                    log_time = datetime.strptime(captured_output[0].strip().replace("\x08", ""), 
-                               "%Y-%m-%d %H:%M:%S")
+                    #Split Line and Message and add to captured_output
+                    line_message = captured_output[-1]
+                    captured_output.remove(line_message)
+                    line_message = line_message.split(":")
+                    captured_output.extend([line_message[0], line_message[1]])
+
+                    #Filter Date/Time
+                    date_time = captured_output[0].replace("\x08", "").strip()
+                    log_time = datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S")
+
                     self.assertEqual(log_time, current_time)
                     self.assertEqual(captured_output[1].strip(), log_level[level])
                     self.assertEqual(captured_output[1].strip(), log_level[level])

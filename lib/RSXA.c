@@ -32,6 +32,7 @@ typedef struct RSXA_hw
 
 /*------------------Prototypes----------------------*/
 static NMT_result RSXA_parse_json(char *data_to_parse, RSXA_hw *hw);
+static void RSXA_free_hw_struct_mem(RSXA_hw *hw);
 
 NMT_result RSXA_get_mode(char *hw_name, bool *sim_mode)
 {
@@ -60,9 +61,12 @@ NMT_result RSXA_get_mode(char *hw_name, bool *sim_mode)
             if (!strcmp(hw.hw_name[i], hw_name))
             {
                 *sim_mode = hw.hw_sim_mode[i];
+                free(file_content);
+                RSXA_free_hw_struct_mem(&hw);
                 return result = OK;
             }
         }
+
     }
     else
     {
@@ -72,6 +76,8 @@ NMT_result RSXA_get_mode(char *hw_name, bool *sim_mode)
     /* Exit the function */
     NMT_log_write(DEBUG, "< hw_name: %s sim_mode: %s result: %s",
                   hw_name, btoa(sim_mode), result_e2s[result]);
+
+    free(file_content);
     return result = NOK;
 
 }
@@ -137,6 +143,7 @@ static NMT_result RSXA_parse_json(char *data_to_parse, RSXA_hw *hw)
         {
             result = NOK;
             NMT_log_write(ERROR, "Expecting to find keys %d but found %d", (array_len *no_of_keys), key_found);
+            RSXA_free_hw_struct_mem(hw);
         }
     }
     else
@@ -147,4 +154,16 @@ static NMT_result RSXA_parse_json(char *data_to_parse, RSXA_hw *hw)
     /* Exit the function */
     NMT_log_write(DEBUG, "< result: %s", result_e2s[result]);
     return result;
+}
+
+static void RSXA_free_hw_struct_mem(RSXA_hw *hw)
+{
+    NMT_log_write(DEBUG, ">");
+    for (int i = 0; i < hw->array_len; i++)
+    {
+        free(hw->hw_name[i]);
+    }
+    free(hw->hw_name);
+    free(hw->hw_sim_mode);
+    NMT_log_write(DEBUG, "<");
 }

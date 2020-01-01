@@ -13,6 +13,7 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 #ifdef __cplusplus
     extern "C" 
     {
+        #define PCA9685_HW_NAME "PCA9685_PWM_DRIVER"
         typedef enum {CHANNEL_0,  CHANNEL_1,  CHANNEL_2,  CHANNEL_3,
                       CHANNEL_4,  CHANNEL_5,  CHANNEL_6,  CHANNEL_7,
                       CHANNEL_8,  CHANNEL_9,  CHANNEL_10, CHANNEL_11,
@@ -28,7 +29,6 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
             float  freq;
             double duty_cycle;
             double delay_time;
-            bool   init_done;
         }PCA9685_settings;
 
         //------------------Prototypes----------------------//
@@ -46,6 +46,7 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
                                                   bool *initialized);                       //Out - Driver State
     }
 #else
+    #define PCA9685_HW_NAME "PCA9685_PWM_DRIVER"
     typedef enum {CHANNEL_0,  CHANNEL_1,  CHANNEL_2,  CHANNEL_3,
                   CHANNEL_4,  CHANNEL_5,  CHANNEL_6,  CHANNEL_7,
                   CHANNEL_8,  CHANNEL_9,  CHANNEL_10, CHANNEL_11,
@@ -79,6 +80,5 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
                                               bool *initialized);                       //Out - Driver State
 #endif
 //------------------Global Macros----------------------//
-#define PCA9685_HW_NAME "PCA9685_PWM_DRIVER"
 
 #endif

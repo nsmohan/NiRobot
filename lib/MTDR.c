@@ -116,10 +116,11 @@ NMT_result MTDR_get_pca9685_status(PCA9685_settings *settings, bool *initialized
     NMT_log_write(DEBUG, "> fd=%d", settings->fd);
 
     /* Get the status from hardware */
+    settings->freq = LD27MG_FREQ;
     PCA9685_get_init_status(settings, initialized);
 
     /* Exit the function */
-    NMT_log_write(DEBUG, "< result=%s", result_e2s[result]);
+    NMT_log_write(DEBUG, "< initialized=%s result=%s", btoa(initialized), result_e2s[result]);
     return result;
 }
 
@@ -133,13 +134,15 @@ NMT_result MTDR_init(PCA9685_settings *settings)
     /* Initialize Varibles */
     NMT_result result = OK;
 
+    NMT_log_write(DEBUG, "> fd=%d", settings->fd);
+
     settings->freq = LD27MG_FREQ;
     settings->delay_time = 0;
 
     /* Initialize the PCA9685 Driver */
     result = PCA9685_init(settings);
 
-    NMT_log_write(DEBUG, "> fd=%d", settings->fd);
+    NMT_log_write(DEBUG, "< result=%s", result_e2s[result]);
     return result;
 }
 
@@ -152,7 +155,7 @@ NMT_result MTDR_seti2c(PCA9685_settings *settings)
     //Initialize Varibles
     NMT_result result  = OK;
 
-    NMT_log_write(DEBUG, " >");
+    NMT_log_write(DEBUG, ">");
 
     //Initialize I2C Communication
     wiringPiSetup();
