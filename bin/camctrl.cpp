@@ -52,7 +52,7 @@ using namespace std;
 int main (int argc, char *argv[])
 {
 
-    /*Initialize Varibles */
+    /*Initialize Variables */
     NMT_result result = OK;
     bool       verbosity = false;
     int        longindex = 0;
@@ -140,7 +140,7 @@ static CAM_MOTOR_CTRL_DIRECTIONS camera_control_dir_to_enum(string direction)
     //Output    : Direction ENUM
     //Function  : Convert direction string to enum
 
-    /*Initialize Varibles */
+    /*Initialize Variables */
     int size_of_array;
     int dir_enum;
 

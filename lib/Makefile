@@ -20,10 +20,10 @@ OBJS        = NMT_stdlib.so \
 #            Dependancies               #
 #                                       #
 #---------------------------------------#
-NMT_STDLIB_LIBS     = -lc
+NMT_stdlib_LIBS     = -lc
 
-NMT_LOG_LIBS        = -lc \
-                      -lNMT_stdlib \
+NMT_log_LIBS        = -lNMT_stdlib \
+                      -lc
 
 RSXA_LIBS           = -lNMT_stdlib \
                       -lNMT_log \

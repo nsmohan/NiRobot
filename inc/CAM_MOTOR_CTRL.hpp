@@ -28,7 +28,7 @@ extern const string DIRECTION_TO_STR[5] = {"UP", "DOWN",
 
 
 /*--------------------------------------------------/
-/                   Strucs/Classes/Enums            /
+/                   Structs/Classes/Enums            /
 /--------------------------------------------------*/
 typedef enum {UP, DOWN, 
               LEFT, RIGHT, 

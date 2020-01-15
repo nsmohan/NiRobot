@@ -16,7 +16,6 @@ import unittest
 import re
 import json
 from ctypes import *
-import HtmlTestRunner
 from datetime import datetime
 
 #---------------------------------------------------#

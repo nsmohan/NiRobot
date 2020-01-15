@@ -12,7 +12,6 @@ __copyright__          = "Copy Right 2019. NM Technologies"
 import sys
 from ctypes import *
 import unittest
-import HtmlTestRunner
 import os
 
 #---------------------------------------------------#
@@ -32,14 +31,13 @@ import NMT_log_test
 
 RESULT_ENUM = ["OK", "NOK"]
 LD27MG_FREQ = 50.00
-FNAME = __file__.split("/")[1].split(".")[0]
+FNAME = __file__.split(".")[0].split("/")[-1]
 
-sys.settrace
 class MTDR_Test(unittest.TestCase):
 
     def setUp(self):
         self.PCA9685 = CDLL(OBJ_PATH + "libPCA9685.so")
-        self.MTDR = CDLL(OBJ_PATH + "libmtdr.so")
+        self.MTDR = CDLL(OBJ_PATH + "libMTDR.so")
         NMT_log_test.NMT_log_test(__file__)
         self.log_file = "%s/%s.log"%(NMT_log_test.LOG_DIR, FNAME)
 
@@ -56,8 +54,8 @@ class MTDR_Test(unittest.TestCase):
 
         #Check if the result is OK
         self.assertEqual(result, RESULT_ENUM.index("OK"))
-
         self.assertEqual(False, initialized.value)
+
     def test_MTDR_get_current_postion(self):
 
         #Description - Test the MTDR_get_current_positoon. This will also

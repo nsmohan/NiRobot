@@ -1,4 +1,4 @@
-/*register_dump.c: This program will read all the registers when provided with 
+/*regdump.c:       This program will read all the registers when provided with 
                    I2C Address
 
 __author__       = "Nitin Mohan
