@@ -48,7 +48,7 @@ NMT_result PCA9685_init(PCA9685_settings *settings)
     //Output    : fd (Pointer to access IC via I2C)
     //Function  : Intialize the PCA9685 device based on the settings provided
 
-    //Initialize Varibles
+    //Initialize Variables
     NMT_result result   = OK;
     bool       sim_mode = false;
 
@@ -80,7 +80,7 @@ NMT_result PCA9685_chgFreq(PCA9685_settings *settings)
     //Output    : N/A
     //Function  : Changed the frequency to the one provided in the input struct
 
-    //Initialize Varibles
+    //Initialize Variables
     NMT_result result = OK;
     bool sim_mode     = false;
     int orig_reg_value;
@@ -120,7 +120,7 @@ static NMT_result PCA9685_setFreq(PCA9685_settings *settings, bool sim_mode)
     //Output    : N/A
     //Function  : Set the frequency to the one provided in the input struct
 
-    //Initialize Varibles
+    //Initialize Variables
     NMT_result result = OK;
 
     NMT_log_write(DEBUG, "> freq: %f duty_cycle: %f delay_time: %f fd: %d",settings->freq, settings->duty_cycle,
@@ -154,7 +154,7 @@ NMT_result PCA9685_setPWM(PCA9685_settings *settings, PCA9685_PWM_CHANNEL channe
     //Output    : N/A
     //Function  : Set PWM duty cycle on the desired channel
 
-    //Initialize Varibles
+    //Initialize Variables
     NMT_result result = OK;
     bool sim_mode     = false; 
 
@@ -206,7 +206,7 @@ NMT_result PCA9685_getPWM(PCA9685_settings *settings, PCA9685_PWM_CHANNEL channe
     //Output    : N/A
     //Function  : Get PWM duty cycle on the desired channel
 
-    //Initialize Varibles
+    //Initialize Variables
     NMT_result result = OK;
     bool sim_mode     = false; 
     int tics_on_duration;
@@ -252,7 +252,7 @@ NMT_result PCA9685_get_init_status(PCA9685_settings *settings, bool *initialized
     //Output    : N/A
     //Function  : Read the MODE1, MODE2 and PRE_SCALE Register
 
-    //Initialize Varibles
+    //Initialize Variables
     NMT_result result = OK;
     bool sim_mode     = false; 
     float freq       = 0.0;
