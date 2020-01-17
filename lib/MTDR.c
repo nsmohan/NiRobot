@@ -131,7 +131,7 @@ NMT_result MTDR_init(PCA9685_settings *settings)
     //Function  : Initialize the PCA9685 Driver and the 
     //            Motors to Home Postion
 
-    /* Initialize Varibles */
+    /* Initialize Variables */
     NMT_result result = OK;
 
     NMT_log_write(DEBUG, "> fd=%d", settings->fd);
