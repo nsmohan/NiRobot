@@ -17,6 +17,7 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 #include "MTDR.h"
 #include "RSXA.h"
 
+using namespace std;
 Camera_Motor_Ctrl::Camera_Motor_Ctrl()
 {
     this->horizontal_motor = CAM_HRZN_MTR;

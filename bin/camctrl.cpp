@@ -45,8 +45,8 @@ static struct option long_options[] =
 /                   Prototypes                      /
 /--------------------------------------------------*/
 static void camera_control_print_usage(int es);
-static NMT_result camera_control_move_camera(string direction);
-static CAM_MOTOR_CTRL_DIRECTIONS camera_control_dir_to_enum(string direction);
+static NMT_result camera_control_move_camera(std::string direction);
+static CAM_MOTOR_CTRL_DIRECTIONS camera_control_dir_to_enum(std::string direction);
 
 using namespace std;
 int main (int argc, char *argv[])
