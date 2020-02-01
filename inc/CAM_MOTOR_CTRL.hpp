@@ -20,9 +20,8 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 /*--------------------------------------------------/
 /                   Globals                         /
 /--------------------------------------------------*/
-using namespace std;
 const int MOTOR_SENSITIVITY = 10; //Default Angle the motor moves
-extern const string DIRECTION_TO_STR[5] = {"UP", "DOWN", 
+extern const std::string DIRECTION_TO_STR[5] = {"UP", "DOWN", 
                                            "LEFT", "RIGHT", 
                                            "CUSTOM"};
 
@@ -37,8 +36,8 @@ typedef enum {UP, DOWN,
 class Camera_Motor_Ctrl
 {
     public:
-        string horizontal_motor;
-        string vertical_motor;
+        std::string horizontal_motor;
+        std::string vertical_motor;
         Camera_Motor_Ctrl();
 
         /* In - Direction to move
@@ -46,7 +45,7 @@ class Camera_Motor_Ctrl
          * In - Optional Custom angle to move
          * In - Optional Motor Sensitivity */
         NMT_result CAM_MTR_CTRL_MOVE_CAMERA(CAM_MOTOR_CTRL_DIRECTIONS direction, 
-                                            string motor = "", 
+                                            std::string motor = "", 
                                             double angle_to_move = 0.00, 
                                             double default_angle = MOTOR_SENSITIVITY);
 };

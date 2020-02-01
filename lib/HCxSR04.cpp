@@ -26,6 +26,7 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 //------------------Prototypes-------------------//
 
 
+using namespace std;
 HCxSR04::HCxSR04(string hw_name, int trigger, int echo)
 {
     /* Constructor */

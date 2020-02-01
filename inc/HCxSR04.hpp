@@ -20,11 +20,10 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 /                   Globals                         /
 /--------------------------------------------------*/
 
-using namespace std;
 class HCxSR04
 {
   public:
-    HCxSR04(string hw_name, int trigger, int echo);
+    HCxSR04(std::string hw_name, int trigger, int echo);
     double distanceMeters;
     double distance();
 
@@ -32,7 +31,7 @@ class HCxSR04
     void init_hw();
     int trigger;
     int echo;
-    string hw_name;
+    std::string hw_name;
     bool sim_mode;
     volatile long startTimeUsec;
     volatile long endTimeUsec;
