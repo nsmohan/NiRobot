@@ -8,7 +8,8 @@
 #                                       #
 #---------------------------------------#
 BLDS = regdump \
-       camctrl
+       camctrl \
+       get_distance
 #---------------------------------------#
 #                                       #
 #              Sources/Libs             #
@@ -22,6 +23,11 @@ regdump_LIBS = -lNMT_stdlib \
 
 camctrl_LIBS  = -lNMT_log \
                 -lCAM_MOTOR_CTRL
+
+get_distance_LIBS  = -lNMT_log \
+				   -lultrasonicController \
+				   -lNMT_stdlib \
+				   -lHCxSR04
 
 # -------Update output file name ---------#
 TARGET_BLDS := $(foreach BLD,$(BLDS),$(BLD_DIR)/$(BLD))
