@@ -13,7 +13,8 @@ OBJS        = NMT_stdlib.so \
               PCA9685.so \
               MTDR.so \
               CAM_MOTOR_CTRL.so \
-              HCxSR04.so
+              HCxSR04.so \
+              ultrasonicController.so
 
 #---------------------------------------#
 #                                       #
@@ -66,6 +67,9 @@ HCxSR04_LIBS        = -lNMT_log \
                       -lcrypt \
                       -lm \
                       -lrt
+                
+ultrasonicController_LIBS 		= -lNMT_log \
+								  -lNMT_stdlib
 
 # -------Update output file name ---------#
 TARGET_OBJS := $(foreach OBJ,$(OBJS),$(OBJ_DIR)/lib$(OBJ))

@@ -1,14 +1,14 @@
 #Makfile:        Makefile for root directory
-#__author__      = "Nitin Mohan
+#__author__      = "Nitin Mohan"
 #__copyright__   = "Copy Right 2018. NM Technologies"
 
-export PROJ_DIR    = /home/nmohan/github/NiRobot
+export PROJ_DIR    = $(PWD)
 export BIN_DIR     = $(PROJ_DIR)/bin
 export OBJ_DIR     = $(PROJ_DIR)/Obj
 export INC_DIR     = $(PROJ_DIR)/inc
 export LIB_DIR     = $(PROJ_DIR)/lib
 export BLD_DIR     = $(PROJ_DIR)/bld
-export CFLAGS      = -g -Wall -Wextra -I $(INC_DIR)
+export CFLAGS      = -g -Wall -Wextra -I $(INC_DIR) -std=c++17
 export SFLAGS      = -fPIC -shared
 export RPATH       = -L$(OBJ_DIR) -Wl,-rpath=$(OBJ_DIR)
 
