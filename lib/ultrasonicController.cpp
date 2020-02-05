@@ -24,7 +24,6 @@ std::vector<std::string> US_sensorNames = {"HCxSR04_Front",
 										  "HCxSR04_Back", 
 										  "HCxSR04_Right", 
 										  "HCxSR04_Left"};
-bool debugPrint = true;
 
 /*--------------------------------------------------/
 /                   Structures                      /
@@ -46,34 +45,37 @@ sensorController::sensorController(){
     //Out    : N/A (CTOR)
     //Description  : Package sensors with query logic
     
-    for( unsigned int iSensor = 0; iSensor < US_sensorNames.size(); iSensor++ ){
-		//debug printing
-		if( debugPrint ){
-			printf("Adding %s [%d, %d]\n", US_sensorNames[iSensor].c_str(), 
-										   iSensor,
-										   US_triggerPin);
-		}
-		
-		//Create sensor object
-		HCxSR04 curSensor(US_sensorNames[iSensor], 
-						  iSensor, 
-						  US_triggerPin );
-		
-		//debug printing				  
-		if( debugPrint ){
-			printf("Successfully created %s\n", US_sensorNames[iSensor].c_str()); 
-		}
-		
-		//Push it
-		this->US_sensorBank.push_back( curSensor ); 
+    for( unsigned int iSensor = 0; iSensor < US_sensorNames.size(); iSensor++ ){				
+				
+		//Emplace Sensors
+		this->US_sensorBank.emplace_back( HCxSR04(US_sensorNames[iSensor], 
+												  iSensor, 
+												  US_triggerPin ) 
+										);  
     }	
 	
 }
 
 sensorController::~sensorController(){
-	std::cout << "Ah! You've destroyed my ultrasonic sensor!" << std::endl;
+	//In     : N/A
+    //Out    : N/A (DTOR)
+    //Description  : Destructor (Unnecessary but included for completeness or debugging)
+
+	//std::cout << "Ah! You've destroyed my ultrasonic sensor!" << std::endl;
 }
 
 double sensorController::getDistance( US_pinout selSensor ){
-	return this->US_sensorBank[selSensor].distance();	
+	//In     : selSensor - Sensor choice (datatype determines which sensor
+    //Out    : Distance measured by sensor
+    //Description  : Get the distance measured by the requested sensor
+    
+    NMT_log_write(DEBUG, (char *)"> Sensor Request=%d", selSensor);
+
+    
+    double measuredDistance = this->US_sensorBank[selSensor].distance();
+    
+    
+	/* Exit Function */    
+    NMT_log_write(DEBUG, (char *)"> Measured Distance=%.6f", measuredDistance);
+	return measuredDistance;	
 }
