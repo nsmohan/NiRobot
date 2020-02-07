@@ -1,7 +1,3 @@
-/*HCxSR04_Driver.cpp: Driver for the Ultransonic Sensors (HC-SR04)
-
-__author__      = "Mickey T Da Silva"
-__copyright__   = "Copyright 2020. NM Technologies" */
 
 /*--------------------------------------------------/
 /                   System Imports                  /
@@ -19,7 +15,8 @@ __copyright__   = "Copyright 2020. NM Technologies" */
 /*--------------------------------------------------/
 /                   Globals                         /
 /--------------------------------------------------*/
-
+//! Enumerated type based on the hardware names of the ultrasonic sensors
+//! \todo Get this string from the JSON file itself, reducing number of dependencies
 std::vector<std::string> US_sensorNames = {"HCxSR04_Front", 
 										  "HCxSR04_Back", 
 										  "HCxSR04_Right", 
@@ -39,7 +36,18 @@ std::vector<std::string> US_sensorNames = {"HCxSR04_Front",
 /*--------------------------------------------------/
 /                   Prototypes (Protos in header)   /
 /--------------------------------------------------*/
-
+/*! 
+	\page page1 testPage
+	\tableofcontents
+	Leading text.
+	\section sec1 Test Section
+	This is a test section
+ 	\name 		Test Name
+	\author		Mickey T Da Silva
+	\copyright  2020 NM Technologies
+	\date 		2020-02-08
+	\brief 		Defines hardware abstraction for ultrasonic sensors
+*/
 sensorController::sensorController(){
 	//In     : N/A
     //Out    : N/A (CTOR)
