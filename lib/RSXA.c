@@ -1,7 +1,11 @@
-/*RSXA.c: Library to read the robot_settings configuration file
-
-__author__      = "Nitin Mohan
-__copyright__   = "Copy Right 2019. NM Technologies" */
+/*! 
+ *  @brief     RSXA.c - Facility for reading RSXA.json
+ *  @details   Read RSXA.json file and write contents to memory for 
+ *             use by other components to determine their sim_mode.
+ *  @author    Nitin Mohan
+ *  @date      Feb 6, 2019
+ *  @copyright 2020 - NM Technologies
+ */
 
 /*--------------------------------------------------/
 /                   System Imports                  /
@@ -20,38 +24,59 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 /*--------------------------------------------------/
 /                   Constants                       /
 /--------------------------------------------------*/
-#define RS_SETTINGS_PATH "/home/nmohan/github/NiRobot/config/RSXA.json"
+#define RS_SETTINGS_PATH "/etc/NiBot/RSXA.json"
 
 //------------------Structs & Enums----------------//
-typedef struct RSXA_hw
-{
-    char **hw_name;
-    bool *hw_sim_mode;
-    int  array_len;
-}RSXA_hw;
 
 /*------------------Prototypes----------------------*/
 static NMT_result RSXA_parse_json(char *data_to_parse, RSXA_hw *hw);
 static void RSXA_free_hw_struct_mem(RSXA_hw *hw);
 
-NMT_result RSXA_get_mode(char *hw_name, bool *sim_mode)
+NMT_result RSXA_init(RSXA_hw *hw)
 {
-    //Input     : Name of hardware to check 
-    //Output    : Mode bit
-    //Function  : Read RSXA_hw structure and set the sim_mode flag
+    /*!
+     *  @brief    : Read RSXA.json file and parse to RSXA_parse_json
+     *               to parse the contents
+     *  @param[in]: RSXA_hw struct
+     *  @return   : NMT_result
+     */
 
-    NMT_log_write(DEBUG, "> hw_name: %s", hw_name);
+    NMT_log_write(DEBUG, "> ");
 
-    //Initialize Variables
+    /* Initialize Variables */
     NMT_result result = OK;
-    RSXA_hw hw          = {0};
     char *file_content;
 
     /* Read and parse the Json settings file */
     result = NMT_stdlib_read_file(RS_SETTINGS_PATH, &file_content);
 
     if (result == OK)
-        result = RSXA_parse_json(file_content, &hw);
+        result = RSXA_parse_json(file_content, hw);
+
+
+    /* Free Used Memory */
+    free(file_content);
+
+    /* Exit the Function */
+    NMT_log_write(DEBUG, "< result: %s", result_e2s[result]);
+    return result;
+}
+
+NMT_result RSXA_get_mode(char *hw_name, bool *sim_mode, RSXA_hw hw)
+{
+    /*!
+     *  @brief     : Read the hw struct and determine the sim mode
+     *  @param[in] : RSXA_hw struct
+     *  @param[in] : hw_name
+     *  @param[out]: sim_mode
+     *  @return    : NMT_result
+     */
+
+    NMT_log_write(DEBUG, "> hw_name: %s", hw_name);
+
+    /* Initialize Variables */
+    NMT_result result = OK;
+
         
     /* Search for the hardware name of interest */
     if (result == OK)
@@ -61,8 +86,6 @@ NMT_result RSXA_get_mode(char *hw_name, bool *sim_mode)
             if (!strcmp(hw.hw_name[i], hw_name))
             {
                 *sim_mode = hw.hw_sim_mode[i];
-                free(file_content);
-                RSXA_free_hw_struct_mem(&hw);
                 return result = OK;
             }
         }
@@ -77,7 +100,6 @@ NMT_result RSXA_get_mode(char *hw_name, bool *sim_mode)
     NMT_log_write(DEBUG, "< hw_name: %s sim_mode: %s result: %s",
                   hw_name, btoa(sim_mode), result_e2s[result]);
 
-    free(file_content);
     return result = NOK;
 
 }
