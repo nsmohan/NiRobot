@@ -78,6 +78,7 @@ class Camera_Motor_Ctrl
         RSXA_hw hw_settings_obj;
 
         Camera_Motor_Ctrl();
+        ~Camera_Motor_Ctrl();
 
         NMT_result CAM_MTR_CTRL_MOVE_CAMERA(CAM_MOTOR_CTRL_DIRECTIONS direction, 
                                             std::string motor = "", 

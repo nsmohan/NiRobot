@@ -46,6 +46,7 @@
         }RSXA_hw;
 
         /* External Interfaces Definitions */
+        extern void RSXA_free_hw_struct_mem(RSXA_hw *hw);
         extern NMT_result RSXA_init(RSXA_hw *hw);
         extern NMT_result RSXA_get_mode(char *hw_name, 
                                         bool *sim_mode,
@@ -71,6 +72,7 @@
     }RSXA_hw;
 
     /* External Interfaces Definitions */
+    extern void RSXA_free_hw_struct_mem(RSXA_hw *hw);
     extern NMT_result RSXA_init(RSXA_hw *hw);
     extern NMT_result RSXA_get_mode(char *hw_name, 
                                     bool *sim_mode,

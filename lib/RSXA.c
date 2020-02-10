@@ -182,3 +182,24 @@ static NMT_result RSXA_parse_json(char *data_to_parse, RSXA_hw *hw)
     NMT_log_write(DEBUG, "< result: %s", result_e2s[result]);
     return result;
 }
+
+void RSXA_free_hw_struct_mem(RSXA_hw *hw)
+{
+     /*!
+     *  @brief      Free RSXA_hw object memory
+     *  @param[in]  hw
+     *  @return     void
+     */
+    
+    NMT_log_write(DEBUG, ">");
+
+    /* Free the Memory */
+    for (int i = 0; i < hw->array_len; i++)
+    {
+        free(hw->hw_name[i]);
+    }
+    free(hw->hw_name);
+    free(hw->hw_sim_mode);
+
+    NMT_log_write(DEBUG, "<");
+}

@@ -37,6 +37,16 @@ Camera_Motor_Ctrl::Camera_Motor_Ctrl()
     RSXA_init(&(this->hw_settings_obj));
 }
 
+Camera_Motor_Ctrl::~Camera_Motor_Ctrl()
+{
+    /*!
+     *  @brief    Destructor for Camera_Motor_Ctrl
+     *  @return   None
+     */
+
+    RSXA_free_hw_struct_mem(&(this->hw_settings_obj));
+}
+
 NMT_result Camera_Motor_Ctrl::CAM_MTR_CTRL_MOVE_CAMERA(CAM_MOTOR_CTRL_DIRECTIONS direction, 
                                                        string motor,
                                                        double angle_to_move, 
