@@ -34,7 +34,7 @@ Camera_Motor_Ctrl::Camera_Motor_Ctrl()
     this->hw_settings_obj = {0};
 
     /* Get Hardware Settings */
-    RSXA_init(&this->hw_settings_obj);
+    RSXA_init(&(this->hw_settings_obj));
 }
 
 NMT_result Camera_Motor_Ctrl::CAM_MTR_CTRL_MOVE_CAMERA(CAM_MOTOR_CTRL_DIRECTIONS direction, 

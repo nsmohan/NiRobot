@@ -56,7 +56,6 @@ NMT_result RSXA_init(RSXA_hw *hw)
     if (result == OK)
         result = RSXA_parse_json(file_content, hw);
 
-
     /* Free Used Memory */
     free(file_content);
 

@@ -60,7 +60,8 @@ const int MAX_NR_OF_MOTORS = 2;
                                    bool sim_mode);
 
         NMT_result MTDR_get_current_position(char *motor, double *angle,
-                                             PCA9685_settings *settings, bool sim_mode);
+                                             PCA9685_settings *settings,
+                                             bool sim_mode);
 
         NMT_result MTDR_get_pca9685_status(PCA9685_settings *settings,
                                            bool *initialized,
@@ -77,7 +78,8 @@ const int MAX_NR_OF_MOTORS = 2;
                                    bool sim_mode);
 
         NMT_result MTDR_get_current_position(char *motor, double *angle,
-                                             PCA9685_settings *settings, bool sim_mode);
+                                             PCA9685_settings *settings,
+                                             bool sim_mode);
 
         NMT_result MTDR_get_pca9685_status(PCA9685_settings *settings,
                                            bool *initialized,
