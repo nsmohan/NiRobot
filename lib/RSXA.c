@@ -1,5 +1,6 @@
-/*! 
- *  @brief     RSXA.c - Facility for reading RSXA.json
+/** 
+ *  @file      RSXA.c
+ *  @brief     Facility for reading RSXA.json
  *  @details   Read RSXA.json file and write contents to memory for 
  *             use by other components to determine their sim_mode.
  *  @author    Nitin Mohan
@@ -22,23 +23,25 @@
 #include "NMT_log.h"
 
 /*--------------------------------------------------/
-/                   Constants                       /
+/                   Macros                          /
 /--------------------------------------------------*/
+/** \def RS_SETTINGS_PATH 
+ *  Hard coded path to the RSXA.json file
+*/
 #define RS_SETTINGS_PATH "/etc/NiBot/RSXA.json"
 
 //------------------Structs & Enums----------------//
 
 /*------------------Prototypes----------------------*/
 static NMT_result RSXA_parse_json(char *data_to_parse, RSXA_hw *hw);
-static void RSXA_free_hw_struct_mem(RSXA_hw *hw);
 
 NMT_result RSXA_init(RSXA_hw *hw)
 {
     /*!
-     *  @brief    : Read RSXA.json file and parse to RSXA_parse_json
-     *               to parse the contents
-     *  @param[in]: RSXA_hw struct
-     *  @return   : NMT_result
+     *  @brief     Read RSXA.json file and parse to RSXA_parse_json
+     *              to parse the contents
+     *  @param[in] hw
+     *  @return    NMT_result
      */
 
     NMT_log_write(DEBUG, "> ");
@@ -65,54 +68,58 @@ NMT_result RSXA_init(RSXA_hw *hw)
 NMT_result RSXA_get_mode(char *hw_name, bool *sim_mode, RSXA_hw hw)
 {
     /*!
-     *  @brief     : Read the hw struct and determine the sim mode
-     *  @param[in] : RSXA_hw struct
-     *  @param[in] : hw_name
-     *  @param[out]: sim_mode
-     *  @return    : NMT_result
+     *  @brief      Read the hw struct and determine the sim mode
+     *  @param[in]  hw
+     *  @param[in]  hw_name
+     *  @param[out] sim_mode
+     *  @return     NMT_result
      */
 
     NMT_log_write(DEBUG, "> hw_name: %s", hw_name);
 
     /* Initialize Variables */
     NMT_result result = OK;
+    bool hw_name_found = false;
 
         
     /* Search for the hardware name of interest */
-    if (result == OK)
+    for (int i = 0; i < hw.array_len; i++)
     {
-        for (int i = 0; i < hw.array_len; i++)
+        if (!strcmp(hw.hw_name[i], hw_name))
         {
-            if (!strcmp(hw.hw_name[i], hw_name))
-            {
-                *sim_mode = hw.hw_sim_mode[i];
-                return result = OK;
-            }
+            *sim_mode = hw.hw_sim_mode[i];
+            hw_name_found = true;
+            result = OK;
+            break;
         }
-
     }
-    else
+
+    if (!hw_name_found)
     {
         NMT_log_write(ERROR, "JSON data parse error");
+        result = NOK;
     }
 
     /* Exit the function */
     NMT_log_write(DEBUG, "< hw_name: %s sim_mode: %s result: %s",
                   hw_name, btoa(sim_mode), result_e2s[result]);
 
-    return result = NOK;
+    return result;
 
 }
 
 static NMT_result RSXA_parse_json(char *data_to_parse, RSXA_hw *hw)
 {
-    //Input     : Data to be parsed and the structure to be populated with data
-    //Output    : Structure with the parsed json data 
-    //Function  : Parse the "hw" key in the json data
+    /*!
+     *  @brief      Parse JSON data passed and populate the RSXA_hw struct
+     *  @param[in]  data_to_parse
+     *  @param[out] hw struct
+     *  @return     NMT_result
+     */
 
     NMT_log_write(DEBUG, "> ");
 
-    //Initialize Variables
+    /* Initialize Variables */
     NMT_result result   = OK;
     int array_len       = 0;
     int key_found       = 0;
@@ -123,25 +130,25 @@ static NMT_result RSXA_parse_json(char *data_to_parse, RSXA_hw *hw)
     struct json_object *jvalue;
     struct json_object *jobj_hw;
 
-    //Parse json file_contents
+    /* Parse json file_contents */
     jobj = json_tokener_parse(data_to_parse);
     json_object_object_get_ex(jobj, root_key, &jobj_hw);
 
-    //Get Number of elements in the array
+    /* Get Number of elements in the array */
     array_len = json_object_array_length(jobj_hw);
     array_len < 1 ? (result = NOK) : (result = OK);
 
     NMT_log_write(DEBUG, "Array Length: %d", array_len);
     if (result == OK)
     {
-        //Allocate memory based on the array length
+        /* Allocate memory based on the array length */
         hw->hw_name = (char **)malloc(sizeof(char *) * array_len);
         hw->hw_sim_mode = (bool *)malloc(sizeof(bool) * array_len);
 
-        //Save array length to structure
+        /* Save array length to structure */
         hw->array_len = array_len;
        
-        //Parse each element in the array and populate the structure
+        /* Parse each element in the array and populate the structure */
         for (int i = 0; i < array_len; i++)
         {
             jvalue = json_object_array_get_idx(jobj_hw, i);
@@ -165,7 +172,6 @@ static NMT_result RSXA_parse_json(char *data_to_parse, RSXA_hw *hw)
         {
             result = NOK;
             NMT_log_write(ERROR, "Expecting to find keys %d but found %d", (array_len *no_of_keys), key_found);
-            RSXA_free_hw_struct_mem(hw);
         }
     }
     else
@@ -176,16 +182,4 @@ static NMT_result RSXA_parse_json(char *data_to_parse, RSXA_hw *hw)
     /* Exit the function */
     NMT_log_write(DEBUG, "< result: %s", result_e2s[result]);
     return result;
-}
-
-static void RSXA_free_hw_struct_mem(RSXA_hw *hw)
-{
-    NMT_log_write(DEBUG, ">");
-    for (int i = 0; i < hw->array_len; i++)
-    {
-        free(hw->hw_name[i]);
-    }
-    free(hw->hw_name);
-    free(hw->hw_sim_mode);
-    NMT_log_write(DEBUG, "<");
 }

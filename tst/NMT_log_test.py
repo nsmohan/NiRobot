@@ -14,7 +14,6 @@ from ctypes import *
 #---------------------------------------------------#
 #                   Constants                       #
 #---------------------------------------------------#
-OBJ_PATH    = "/home/nmohan/github/NiRobot/Obj/"
 LOG_DIR     = "/var/log/NiRobot"
 
 #---------------------------------------------------#
@@ -25,6 +24,6 @@ LOG_DIR     = "/var/log/NiRobot"
 class NMT_log_test(object):
 
     def __init__(self, file_name):
-        self.NMT_log   = CDLL(OBJ_PATH + "libNMT_log.so")
+        self.NMT_log   = CDLL("Obj/libNMT_log.so")
         self.log_dir   = LOG_DIR
         self.NMT_log.NMT_log_init_m(file_name, self.log_dir, False)

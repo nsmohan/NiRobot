@@ -27,13 +27,13 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 
 
 using namespace std;
-HCxSR04::HCxSR04(string hw_name, int trigger, int echo)
+HCxSR04::HCxSR04(string hw_name, int trigger, int echo, bool sim_mode)
 {
     /* Constructor */
     this->trigger = trigger;
     this->echo = echo;
     this->hw_name = hw_name;
-    this->sim_mode = false;
+    this->sim_mode = sim_mode;
     this->init_hw();
 } 
 
@@ -42,9 +42,6 @@ void HCxSR04::init_hw()
     //Input     : N/A
     //Output    : N/A
     //Function  : Check simulation mode and init the hardware
-
-    /*Get Simulation Mode */
-    RSXA_get_mode((char *)this->hw_name.c_str(), &(this->sim_mode));
 
     /* Initialize Hardware if not in sim mode */
     if (!(this->sim_mode))

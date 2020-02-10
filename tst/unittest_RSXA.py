@@ -13,17 +13,22 @@ import unittest
 from ctypes import *
 import os
 import json
+import sys
 
 #---------------------------------------------------#
 #                   Constants                       #
 #---------------------------------------------------#
 OBJ_PATH    = "/home/nmohan/github/NiRobot/Obj/"
-RS_PATH     = "/home/nmohan/github/NiRobot/config/RSXA.json"
+RS_PATH     = "/etc/NiBot/RSXA.json"
 LIB_PATH    = "/home/nmohan/github/NiRobot/lib/"
+OK = 0
+NOK = 1
 
 #---------------------------------------------------#
 #                   Local Imports                   #
 #---------------------------------------------------#
+sys.path.append(LIB_PATH)
+from RSXA import RSXA_hw
 import NMT_log_test
 
 class NMT_RSXA_test(unittest.TestCase, ):
@@ -48,7 +53,9 @@ class NMT_RSXA_test(unittest.TestCase, ):
 
         #Initialize Variables
         sim_mode  = c_bool()
-        OK        = 0
+        hw_settings_obj = RSXA_hw()
+
+        # -- Prepare Test -- #
         test_data = [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False},
                      {"hw_name": "UnitTest_HW2", "hw_sim_mode": True}]
 
@@ -58,9 +65,17 @@ class NMT_RSXA_test(unittest.TestCase, ):
 
         with open(RS_PATH, "w") as n_rsxa_file:
             json.dump(rsxa_file_json, n_rsxa_file)
-        
+
+
+        # -- Start of Actual Test -- #
+
+        #Initialze RSXA
+        result = self.rsxa.RSXA_init(byref(hw_settings_obj))
+        self.assertEqual(result, OK)
+
+        #Verify Sim mode by RSXA_get_mode
         for data in test_data:
-            result = self.rsxa.RSXA_get_mode(data["hw_name"], byref(sim_mode))
+            result = self.rsxa.RSXA_get_mode(data["hw_name"], byref(sim_mode), hw_settings_obj)
             self.assertEqual(data["hw_sim_mode"], sim_mode.value)
             self.assertEqual(result, OK)
 
@@ -69,7 +84,8 @@ class NMT_RSXA_test(unittest.TestCase, ):
 
         #Initialize Variables
         sim_mode  = c_bool()
-        NOK       = 1
+        hw_settings_obj = RSXA_hw()
+
         test_data = [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False},
                      {"hw_name": "UnitTest_HW2", "hw_sim_mode_BW": True}]
 
@@ -79,17 +95,17 @@ class NMT_RSXA_test(unittest.TestCase, ):
 
         with open(RS_PATH, "w") as n_rsxa_file:
             json.dump(rsxa_file_json, n_rsxa_file)
-        
-        for data in test_data:
-            result = self.rsxa.RSXA_get_mode(data["hw_name"], byref(sim_mode))
-            self.assertEqual(result, NOK)
+
+        #Initialze RSXA and confirm result is NOK file has invalid key
+        result = self.rsxa.RSXA_init(byref(hw_settings_obj))
+        self.assertEqual(result, NOK)
 
     def test_RSXA_get_mode_BW_blank_array(self):
         #Description - Verify Error is thrown when array is passed in is empty
 
         #Initialize Variables
+        hw_settings_obj = RSXA_hw()
         sim_mode  = c_bool()
-        NOK       = 1
         test_data = []
         hw_name       = "UnitTest_HW3"
 
@@ -100,7 +116,12 @@ class NMT_RSXA_test(unittest.TestCase, ):
         with open(RS_PATH, "w") as n_rsxa_file:
             json.dump(rsxa_file_json, n_rsxa_file)
         
-        result = self.rsxa.RSXA_get_mode(hw_name, byref(sim_mode))
+        #Initialze RSXA -> Result is NOK as the array is blank
+        result = self.rsxa.RSXA_init(byref(hw_settings_obj))
+        self.assertEqual(result, NOK)
+
+        #Verify Sim mode by RSXA_get_mode
+        result = self.rsxa.RSXA_get_mode(hw_name, byref(sim_mode), hw_settings_obj)
         self.assertEqual(result, NOK)
 
     def tearDown(self):

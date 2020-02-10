@@ -21,22 +21,17 @@ from datetime import datetime
 #---------------------------------------------------#
 #                   Constants                       #
 #---------------------------------------------------#
-OBJ_PATH    = "/home/nmohan/github/NiRobot/Obj/"
-RESULT_PATH = "/home/nmohan/Test_Results/"
-DAT_PATH    = "/home/nmohan/github/NiRobot/tst/dat/"  
-LIB_PATH    = "/home/nmohan/github/NiRobot/lib/"
 
 #---------------------------------------------------#
 #                   Local Imports                   #
 #---------------------------------------------------#
-sys.path.append(LIB_PATH)
-import NMT_stdlib_py
-from NMT_log import logger
+from lib_py import NMT_stdlib_py
+from lib_py.NMT_log import logger
 
 class NMT_stdlib_test(unittest.TestCase):
     
     def setUp(self):
-        self.NMT_stdlib = CDLL(OBJ_PATH + "libNMT_stdlib.so")
+        self.NMT_stdlib = CDLL("Obj/libNMT_stdlib.so")
 
     def test_NMT_stdlib_count(self):
 
@@ -165,7 +160,7 @@ class NMT_stdlib_test(unittest.TestCase):
 class NMT_log_Test(unittest.TestCase):
 
     def setUp(self):
-        self.NMT_log   = CDLL(OBJ_PATH + "libNMT_log.so")
+        self.NMT_log   = CDLL("Obj/libNMT_log.so")
         self.log_fname = __file__.split("/")[-1].split(".")[0]
         self.log_dir   = "/tmp"
     
@@ -274,4 +269,3 @@ class NMT_log_Test(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-    #unittest.main(testRunner=HtmlTestRunner.HTMLTestRunner(output=RESULT_PATH))

@@ -1,7 +1,11 @@
-/*MTDR.c:       Camera Motor Driver
-
-__author__      = "Nitin Mohan
-__copyright__   = "Copy Right 2019. NM Technologies" */
+/** 
+ *  @file      MTDR.c
+ *  @brief     LD27MG Camera Motor Drivers
+ *  @details   Low level driver library to control the camera motors
+ *  @author    Nitin Mohan
+ *  @date      Feb 7, 2019
+ *  @copyright 2020 - NM Technologies
+ */
 
 /*--------------------------------------------------/
 /                   System Imports                  /
@@ -20,15 +24,34 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 #include "RSXA.h"
 
 //---------------------Macros----------------------//
-#define LOG_DIR       "/var/log/NiRobot"
+
+/** @def MAX_ANGLE 
+ * Maximum angle motor is allowed to move */
 #define MAX_ANGLE     180.00
+
+/** @def MIN_ANGLE 
+ * Minimum angle motor is allowed to move */
 #define MIN_ANGLE     0.00
+
+/** @def HOME_ANGLE 
+ * Home angle motor */
+#define HOME_ANGLE     90.00
+
+/** @def LD27MG_FREQ
+ *  Frequency the LD27MG Motors operate at */
 #define LD27MG_FREQ   50.00
+
+/** @def LD27MG_OFFSET
+ *  Y-Intercept (setting for angle = 0.00) */
 #define LD27MG_OFFSET 0.5
+
+/** @def LD27MG_SLOPE
+ * Slope. Rate of change in time for angle */
 #define LD27MG_SLOPE  135
 
-//I2C address of PCA9685
-#define I2C_ADDRESS 0x40
+/**@def PCA9685_I2C_ADDRESS
+ * PCA9685 I2C Address */
+#define PCA9685_I2C_ADDRESS 0x40
 
 /*--------------------------------------------------/
 /                   Structures                      /
@@ -39,12 +62,19 @@ static NMT_result mtdr_m2c(char *motor, PCA9685_PWM_CHANNEL *channel);
 static double     mtdr_get_duty_cycle(double angle);
 static double     mtdr_get_angle(double duty_cycle);
 
-NMT_result MTDR_get_current_position(char *motor, double *angle, PCA9685_settings *settings)
+NMT_result MTDR_get_current_position(char *motor, double *angle, 
+                                     PCA9685_settings *settings,
+                                     bool sim_mode)
 {
-    //Input     : Name of the motor
-    //Output    : Angle of the motor
-    //Function  : Get the duty_cycle of PWM channel based 
-    //            on motor name and calcualte angle
+    /*!
+     *  @brief     Get the current duty cycle of PWM Channel
+     *             and calcualte the angle
+     *  @param[in] motor
+     *  @param[in] settings
+     *  @param[in] sim_mode
+     *  @param[out] angle
+     *  @return    NMT_result
+     */
     
     NMT_log_write(DEBUG, "> motor=%s", motor);
 
@@ -58,7 +88,7 @@ NMT_result MTDR_get_current_position(char *motor, double *angle, PCA9685_setting
     /* Get duty cycle */
     if (result == OK)
     {
-        result = PCA9685_getPWM(settings, channel);
+        result = PCA9685_getPWM(settings, channel, sim_mode);
     }
     else
     {
@@ -74,11 +104,19 @@ NMT_result MTDR_get_current_position(char *motor, double *angle, PCA9685_setting
     return result;
 }
 
-NMT_result MTDR_move_motor(char *motor, double angle, PCA9685_settings *settings)
+NMT_result MTDR_move_motor(char *motor, double angle,
+                           PCA9685_settings *settings,
+                           bool sim_mode)
 {
-    //Input     : Name of the motor and angle
-    //Output    : N/A
-    //Function  : Call appropriate function to move the motor to desired position 
+    /*!
+     *  @brief     Get the duty cycle needed to move to motor to the
+     *             provided angle and send to PCA9685.c
+     *  @param[in] motor
+     *  @param[in] angle
+     *  @param[in] settings
+     *  @param[in] sim_mode
+     *  @return    NMT_result
+     */
 
     NMT_log_write(DEBUG, "> motor=%s angle=%f", motor, angle);
 
@@ -93,7 +131,7 @@ NMT_result MTDR_move_motor(char *motor, double angle, PCA9685_settings *settings
     if (result == OK)
     {
         settings->duty_cycle = mtdr_get_duty_cycle(angle);
-        result = PCA9685_setPWM(settings, channel);
+        result = PCA9685_setPWM(settings, channel, sim_mode);
     }
     else
     {
@@ -104,11 +142,17 @@ NMT_result MTDR_move_motor(char *motor, double angle, PCA9685_settings *settings
     return result;
 }
 
-NMT_result MTDR_get_pca9685_status(PCA9685_settings *settings, bool *initialized)
+NMT_result MTDR_get_pca9685_status(PCA9685_settings *settings,
+                                   bool *initialized,
+                                   bool sim_mode)
 {
-    //Input     : Name of the motor and angle
-    //Output    : N/A
-    //Function  : Get the status of PCA9685 (Initialized || Not Initialzied)
+    /*!
+     *  @brief      Get the status of PCA9685 (Initialized || Not Initialized)
+     *  @param[in]  settings
+     *  @param[in]  sim_mode
+     *  @param[out] initialized
+     *  @return     NMT_result
+     */
 
     /* Initialize Varibles */
     NMT_result result      = OK;
@@ -117,19 +161,22 @@ NMT_result MTDR_get_pca9685_status(PCA9685_settings *settings, bool *initialized
 
     /* Get the status from hardware */
     settings->freq = LD27MG_FREQ;
-    PCA9685_get_init_status(settings, initialized);
+    PCA9685_get_init_status(settings, initialized, sim_mode);
 
     /* Exit the function */
     NMT_log_write(DEBUG, "< initialized=%s result=%s", btoa(initialized), result_e2s[result]);
     return result;
 }
 
-NMT_result MTDR_init(PCA9685_settings *settings)
+NMT_result MTDR_init(PCA9685_settings *settings, bool sim_mode)
 {
-    //Input     : PCA9685_settings Structure
-    //Output    : N/A
-    //Function  : Initialize the PCA9685 Driver and the 
-    //            Motors to Home Postion
+    /*!
+     *  @brief     Initialize the PCA9685 Driver and move the 
+     *             motors to the home ppsition
+     *  @param[in] settings
+     *  @param[in] sim_mode
+     *  @return    NMT_result
+     */
 
     /* Initialize Variables */
     NMT_result result = OK;
@@ -138,9 +185,21 @@ NMT_result MTDR_init(PCA9685_settings *settings)
 
     settings->freq = LD27MG_FREQ;
     settings->delay_time = 0;
+    settings->duty_cycle = mtdr_get_duty_cycle(HOME_ANGLE);
 
     /* Initialize the PCA9685 Driver */
-    result = PCA9685_init(settings);
+    result = PCA9685_init(settings, sim_mode);
+
+    /* Move the LD27MG Motors to home position */
+    for (int i = 0; i < MAX_NR_OF_MOTORS; i++)
+    {
+        if (result == OK)
+        {
+            result = PCA9685_setPWM(settings,
+                                    MTDR_motors[i].channel,
+                                    sim_mode);
+        }
+    }
 
     NMT_log_write(DEBUG, "< result=%s", result_e2s[result]);
     return result;
@@ -148,9 +207,11 @@ NMT_result MTDR_init(PCA9685_settings *settings)
 
 NMT_result MTDR_seti2c(PCA9685_settings *settings)
 {
-    //Input     : PCA9685 settings structure
-    //Output    : fd (Pointer to access IC via I2C)
-    //Function  : Configure I2C Communication with PCA9685
+    /*!
+     *  @brief     Initialize I2C communication with PCA9685 Driver
+     *  @param[out] settings
+     *  @return    NMT_result
+     */
 
     //Initialize Varibles
     NMT_result result  = OK;
@@ -159,7 +220,7 @@ NMT_result MTDR_seti2c(PCA9685_settings *settings)
 
     //Initialize I2C Communication
     wiringPiSetup();
-    settings->fd = wiringPiI2CSetup(I2C_ADDRESS);
+    settings->fd = wiringPiI2CSetup(PCA9685_I2C_ADDRESS);
 
     //Check if found the slave address
     if (settings->fd < 0)
@@ -178,6 +239,12 @@ static NMT_result mtdr_m2c(char *motor, PCA9685_PWM_CHANNEL *channel)
     //Output    : Channel the motor name corresponds to
     //Function  : Convert motor string to appropriate channel
 
+    /*!
+     *  @brief     Convert motor string to motor channel
+     *  @param[in] motor
+     *  @param[out] channel
+     *  @return    NMT_result
+     */
     NMT_log_write(DEBUG, "> motor=%s", motor);
 
     /* Initialize Variables */
@@ -205,10 +272,11 @@ static NMT_result mtdr_m2c(char *motor, PCA9685_PWM_CHANNEL *channel)
 
 static double mtdr_get_duty_cycle(double angle)
 {
-    //Input     : Angle of rotation
-    //Output    : On time in milliseconds
-    //Function  : Convert the angle of rotation needed to on_time in ms
-
+    /*!
+     *  @brief     Convert Duty Cycle based on angle
+     *  @param[in] angle
+     *  @return    duty_cycle
+     */
     NMT_log_write(DEBUG, "> angle: %f",angle);
             
     //Initialize Varibles
@@ -233,9 +301,11 @@ static double mtdr_get_duty_cycle(double angle)
 
 static double mtdr_get_angle(double duty_cycle)
 {
-    //Input     : Duty Cycle
-    //Output    : Angle
-    //Function  : Convert duty_cycle to Angle
+    /*!
+     *  @brief     Calculate angle based on duty cycle
+     *  @param[in] duty_cycle
+     *  @return    angle
+     */
 
     NMT_log_write(DEBUG, "> angle: %f",duty_cycle);
             

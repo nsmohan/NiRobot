@@ -17,27 +17,23 @@ import os
 #---------------------------------------------------#
 #                   Constants                       #
 #---------------------------------------------------#
-OBJ_PATH    = "/home/nmohan/github/NiRobot/Obj/"
-RESULT_PATH = "/home/nmohan/Test_Results/"
-DAT_PATH    = "/home/nmohan/github/NiRobot/tst/dat/"  
-LIB_PATH    = "/home/nmohan/github/NiRobot/lib/"
 
 #---------------------------------------------------#
 #                   Local Imports                   #
 #---------------------------------------------------#
-sys.path.append(LIB_PATH)
-from PCA9685 import PCA9685_settings
+from lib_py.PCA9685 import PCA9685_settings
 import NMT_log_test
 
 RESULT_ENUM = ["OK", "NOK"]
+SIM_MODE = True
 LD27MG_FREQ = 50.00
 FNAME = __file__.split(".")[0].split("/")[-1]
 
 class MTDR_Test(unittest.TestCase):
 
     def setUp(self):
-        self.PCA9685 = CDLL(OBJ_PATH + "libPCA9685.so")
-        self.MTDR = CDLL(OBJ_PATH + "libMTDR.so")
+        self.PCA9685 = CDLL("Obj/libPCA9685.so")
+        self.MTDR = CDLL("Obj/libMTDR.so")
         NMT_log_test.NMT_log_test(__file__)
         self.log_file = "%s/%s.log"%(NMT_log_test.LOG_DIR, FNAME)
 
@@ -50,7 +46,7 @@ class MTDR_Test(unittest.TestCase):
         settings = PCA9685_settings()
         initialized = c_bool()
 
-        result = self.MTDR.MTDR_get_pca9685_status(byref(settings), byref(initialized))
+        result = self.MTDR.MTDR_get_pca9685_status(byref(settings), byref(initialized), SIM_MODE)
 
         #Check if the result is OK
         self.assertEqual(result, RESULT_ENUM.index("OK"))
@@ -68,7 +64,7 @@ class MTDR_Test(unittest.TestCase):
 
         expected_angle = 261.76025390625 
         #Call the actual function
-        result = self.MTDR.MTDR_get_current_position(motor, byref(angle), byref(settings))
+        result = self.MTDR.MTDR_get_current_position(motor, byref(angle), byref(settings), SIM_MODE)
 
         #Check if the result is OK
         self.assertEqual(result, RESULT_ENUM.index("OK"))
@@ -96,7 +92,7 @@ class MTDR_Test(unittest.TestCase):
         expected_channel_reg_off  = "44"
 
         #Call the actual function
-        result = self.MTDR.MTDR_move_motor(motor, angle, byref(settings))
+        result = self.MTDR.MTDR_move_motor(motor, angle, byref(settings), SIM_MODE)
 
         #Ensure the result is OK
         self.assertEqual(result, RESULT_ENUM.index("OK"))
@@ -144,7 +140,7 @@ class MTDR_Test(unittest.TestCase):
 
         expected_pre_scale = 121
         settings = PCA9685_settings()
-        result = self.MTDR.MTDR_init(byref(settings))
+        result = self.MTDR.MTDR_init(byref(settings), SIM_MODE)
 
         #Check that the result is OK and Frequency is as expected
         self.assertEqual(result, RESULT_ENUM.index("OK"))
