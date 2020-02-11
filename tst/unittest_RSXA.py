@@ -25,7 +25,7 @@ NOK = 1
 #---------------------------------------------------#
 #                   Local Imports                   #
 #---------------------------------------------------#
-from RSXA import RSXA_hw
+from lib_py.RSXA import RSXA_hw
 import NMT_log_test
 
 class NMT_RSXA_test(unittest.TestCase, ):
