@@ -25,11 +25,13 @@ NMT_result NMT_stdlib_read_file(char *filepath, char **file_content)
     //Function  : Read file and populate file_content with contents
 
     //Initialize Variables
-    size_t file_size = NMT_stdlib_get_file_size(filepath);
-    size_t index;
+    size_t file_size = 0;
     FILE *fp;
     NMT_result result = OK;
-    
+
+    /* Get the file Size */
+    file_size = NMT_stdlib_get_file_size(filepath);
+
     //Allocate Memory
     *file_content = (char *)malloc(sizeof(char)*file_size);
 
@@ -37,8 +39,7 @@ NMT_result NMT_stdlib_read_file(char *filepath, char **file_content)
     if (access(filepath, F_OK) != -1)
     {
         fp = fopen(filepath, "r");
-        index = fread(*file_content, sizeof(char), file_size, fp);
-        file_content[index] = '\0';
+        fread(*file_content, sizeof(char), file_size, fp);
     }
     else
     {
@@ -84,7 +85,7 @@ void NMT_stdlib_split(char *string, char *param, char ***item_array, int *no_of_
     token = strtok(str, param);
     while(token != NULL)
     {
-        (*item_array)[i] = (char *)malloc(sizeof(char) * sizeof(token));
+        (*item_array)[i] = (char *)malloc(sizeof(char) * strlen(token) + 1);
         strcpy((*item_array)[i++], token);
         token = strtok(NULL, param);
     }

@@ -25,6 +25,7 @@ typedef enum {DEBUG, WARNING, ERROR} log_level;
 #ifdef __cplusplus
     extern "C" 
     {
+        extern void NMT_log_finish(void);
         extern NMT_result NMT_log_init_m(char *fname,           //In - Source file name
                                          char *log_dir,         //In - Directory to log in
                                          bool verbosity);       //In - Verbosity setting
@@ -47,6 +48,7 @@ typedef enum {DEBUG, WARNING, ERROR} log_level;
         const char* log_level_e2s[] = {"DEBUG", "WARNING", "ERROR"};
     }
 #else
+    extern void NMT_log_finish(void);
     extern NMT_result NMT_log_init_m(char *fname,           //In - Source file name
                                      char *log_dir,         //In - Directory to log in
                                      bool verbosity);       //In - Verbosity setting

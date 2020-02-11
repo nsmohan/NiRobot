@@ -37,12 +37,18 @@ NMT_result NMT_log_init_m(char *fname, char *log_dir, bool verbosity)
         //Split File Name string
         NMT_stdlib_split(fname, "/.", &fname_array, &no_of_items);
 
+        log_settings.file_name = (char *)malloc(sizeof(char) * strlen(fname_array[no_of_items - 2]) + 1);
+
+
         //Populate log_settings struct from func input
-        log_settings.file_name = fname_array[no_of_items - 2]; 
+        strcpy(log_settings.file_name, fname_array[no_of_items - 2]);
         log_settings.log_dir = log_dir;
         verbosity ? (log_settings.log_level = DEBUG) : (log_settings.log_level = WARNING);
 
         //Free allocated memory
+        int i = 0;
+        while (i < no_of_items)
+            free(fname_array[i++]);
         free(fname_array);
     }
 
@@ -93,5 +99,16 @@ void NMT_log_write_m(int line_no, const char *func_name, log_level level, char *
     free(string);
     free(log_to_write);
     free(out_file_name);
+}
+
+void NMT_log_finish(void)
+{
+    /*!
+     *  @brief     Function to destroy any memory used by NMT_log
+     *  @return    void
+     */
+
+    /* Free Used Memory */
+    free(log_settings.file_name);
 }
 
