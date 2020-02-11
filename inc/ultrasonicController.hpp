@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /**
  *  @file ultrasonicController.hpp
  *  @brief Hardware abstraction header
@@ -6,10 +7,20 @@
  *  @copyright 2020 - NM Technologies
  */
 
+=======
+>>>>>>> 6d2f0b6a528d15a1baca09387d437afeabc6f23a
 
 #ifndef DEF_ultraSonicController
 #define DEF_ultraSonicController
 
+<<<<<<< HEAD
+=======
+/*ultrasonicController.hpp: Header File for ultrasonicController.cpp
+
+__author__      = "Mickey T Da Silva"
+__copyright__   = "Copy Right 2020. NM Technologies" */
+
+>>>>>>> 6d2f0b6a528d15a1baca09387d437afeabc6f23a
 /*--------------------------------------------------/
 /                   System Imports                  /
 /--------------------------------------------------*/
@@ -41,6 +52,7 @@ typedef enum {US_echoPin_front,
 			  US_triggerPin} US_pinout;
 
 
+<<<<<<< HEAD
 
 class sensorController{
 	public:
@@ -55,6 +67,20 @@ class sensorController{
 
 	private:
 		//! Container for driver interfaces with ultrasonic sensors
+=======
+class sensorController{
+	public:
+		//ITOR
+		sensorController();
+		
+		//DTOR
+		~sensorController();
+
+		//Query
+		double getDistance(US_pinout selSensor);
+
+	private:
+>>>>>>> 6d2f0b6a528d15a1baca09387d437afeabc6f23a
 		std::vector< HCxSR04 > US_sensorBank;
 };
 

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /**
  *  @file ultrasonicController.cpp
  *  @brief Hardware abstraction for ultrasonic sensors
@@ -5,6 +6,8 @@
  *  @date 2020-02-10
  *  @copyright 2020 - NM Technologies
  */
+=======
+>>>>>>> 6d2f0b6a528d15a1baca09387d437afeabc6f23a
 
 /*--------------------------------------------------/
 /                   System Imports                  /
