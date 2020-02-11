@@ -1,11 +1,5 @@
-
 #ifndef DEF_ultraSonicController
 #define DEF_ultraSonicController
-
-/*ultrasonicController.hpp: Header File for ultrasonicController.cpp
-
-__author__      = "Mickey T Da Silva"
-__copyright__   = "Copy Right 2020. NM Technologies" */
 
 /*--------------------------------------------------/
 /                   System Imports                  /
@@ -38,18 +32,20 @@ typedef enum {US_echoPin_front,
 			  US_triggerPin} US_pinout;
 
 
+
 class sensorController{
 	public:
-		//ITOR
+		//! ITOR
 		sensorController();
 		
-		//DTOR
+		//! DTOR
 		~sensorController();
 
-		//Query
+		//! Query sensor for distance measurement
 		double getDistance(US_pinout selSensor);
 
 	private:
+		//! Container for driver interfaces with ultrasonic sensors
 		std::vector< HCxSR04 > US_sensorBank;
 };
 
