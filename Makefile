@@ -7,7 +7,7 @@ export BIN_DIR     = $(PROJ_DIR)/bin
 export OBJ_DIR     = $(PROJ_DIR)/Obj
 export INC_DIR     = $(PROJ_DIR)/inc
 export LIB_DIR     = $(PROJ_DIR)/lib
-export LIBPY_DIR     = $(PROJ_DIR)/lib_py
+export LIBPY_DIR   = $(PROJ_DIR)/lib_py
 export BLD_DIR     = $(PROJ_DIR)/bld
 export TST_DIR     = $(PROJ_DIR)/tst
 export CFLAGS      = -g -Wall -Wextra -I $(INC_DIR) \
@@ -24,3 +24,4 @@ all:
 clean:
 	rm -rf $(OBJ_DIR)/*.so
 	rm -rf $(BLD_DIR)/*
+	rm -rf $(LIBPY_DIR)/*pyc
