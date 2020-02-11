@@ -1,3 +1,12 @@
+/**
+ *  @file ultrasonicController.hpp
+ *  @brief Hardware abstraction header
+ *  @author Mickey T Da Silva
+ *  @date 2020-02-10
+ *  @copyright 2020 - NM Technologies
+ */
+
+
 #ifndef DEF_ultraSonicController
 #define DEF_ultraSonicController
 
