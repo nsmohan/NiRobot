@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /**
  *  @file ultrasonicController.cpp
  *  @brief Hardware abstraction for ultrasonic sensors
@@ -6,8 +5,6 @@
  *  @date 2020-02-10
  *  @copyright 2020 - NM Technologies
  */
-=======
->>>>>>> 6d2f0b6a528d15a1baca09387d437afeabc6f23a
 
 /*--------------------------------------------------/
 /                   System Imports                  /
@@ -46,18 +43,6 @@ std::vector<std::string> US_sensorNames = {"HCxSR04_Front",
 /*--------------------------------------------------/
 /                   Prototypes (Protos in header)   /
 /--------------------------------------------------*/
-/*! 
-	\page page1 testPage
-	\tableofcontents
-	Leading text.
-	\section sec1 Test Section
-	This is a test section
- 	\name 		Test Name
-	\author		Mickey T Da Silva
-	\copyright  2020 NM Technologies
-	\date 		2020-02-08
-	\brief 		Defines hardware abstraction for ultrasonic sensors
-*/
 sensorController::sensorController(){
 	//In     : N/A
     //Out    : N/A (CTOR)

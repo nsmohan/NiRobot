@@ -1,9 +1,11 @@
-/* CAM_CTRL.cpp: External Interface to allow for camera control. 
- *               User is able to move the motor (UP, DOWN,LEFT,RIGHT,HOME)
- *               HOME = 90/90
-
-__author__      = "Nitin Mohan
-__copyright__   = "Copy Right 2019. NM Technologies" */
+/** 
+ *  @file      camctrl.cpp
+ *  @brief     Program for commanding the motors to move
+ *  @details   A program designed to test the movement of the motors
+ *  @author    Nitin Mohan
+ *  @date      Feb 8, 2019
+ *  @copyright 2020 - NM Technologies
+ */
 
 /*--------------------------------------------------/
 /                   System Imports                  /
@@ -24,11 +26,13 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 /*--------------------------------------------------/
 /                   Macros                          /
 /--------------------------------------------------*/
+/** @def LOG_DIR Directory to the logger file */
 #define LOG_DIR "/var/log/NiRobot"
 
 /*--------------------------------------------------/
 /                   Global Vars                     /
 /--------------------------------------------------*/
+/** @var HOME_ANGLE Home Postion for motors */
 const double HOME_ANGLE = 90.00;
 
 /*--------------------------------------------------/
@@ -51,6 +55,11 @@ static CAM_MOTOR_CTRL_DIRECTIONS camera_control_dir_to_enum(std::string directio
 using namespace std;
 int main (int argc, char *argv[])
 {
+    /*!
+     *  @brief    Main function -> Takes user input and moves the motor
+     *            accordingly.
+     *  @return   status
+     */
 
     /*Initialize Variables */
     NMT_result result = OK;
@@ -81,7 +90,7 @@ int main (int argc, char *argv[])
         }
     }
 
-    /*Run Program*/
+    /* Run Program */
     NMT_log_init((char *)LOG_DIR, verbosity);
     result = camera_control_move_camera(dir_str_input);
 
@@ -90,15 +99,23 @@ int main (int argc, char *argv[])
 
 static void camera_control_print_usage(int es)
 {
+    /*!
+     *  @brief    Function to print Help Screen
+     *  parm[in]  es (Exit Status)
+     *  @return   status
+     */
+
     cout << "direction/d (UP,DOWN,LEFT,RIGHT,HOME) || -v verbosity || -h/help menu" << endl;
     exit(es);
 }
 
 static NMT_result camera_control_move_camera(string dir_str_input)
 {
-    //Input     : Direction String
-    //Output    : N/A
-    //Function  : Move camera according to the direction input provided
+    /*!
+     *  @brief     Move the camera as per direction input provided
+     *  @param[in] dir_str_input
+     *  @return    NMT_result
+     */
 
     /*Initialize Varibles */
     NMT_result result = OK;
