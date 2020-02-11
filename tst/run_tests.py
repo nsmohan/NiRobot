@@ -16,7 +16,7 @@ import fnmatch
 #---------------------------------------------------#
 #                   Constants                       #
 #---------------------------------------------------#
-TST_PATH    = "/home/nmohan/github/NiRobot/tst/"
+TST_PATH = "%s/"%(os.path.dirname(os.path.realpath(__file__)))
 
 #---------------Start of Program ------------------#
 class TestRunner(object):

@@ -23,7 +23,7 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 class HCxSR04
 {
   public:
-    HCxSR04(std::string hw_name, int trigger, int echo);
+    HCxSR04(std::string hw_name, int trigger, int echo, bool sim_mode);
     double distanceMeters;
     double distance();
 
