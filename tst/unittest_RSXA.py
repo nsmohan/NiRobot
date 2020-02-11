@@ -28,7 +28,7 @@ NOK = 1
 from lib_py.RSXA import RSXA_hw
 import NMT_log_test
 
-class NMT_RSXA_test(unittest.TestCase, ):
+class NMT_RSXA_test(unittest.TestCase):
     
     def setUp(self):
         self.rsxa = CDLL("Obj/libRSXA.so")
