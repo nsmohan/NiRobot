@@ -1,8 +1,11 @@
-/*NMT_stdlib.h:    Header for library of standard functions for 
- *                 NM Technologies
-
-__author__      = "Nitin Mohan
-__copyright__   = "Copy Right 2019. NM Technologies" */
+/** 
+ *  @file      NMT_stdlib.h
+ *  @brief     Standard Library functions for NMT Technologies Header
+ *  @details   External Interfaces for NMT_stdlib
+ *  @author    Nitin Mohan
+ *  @date      Feb 7, 2019
+ *  @copyright 2020 - NM Technologies
+ */
 
 #ifndef _NMT_stdlib_
 #define _NMT_stdlib_
@@ -12,9 +15,14 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
     extern "C" 
     {
         //------------------Structs & Enums----------------//
+
+        /** enum NMT_result
+         *  OK/NOK enumeration */
         typedef enum {OK, NOK} NMT_result;                              //Standard return of function
 
         //--------------Global Definitions----------------//
+        /** enum result_e2s
+         *  OK/NOK enum_to_string */
         const char *result_e2s[] = {"OK","NOK"};                        //Convert NMT_result to string
 
         //------------------Prototypes----------------------//
@@ -38,9 +46,13 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
     }
 #else
     //------------------Structs & Enums----------------//
+    /** enum NMT_result
+     *  OK/NOK enumeration */
     typedef enum {OK, NOK} NMT_result;                              //Standard return of function
 
     //--------------Global Definitions----------------//
+    /** enum result_e2s
+     *  OK/NOK enum_to_string */
     const char *result_e2s[] = {"OK","NOK"};                        //Convert NMT_result to string
 
     //------------------Prototypes----------------------//

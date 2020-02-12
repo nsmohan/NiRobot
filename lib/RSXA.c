@@ -167,6 +167,7 @@ static NMT_result RSXA_parse_json(char *data_to_parse, RSXA_hw *hw)
                 }
             }
         }
+
         if (key_found < (array_len * no_of_keys))
         {
             result = NOK;
@@ -178,8 +179,12 @@ static NMT_result RSXA_parse_json(char *data_to_parse, RSXA_hw *hw)
         NMT_log_write(ERROR, "Invalid array length (array_len=%d)", array_len);
     }
 
-    /* Exit the function */
+    /* Free Memory */
+    json_object_put(jobj);
+
     NMT_log_write(DEBUG, "< result: %s", result_e2s[result]);
+
+    /* Exit the function */
     return result;
 }
 

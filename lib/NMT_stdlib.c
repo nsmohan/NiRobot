@@ -1,8 +1,11 @@
-/*NMT_stdlib.c: Library of standard functions for 
- *                 NM Technologies
-
-__author__      = "Nitin Mohan
-__copyright__   = "Copy Right 2019. NM Technologies" */
+/** 
+ *  @file      NMT_stdlib.c
+ *  @brief     Standard Library functions for NMT Technologies
+ *  @details   Standard Facilities provided by NMT Technologies
+ *  @author    Nitin Mohan
+ *  @date      Feb 7, 2019
+ *  @copyright 2020 - NM Technologies
+ */
 
 /*--------------------------------------------------/
 /                   System Imports                  /
@@ -20,31 +23,41 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 
 NMT_result NMT_stdlib_read_file(char *filepath, char **file_content)
 {
-    //Input     : File Path, file_content pointer
-    //Output    : Return OK/NOK Status
-    //Function  : Read file and populate file_content with contents
+    /*!
+     *  @brief     Read a file and store contents in buffer
+     *  @param[in] filepath
+     *  @param[out] file_content
+     *  @return    NMT_result
+     */
 
     //Initialize Variables
     size_t file_size = 0;
+    int index = 0;
     FILE *fp;
     NMT_result result = OK;
 
     /* Get the file Size */
     file_size = NMT_stdlib_get_file_size(filepath);
 
-    //Allocate Memory
-    *file_content = (char *)malloc(sizeof(char)*file_size);
+    /* Store contents in a temp location */
+    char temp_file_content[file_size + 1];
+
 
     //Main Part of Function
     if (access(filepath, F_OK) != -1)
     {
         fp = fopen(filepath, "r");
-        fread(*file_content, sizeof(char), file_size, fp);
+        index = fread(temp_file_content, sizeof(char), file_size, fp);
+        temp_file_content[index] = '\0';
     }
     else
     {
         result = NOK;
     }
+
+    //Allocate Memory and store to contents to actual location
+    *file_content = (char *)malloc((sizeof(char) * strlen(temp_file_content)) + 1);
+    strcpy(*file_content, temp_file_content);
 
     //Close the file and Exit the Function
     fclose(fp);
@@ -53,6 +66,13 @@ NMT_result NMT_stdlib_read_file(char *filepath, char **file_content)
 
 void NMT_stdlib_write_file(char *filepath, char *file_content)
 {
+    /*!
+     *  @brief     Standard function for writing to a file
+     *  @param[in] filepath
+     *  @param[out] file_content
+     *  @return    NMT_result
+     */
+
     //Initialize Variables
     FILE *fp;
 
@@ -64,9 +84,15 @@ void NMT_stdlib_write_file(char *filepath, char *file_content)
 
 void NMT_stdlib_split(char *string, char *param, char ***item_array, int *no_of_items)
 {
-    //Input     : String and the value(s) to split from
-    //Output    : Array of of split strings and the number of strings
-    //Function  : Split string based on param(s) passed and return split array
+    /*!
+     *  @brief     Function to split string based on given parameter(s)
+     *             and store in to an array
+     *  @param[in] string
+     *  @param[in] param
+     *  @param[out] item_array
+     *  @param[out] no_of_items
+     *  @return    NMT_result
+     */
 
     //Initialize Variables
     char *str;
@@ -97,9 +123,13 @@ void NMT_stdlib_split(char *string, char *param, char ***item_array, int *no_of_
 
 int NMT_stdlib_count(char *string, char *param)
 {
-    //Input     : String and the value to look for in the string 
-    //Output    : Number of occurances of param in the string
-    //Function  : Count number of occurences of a parameter in the string passed
+    /*!
+     *  @brief     Count the number of occurances of a character
+     *             in a string
+     *  @param[in] string
+     *  @param[in] param
+     *  @return    no_of_matches
+     */
 
     //Initialize Variables
     int counter;
@@ -124,9 +154,11 @@ int NMT_stdlib_count(char *string, char *param)
 size_t NMT_stdlib_get_file_size(char *filepath)
 {
 
-    //Input     : Path of the file
-    //Output    : Size of file
-    //Function  : Return the size of the file
+    /*!
+     *  @brief     Get the size of the file in bytes
+     *  @param[in] filepath
+     *  @return    size
+     */
 
     //Initialize Variables
     size_t size; 

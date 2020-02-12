@@ -1,7 +1,11 @@
-/*NMT_log.c:    Library for logging support
-
-__author__      = "Nitin Mohan
-__copyright__   = "Copy Right 2019. NM Technologies" */
+/** 
+ *  @file      NMT_log.c
+ *  @brief     Logging Support
+ *  @details   Provides support for logging to the screen and/or file
+ *  @author    Nitin Mohan
+ *  @date      Feb 7, 2019
+ *  @copyright 2020 - NM Technologies
+ */
 
 /*--------------------------------------------------/
 /                   System Imports                  /
@@ -22,9 +26,13 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 
 NMT_result NMT_log_init_m(char *fname, char *log_dir, bool verbosity)
 {
-    //Input     : Path to input log configuration file and verbosity
-    //Output    : Result of init
-    //Function  : Initialize the logger_settings struct
+    /*!
+     *  @brief     Constructor for NMT_log
+     *  @param[in] fname
+     *  @param[in] log_dir
+     *  @param[in] verbosity
+     *  @return    NMT_result
+     */
     
     //Initialize Variables
     NMT_result result   = OK;
@@ -58,6 +66,15 @@ NMT_result NMT_log_init_m(char *fname, char *log_dir, bool verbosity)
 
 void NMT_log_write_m(int line_no, const char *func_name, log_level level, char *message, ...)
 {
+    /*!
+     *  @brief     Write log to file and/or screen
+     *  @param[in] line_no
+     *  @param[in] func_name
+     *  @param[in] level
+     *  @param[in] message
+     *  @return    void
+     */
+
     //Initialize Variables
     time_t  t       = time(NULL);
     struct  tm tm   = *localtime(&t);
