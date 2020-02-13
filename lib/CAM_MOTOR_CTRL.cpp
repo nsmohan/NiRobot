@@ -65,7 +65,7 @@ NMT_result Camera_Motor_Ctrl::CAM_MTR_CTRL_MOVE_CAMERA(CAM_MOTOR_CTRL_DIRECTIONS
     NMT_result result = OK;
     double     angle;
     bool       sim_mode;
-    bool       initialized;
+    bool       initialized = false;
 
 
     NMT_log_write(DEBUG, (char *)"> direction=%s, angle_to_move=%.2f, default_angle=%.2f",

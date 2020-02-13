@@ -94,6 +94,7 @@ int main (int argc, char *argv[])
     NMT_log_init((char *)LOG_DIR, verbosity);
     result = camera_control_move_camera(dir_str_input);
 
+    NMT_log_finish();
     return result;
 }
 

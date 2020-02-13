@@ -37,7 +37,8 @@ if __name__ == '__main__':
 
     #Parse arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('-p', '--pattern', required = True,  help = "-p/--pattern Enter test pattern")
+    parser.add_argument('-p', '--pattern', required=False, default="unittest_*.py",
+                        help = "-p/--pattern Enter test pattern")
     args = parser.parse_args()
 
     TestRunner(args.pattern)
