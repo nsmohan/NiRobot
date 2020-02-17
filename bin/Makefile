@@ -1,5 +1,5 @@
 #Makfile:        Makefile for bin directory
-#__author__      = "Nitin Mohan
+#__author__      = "Nitin Mohan"
 #__copyright__   = "Copy Right 2018. NM Technologies"
 
 #---------------------------------------#
@@ -25,9 +25,9 @@ camctrl_LIBS  = -lNMT_log \
                 -lCAM_MOTOR_CTRL
 
 get_distance_LIBS  = -lNMT_log \
-				   -lultrasonicController \
-				   -lNMT_stdlib \
-				   -lHCxSR04
+		     -lultrasonicController \
+		     -lNMT_stdlib \
+		     -lHCxSR04
 
 # -------Update output file name ---------#
 TARGET_BLDS := $(foreach BLD,$(BLDS),$(BLD_DIR)/$(BLD))
