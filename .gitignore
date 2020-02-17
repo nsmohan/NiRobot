@@ -1,4 +1,6 @@
-Obj/*
-figures/*
-designDocs/*
-
+Obj
+figures
+designDocs
+test/lib_py
+html
+latex
