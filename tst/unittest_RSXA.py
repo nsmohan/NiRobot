@@ -121,6 +121,11 @@ class NMT_RSXA_test(unittest.TestCase):
         result = self.rsxa.RSXA_get_mode(hw_name, byref(sim_mode), hw_settings_obj)
         self.assertEqual(result, NOK)
 
+
+    def test_debug(self):
+        hw_settings_obj = RSXA_hw()
+        result = self.rsxa.RSXA_init(byref(hw_settings_obj))
+
     def tearDown(self):
         os.system("cp %s %s"%(self.backup_file, RS_PATH))
         os.system("rm -rf %s"%self.backup_file)

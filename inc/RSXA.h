@@ -27,23 +27,50 @@
 #ifdef __cplusplus
     extern "C" 
     {
+        /** @typedef struct RSXA_pins
+         * Structure which holds hw interface info */
+        typedef struct RSXA_pins
+        {
+            /** @var pin_name
+             * Name of GPIO Pin */
+            char pin_name[20];
+
+            /** @var pin_no
+             *  Hardware Pin No */
+            int  pin_no;
+        } RSXA_pins;
+
         /*! @typedef struct RSXA_hw
          *  @brief Structure populated by RSXA_parse_json
          */
-        typedef struct RSXA_hw {
-
+        typedef struct RSXA_hw 
+        {
             /** @var hw_name
              *  @brief Hardware Name */
-            char **hw_name;
+            char hw_name[20];
 
             /** @var hw_sim_mode
              *  @brief True if in Simulation else False Name */
-            bool *hw_sim_mode;
+            bool hw_sim_mode;
 
-            /** @var array_len
-             *  @brief Number of items */
-            int  array_len;
+            /** @var hw_interface
+             *  Hardware Interface Definitions */
+            RSXA_pins *hw_interface;
+
         }RSXA_hw;
+
+        /** @typedef struct RSXA
+         * Root struct with all Robot Settings */
+        typedef struct RSXA
+        {
+            /** @var log_dir
+             *  Default Log Directory */
+            char log_dir[100];
+
+            /** @var hw
+             *  Contains all hardware settnigs */
+            RSXA_hw *hw;
+        }RSXA;
 
         /* External Interfaces Definitions */
         extern void RSXA_free_hw_struct_mem(RSXA_hw *hw);
@@ -53,23 +80,50 @@
                                         RSXA_hw hw);   
     }
 #else
+    /** @typedef struct RSXA_pins
+     * Structure which holds hw interface info */
+    typedef struct RSXA_pins
+    {
+        /** @var pin_name
+         * Name of GPIO Pin */
+        char pin_name[20];
+
+        /** @var pin_no
+         *  Hardware Pin No */
+        int  pin_no;
+    } RSXA_pins;
+
     /*! @typedef struct RSXA_hw
      *  @brief Structure populated by RSXA_parse_json
      */
-    typedef struct RSXA_hw {
-
+    typedef struct RSXA_hw 
+    {
         /** @var hw_name
          *  @brief Hardware Name */
-        char **hw_name;
+        char hw_name[20];
 
         /** @var hw_sim_mode
          *  @brief True if in Simulation else False Name */
-        bool *hw_sim_mode;
+        bool hw_sim_mode;
 
-        /** @var array_len
-         *  @brief Number of items */
-        int  array_len;
+        /** @var hw_interface
+         *  Hardware Interface Definitions */
+        RSXA_pins *hw_interface;
+
     }RSXA_hw;
+
+    /** @typedef struct RSXA
+     * Root struct with all Robot Settings */
+    typedef struct RSXA
+    {
+        /** @var log_dir
+         *  Default Log Directory */
+        char log_dir[100];
+
+        /** @var hw
+         *  Contains all hardware settnigs */
+        RSXA_hw *hw;
+    }RSXA;
 
     /* External Interfaces Definitions */
     extern void RSXA_free_hw_struct_mem(RSXA_hw *hw);
