@@ -31,6 +31,12 @@
 class HCxSR04
 {
   public:
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+    HCxSR04(std::string hw_name, int trigger, int echo, bool sim_mode);
+=======
+>>>>>>> dev
     /*!
      * @fn HCxSR04( std::string, int, bool ) 
      * @brief Constructor for Ultrasonic controller
@@ -46,6 +52,10 @@ class HCxSR04
      * @var distanceMeters
      * @brief Distance measured by ultrasonic sensor in units of \f$ [m] \f$
      */
+<<<<<<< HEAD
+=======
+>>>>>>> ultrasonicAbstraction
+>>>>>>> dev
     double distanceMeters;
     
     /*!

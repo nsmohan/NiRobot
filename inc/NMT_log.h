@@ -1,8 +1,11 @@
-/*NMT_log.h: Library of standard functions for 
- *                 NM Technologies
-
-__author__      = "Nitin Mohan
-__copyright__   = "Copy Right 2019. NM Technologies" */
+/** 
+ *  @file      NMT_log.h
+ *  @brief     Header for NMT_log.c
+ *  @details   External Interfaces for NMT_log
+ *  @author    Nitin Mohan
+ *  @date      Feb 7, 2019
+ *  @copyright 2020 - NM Technologies
+ */
 
 #ifndef _NMT_log_
 #define _NMT_log_
@@ -17,14 +20,44 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 /--------------------------------------------------*/
 #include "NMT_stdlib.h"
 
-//------------------Structs & Enums----------------//
-typedef enum {DEBUG, WARNING, ERROR} log_level;
 
 
-//------------------Prototypes----------------------//
 #ifdef __cplusplus
     extern "C" 
     {
+        //------------------Structs & Enums----------------//
+        /** @enum log_level
+         * Logging Levels Enumeration */
+        typedef enum {DEBUG, WARNING, ERROR} log_level;
+
+        /** @struct NMT_log_settings
+         *  Struct which holds log settings */
+        struct NMT_log_settings 
+        {
+            /** @var log_level
+             *  level for logging */
+            log_level log_level;
+
+            /** @var log_dir
+             *  logging Directory */
+            char      *log_dir;
+
+            /** @var file_name
+             *  Name of the log file */
+            char      *file_name;
+        };
+
+
+        /** @struct log_settings
+         *  log_settings global decleration */
+        struct NMT_log_settings log_settings;
+
+        /** @var log_level_e2s
+         *  Convert Enum to string for log_level */
+        const char* log_level_e2s[] = {"DEBUG", "WARNING", "ERROR"};
+
+        //------------------Prototypes----------------------//
+        extern void NMT_log_finish(void);
         extern NMT_result NMT_log_init_m(char *fname,           //In - Source file name
                                          char *log_dir,         //In - Directory to log in
                                          bool verbosity);       //In - Verbosity setting
@@ -35,18 +68,41 @@ typedef enum {DEBUG, WARNING, ERROR} log_level;
                                     char *message,              //In - Message to log
                                     ...) __attribute__ 
                                     ((format (printf, 4, 5)));
-        struct NMT_log_settings 
-        {
-            log_level log_level;
-            char      *log_dir;
-            char      *file_name;
-        };
-
-        //--------------Global Definitions----------------//
-        struct NMT_log_settings log_settings;
-        const char* log_level_e2s[] = {"DEBUG", "WARNING", "ERROR"};
     }
 #else
+    //------------------Structs & Enums----------------//
+    /** @enum log_level
+     * Logging Levels Enumeration */
+    typedef enum {DEBUG, WARNING, ERROR} log_level;
+
+    /** @struct NMT_log_settings
+     *  Struct which holds log settings */
+    struct NMT_log_settings 
+    {
+        /** @var log_level
+         *  level for logging */
+        log_level log_level;
+
+        /** @var log_dir
+         *  logging Directory */
+        char      *log_dir;
+
+        /** @var file_name
+         *  Name of the log file */
+        char      *file_name;
+    };
+
+
+    /** @struct log_settings
+     *  log_settings global decleration */
+    struct NMT_log_settings log_settings;
+
+    /** @var log_level_e2s
+     *  Convert Enum to string for log_level */
+    const char* log_level_e2s[] = {"DEBUG", "WARNING", "ERROR"};
+
+    //------------------Prototypes----------------------//
+    extern void NMT_log_finish(void);
     extern NMT_result NMT_log_init_m(char *fname,           //In - Source file name
                                      char *log_dir,         //In - Directory to log in
                                      bool verbosity);       //In - Verbosity setting
@@ -57,21 +113,15 @@ typedef enum {DEBUG, WARNING, ERROR} log_level;
                                 char *message,              //In - Message to log
                                 ...) __attribute__ 
                                 ((format (printf, 4, 5)));
-    struct NMT_log_settings 
-    {
-        log_level log_level;
-        char      *log_dir;
-        char      *file_name;
-    };
-
-    //--------------Global Definitions----------------//
-    struct NMT_log_settings log_settings;
-    const char* log_level_e2s[] = {"DEBUG", "WARNING", "ERROR"};
-
 #endif
 
 //--------------------Macros---------------------//
+/** @def NMT_log_init
+ *  Macro definition. See NMT_log_init_m */
 #define NMT_log_init(...)  NMT_log_init_m(__FILE__, __VA_ARGS__)
+
+/** @def NMT_log_write
+ *  Macro definition. See NMT_log_write_m */
 #define NMT_log_write(...) NMT_log_write_m(__LINE__, __func__,  __VA_ARGS__) 
 
 #endif
