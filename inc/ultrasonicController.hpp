@@ -33,32 +33,52 @@
 /                   Data Definitions                 /
 /--------------------------------------------------*/
 typedef enum {US_echoPin_front, 
-			  US_echoPin_back, 
+              US_echoPin_back, 
               US_echoPin_left, 
               US_echoPin_right,
-			  US_triggerPin} US_pinout;
+              US_triggerPin} US_pinout;
 
-
+/*!
+ * @class sensorController
+ * @brief Abstraction for HCxSR04 ultrasonic sensors
+ * 
+ */
+class sensorController{
 
  
-class sensorController{
-	public:
-		//! ITOR
-		sensorController();
+	public:        
+        /*!
+         * @fn sensorController( bool ) 
+         * @brief Container for ultrasonic sensors
+         * @param[in] sim_mode      Simulation mode for ultrasonic sensors (true == Simulated, false == real)
+         * @return Constructed object
+         */
+		sensorController(bool sim_mode);
 		
-		//! DTOR
+        /*!
+         * @fn ~sensorController( bool ) 
+         * @brief Empty destructor for ultrasonic sensor
+         */
 		~sensorController();
 
-		//! Query
+        /*!
+         * @fn sensorController( bool ) 
+         * @brief Container for ultrasonic sensors
+         * @param[in] sim_mode      Simulation mode for ultrasonic sensors (true == Simulated, false == real)
+         * @return Constructed object
+         */
 		double getDistance(US_pinout selSensor);
 
 	private:
+    
+        /*!
+         * @var US_sensorBank
+         * @brief Container for ultrasonic sensors
+         */
+
 		std::vector< HCxSR04 > US_sensorBank;
 };
 
-/*--------------------------------------------------/
-/                   Prototypes                      /
-/--------------------------------------------------*/
 
 
 

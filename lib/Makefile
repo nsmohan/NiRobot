@@ -69,7 +69,7 @@ HCxSR04_LIBS        = -lNMT_log \
                       -lrt
                 
 ultrasonicController_LIBS 		= -lNMT_log \
-								  -lNMT_stdlib
+					  -lNMT_stdlib
 
 # -------Update output file name ---------#
 TARGET_OBJS := $(foreach OBJ,$(OBJS),$(OBJ_DIR)/lib$(OBJ))
