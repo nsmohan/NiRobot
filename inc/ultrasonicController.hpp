@@ -39,8 +39,8 @@ typedef enum {US_echoPin_front,
 			  US_triggerPin} US_pinout;
 
 
-<<<<<<< HEAD
 
+ 
 class sensorController{
 	public:
 		//! ITOR
@@ -49,21 +49,7 @@ class sensorController{
 		//! DTOR
 		~sensorController();
 
-		//! Query sensor for distance measurement
-		double getDistance(US_pinout selSensor);
-
-	private:
-		//! Container for driver interfaces with ultrasonic sensors
-=======
-class sensorController{
-	public:
-		//ITOR
-		sensorController();
-		
-		//DTOR
-		~sensorController();
-
-		//Query
+		//! Query
 		double getDistance(US_pinout selSensor);
 
 	private:
