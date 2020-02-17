@@ -53,7 +53,8 @@ sensorController::sensorController(){
 		//Emplace Sensors
 		this->US_sensorBank.emplace_back( HCxSR04(US_sensorNames[iSensor], 
 												  iSensor, 
-												  US_triggerPin ) 
+												  US_triggerPin,
+                                                  false ) 
 										);  
     }	
 	
