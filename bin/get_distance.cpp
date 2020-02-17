@@ -1,7 +1,11 @@
-/* get_distance.cpp: External Interface to query ultrasonic sensors to get distance data. 
-
-__author__      = "Mickey T Da Silva"
-__copyright__   = "Copyright 2020. NM Technologies" */
+/** 
+ *  @file       get_distance.cpp
+ *  @brief     Program for acquiring ultrasonic sensor data
+ *  @details   A program designed to test the ultrasonic sensors
+ *  @author    Mickey T Da Silva
+ *  @date      Feb 17, 2020
+ *  @copyright 2020 - NM Technologies
+ */
 
 /*--------------------------------------------------/
 /                   System Imports                  /
@@ -9,17 +13,14 @@ __copyright__   = "Copyright 2020. NM Technologies" */
 #include <iostream>
 #include <string>
 #include <vector>
-
 #include "getopt.h"
 #include "unistd.h"
-
 /*--------------------------------------------------/
 /                   Local Imports                   /
 /--------------------------------------------------*/
 #include "ultrasonicController.hpp"
 #include "NMT_stdlib.h"
 #include "NMT_log.h"
-
 /*--------------------------------------------------/
 /                   Macros                          /
 /--------------------------------------------------*/
@@ -41,34 +42,34 @@ static struct option long_options[] =
 {
     {"sensor",               required_argument, NULL, 's'},
     {"help",                 no_argument,       NULL,  0},
+    {"sim_mode",             no_argument,       NULL, 'S'},
     {NULL, 0, NULL, 0}
 };
 
 /*--------------------------------------------------/
 /                   Prototypes                      /
 /--------------------------------------------------*/
-static NMT_result sensorControl_querySensors(std::string selSensor, double* returnedDistance, bool verbosity);
+static NMT_result sensorControl_querySensors(std::string selSensor, double* returnedDistance, bool verbosity, bool sim_mode);
 static US_pinout US_queryStrToEnum( std::string command, bool verbosity );
 static void US_ctrl_print_usage(int es);
 
-
 int main( int argc, char** argv ){
-
-    //Input     : Direction String
-    //Output    : Direction ENUM
-    //Function  : Convert direction string to enum
-
-
-    /*Initialize Variables */
+    /*!
+     *  @brief    Main function -> Takes user input and logs distance from queried sensor
+     *  @return   status
+     */
+    
     NMT_result 	result = OK;
     bool       	verbosity = false;
     int        	longindex = 0;
     int        	opt;
+    bool        sim_mode = false;;
+
     double returnedDistance;
     string queriedSensor; 
 
 
-	while ((opt = getopt_long(argc, argv, "s:hv", long_options, &longindex)) != -1){
+	while ((opt = getopt_long(argc, argv, "s:hvS", long_options, &longindex)) != -1){
         switch (opt){
             case 's':
                 queriedSensor = optarg;
@@ -81,6 +82,10 @@ int main( int argc, char** argv ){
                 cout << "Help Menu" << endl;
                 US_ctrl_print_usage(0);
                 break;
+            case 'S':
+                cout << "Running in SIM_MODE................." << endl;
+                sim_mode = true;
+                break;
             case '?':
                 cout << "Unknown Argument Provided" << endl;
                 US_ctrl_print_usage(0);
@@ -90,7 +95,7 @@ int main( int argc, char** argv ){
     
     /* RUN PROGRAM */
     NMT_log_init((char *)LOG_DIR, verbosity);
-    result = sensorControl_querySensors(queriedSensor, &returnedDistance, verbosity);
+    result = sensorControl_querySensors(queriedSensor, &returnedDistance, verbosity, sim_mode);
     NMT_log_write(DEBUG, (char *)"< distance=%f", returnedDistance);
 
 	NMT_log_finish();
@@ -102,11 +107,11 @@ static void US_ctrl_print_usage(int es){
     //Output    : N/A
     //Function  : Print usage text to console and exit gracefully
 
-    std::cout << "Sensor/d (Front/Back/Left/Right) || -v verbosity || -h/help menu" << std::endl;
+    std::cout << "Sensor/d (Front/Back/Left/Right) || -v verbosity || -h help menu || -S sim_mode" << std::endl;
     exit( es );
 }
 
-static NMT_result sensorControl_querySensors( string s_selSensor, double* returnedDistance, bool verbosity ){
+static NMT_result sensorControl_querySensors( string s_selSensor, double* returnedDistance, bool verbosity, bool sim_mode ){
 	//Input     : String with sensor choice
     //Output    : N/A
     //Function  : Command sensor to take distance data
@@ -117,7 +122,7 @@ static NMT_result sensorControl_querySensors( string s_selSensor, double* return
 	US_pinout queriedSensor;
 	
 	/* Create sensor object */
-	sensorController sensorBank; 
+	sensorController sensorBank( sim_mode ); 
 	
 	NMT_log_write(DEBUG, (char *)"> US_sensor=%s", s_selSensor.c_str());
 	
