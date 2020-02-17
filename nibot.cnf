@@ -68,15 +68,7 @@ OUTPUT_DIRECTORY       =
 # performance problems for the file system.
 # The default value is: NO.
 
-<<<<<<< HEAD
 CREATE_SUBDIRS         = YES
-=======
-<<<<<<< HEAD
-CREATE_SUBDIRS         = NO
-=======
-CREATE_SUBDIRS         = YES
->>>>>>> ultrasonicAbstraction
->>>>>>> dev
 
 # If the ALLOW_UNICODE_NAMES tag is set to YES, doxygen will allow non-ASCII
 # characters to appear in the names of generated files. If set to NO, non-ASCII
@@ -179,15 +171,7 @@ STRIP_FROM_PATH        =
 # specify the list of include paths that are normally passed to the compiler
 # using the -I flag.
 
-<<<<<<< HEAD
 STRIP_FROM_INC_PATH    = inc/
-=======
-<<<<<<< HEAD
-STRIP_FROM_INC_PATH    = -I inc/
-=======
-STRIP_FROM_INC_PATH    = inc/
->>>>>>> ultrasonicAbstraction
->>>>>>> dev
 
 # If the SHORT_NAMES tag is set to YES, doxygen will generate much shorter (but
 # less readable) file names. This can be useful is your file systems doesn't
@@ -451,15 +435,8 @@ LOOKUP_CACHE_SIZE      = 0
 # normally produced when WARNINGS is set to YES.
 # The default value is: NO.
 
-<<<<<<< HEAD
 EXTRACT_ALL            = YES
-=======
-<<<<<<< HEAD
-EXTRACT_ALL            = NO
-=======
-EXTRACT_ALL            = YES
->>>>>>> ultrasonicAbstraction
->>>>>>> dev
+
 
 # If the EXTRACT_PRIVATE tag is set to YES, all private members of a class will
 # be included in the documentation.
@@ -814,15 +791,7 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-<<<<<<< HEAD
-INPUT                  = lib/ inc/ bin/ bld/ config/
-=======
-<<<<<<< HEAD
-INPUT                  = lib/ inc/
-=======
-INPUT                  = lib/ inc/ bin/ bld/ config/
->>>>>>> ultrasonicAbstraction
->>>>>>> dev
+INPUT                  = lib/ inc/ bin/ bld/ config/ tools/
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -896,15 +865,7 @@ FILE_PATTERNS          = *.c \
 # be searched for input files as well.
 # The default value is: NO.
 
-<<<<<<< HEAD
 RECURSIVE              = YES
-=======
-<<<<<<< HEAD
-RECURSIVE              = NO
-=======
-RECURSIVE              = YES
->>>>>>> ultrasonicAbstraction
->>>>>>> dev
 
 # The EXCLUDE tag can be used to specify files and/or directories that should be
 # excluded from the INPUT source files. This way you can easily exclude a
@@ -913,15 +874,7 @@ RECURSIVE              = YES
 # Note that relative paths are relative to the directory from which doxygen is
 # run.
 
-<<<<<<< HEAD
 EXCLUDE                = tst/
-=======
-<<<<<<< HEAD
-EXCLUDE                =
-=======
-EXCLUDE                = tst/
->>>>>>> ultrasonicAbstraction
->>>>>>> dev
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -2328,15 +2281,7 @@ GROUP_GRAPHS           = YES
 # The default value is: NO.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-<<<<<<< HEAD
 UML_LOOK               = YES
-=======
-<<<<<<< HEAD
-UML_LOOK               = NO
-=======
-UML_LOOK               = YES
->>>>>>> ultrasonicAbstraction
->>>>>>> dev
 
 # If the UML_LOOK tag is enabled, the fields and methods are shown inside the
 # class node. If there are many fields or methods and many nodes the graph may
@@ -2349,15 +2294,7 @@ UML_LOOK               = YES
 # Minimum value: 0, maximum value: 100, default value: 10.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-<<<<<<< HEAD
 UML_LIMIT_NUM_FIELDS   = 25
-=======
-<<<<<<< HEAD
-UML_LIMIT_NUM_FIELDS   = 10
-=======
-UML_LIMIT_NUM_FIELDS   = 25
->>>>>>> ultrasonicAbstraction
->>>>>>> dev
 
 # If the TEMPLATE_RELATIONS tag is set to YES then the inheritance and
 # collaboration graphs will show the relations between templates and their
@@ -2395,15 +2332,7 @@ INCLUDED_BY_GRAPH      = YES
 # The default value is: NO.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-<<<<<<< HEAD
 CALL_GRAPH             = YES
-=======
-<<<<<<< HEAD
-CALL_GRAPH             = NO
-=======
-CALL_GRAPH             = YES
->>>>>>> ultrasonicAbstraction
->>>>>>> dev
 
 # If the CALLER_GRAPH tag is set to YES then doxygen will generate a caller
 # dependency graph for every global function or class method.
@@ -2415,15 +2344,8 @@ CALL_GRAPH             = YES
 # The default value is: NO.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-<<<<<<< HEAD
 CALLER_GRAPH           = YES
-=======
-<<<<<<< HEAD
-CALLER_GRAPH           = NO
-=======
-CALLER_GRAPH           = YES
->>>>>>> ultrasonicAbstraction
->>>>>>> dev
+
 
 # If the GRAPHICAL_HIERARCHY tag is set to YES then doxygen will graphical
 # hierarchy of all classes instead of a textual one.
@@ -2468,15 +2390,7 @@ DOT_IMAGE_FORMAT       = png
 # The default value is: NO.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-<<<<<<< HEAD
 INTERACTIVE_SVG        = YES
-=======
-<<<<<<< HEAD
-INTERACTIVE_SVG        = NO
-=======
-INTERACTIVE_SVG        = YES
->>>>>>> ultrasonicAbstraction
->>>>>>> dev
 
 # The DOT_PATH tag can be used to specify the path where the dot tool can be
 # found. If left blank, it is assumed the dot tool can be found in the path.
