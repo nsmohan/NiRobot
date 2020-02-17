@@ -1,7 +1,11 @@
-/*HCxSR04_Driver.cpp: Driver for the Ultransonic Sensors (HC-SR04)
-
-__author__      = "Nitin Mohan
-__copyright__   = "Copy Right 2019. NM Technologies" */
+/** 
+ *  @file       HCxSR04.cpp
+ *  @brief     Implementation file for HCxSR04.cpp
+ *  @details   External interfaces to query ultrasonic sensors
+ *  @author    Nitin Mohan
+ *  @date      Feb 7, 2019
+ *  @copyright 2020 - NM Technologies
+ */
 
 /*--------------------------------------------------/
 /                   System Imports                  /
@@ -29,7 +33,6 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 using namespace std;
 HCxSR04::HCxSR04(string hw_name, int trigger, int echo, bool sim_mode)
 {
-    /* Constructor */
     this->trigger = trigger;
     this->echo = echo;
     this->hw_name = hw_name;
