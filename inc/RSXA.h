@@ -57,6 +57,10 @@
              *  Hardware Interface Definitions */
             RSXA_pins *hw_interface;
 
+            /** @var array_len_hw_int
+             *  No of hw interfaces */
+            int array_len_hw_int;
+
         }RSXA_hw;
 
         /** @typedef struct RSXA
@@ -70,14 +74,15 @@
             /** @var hw
              *  Contains all hardware settnigs */
             RSXA_hw *hw;
-        }RSXA;
+
+            /** @var array_len_hw
+             *  No of hw structs */
+            int array_len_hw;
+            }RSXA;
 
         /* External Interfaces Definitions */
-        extern void RSXA_free_hw_struct_mem(RSXA_hw *hw);
-        extern NMT_result RSXA_init(RSXA_hw *hw);
-        extern NMT_result RSXA_get_mode(char *hw_name, 
-                                        bool *sim_mode,
-                                        RSXA_hw hw);   
+        extern NMT_result RSXA_init(RSXA *RSXA_Object);
+        extern void RSXA_free_mem(RSXA *RSXA_Object);
     }
 #else
     /** @typedef struct RSXA_pins
@@ -110,6 +115,10 @@
          *  Hardware Interface Definitions */
         RSXA_pins *hw_interface;
 
+        /** @var array_len_hw_int
+         *  No of hw interfaces */
+        int array_len_hw_int;
+
     }RSXA_hw;
 
     /** @typedef struct RSXA
@@ -123,14 +132,14 @@
         /** @var hw
          *  Contains all hardware settnigs */
         RSXA_hw *hw;
+
+        /** @var array_len_hw
+         *  No of hw structs */
+        int array_len_hw;
     }RSXA;
 
     /* External Interfaces Definitions */
-    extern void RSXA_free_hw_struct_mem(RSXA_hw *hw);
-    extern NMT_result RSXA_init(RSXA_hw *hw);
-    extern NMT_result RSXA_get_mode(char *hw_name, 
-                                    bool *sim_mode,
-                                    RSXA_hw hw);
-
+    extern NMT_result RSXA_init(RSXA *RSXA_Object);
+    extern void RSXA_free_mem(RSXA *RSXA_Object);
 #endif
 #endif

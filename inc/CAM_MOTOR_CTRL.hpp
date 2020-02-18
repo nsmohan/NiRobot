@@ -75,7 +75,7 @@ class Camera_Motor_Ctrl
 
         /** @var hw_settings_obj
          * RSXA Settings structure */
-        RSXA_hw hw_settings_obj;
+        RSXA RSXA_Object;
 
         Camera_Motor_Ctrl();
         ~Camera_Motor_Ctrl();
