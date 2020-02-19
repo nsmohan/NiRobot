@@ -21,6 +21,7 @@ regdump_LIBS = -lNMT_stdlib \
                -lrt
 
 camctrl_LIBS  = -lNMT_log \
+                -lRSXA \
                 -lCAM_MOTOR_CTRL
 
 # -------Update output file name ---------#

@@ -20,7 +20,7 @@
 #include "MTDR.h"
 
 using namespace std;
-Camera_Motor_Ctrl::Camera_Motor_Ctrl()
+Camera_Motor_Ctrl::Camera_Motor_Ctrl(RSXA RSXA_Object)
 {
     /*!
      *  @brief    Constructor for Camera_Motor_Ctrl
@@ -31,10 +31,8 @@ Camera_Motor_Ctrl::Camera_Motor_Ctrl()
     this->horizontal_motor = CAM_HRZN_MTR;
     this->vertical_motor = CAM_VERT_MTR;
     this->settings = {0};
-    this->RSXA_Object = {0};
+    this->RSXA_Object = RSXA_Object;
 
-    /* Get Hardware Settings */
-    RSXA_init(&(this->RSXA_Object));
 }
 
 Camera_Motor_Ctrl::~Camera_Motor_Ctrl()
@@ -44,7 +42,6 @@ Camera_Motor_Ctrl::~Camera_Motor_Ctrl()
      *  @return   None
      */
 
-    RSXA_free_mem(&(this->RSXA_Object));
 }
 
 NMT_result Camera_Motor_Ctrl::CAM_MTR_CTRL_MOVE_CAMERA(CAM_MOTOR_CTRL_DIRECTIONS direction, 

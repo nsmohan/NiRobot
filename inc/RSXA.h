@@ -27,7 +27,7 @@
 #ifdef __cplusplus
     extern "C" 
     {
-        /** @typedef struct RSXA_pins
+        /** @struct RSXA_pins
          * Structure which holds hw interface info */
         typedef struct RSXA_pins
         {
@@ -40,7 +40,7 @@
             int  pin_no;
         } RSXA_pins;
 
-        /*! @typedef struct RSXA_hw
+        /*! @struct RSXA_hw
          *  @brief Structure populated by RSXA_parse_json
          */
         typedef struct RSXA_hw 
@@ -63,7 +63,7 @@
 
         }RSXA_hw;
 
-        /** @typedef struct RSXA
+        /** @struct RSXA
          * Root struct with all Robot Settings */
         typedef struct RSXA
         {
@@ -85,7 +85,7 @@
         extern void RSXA_free_mem(RSXA *RSXA_Object);
     }
 #else
-    /** @typedef struct RSXA_pins
+    /** @struct RSXA_pins
      * Structure which holds hw interface info */
     typedef struct RSXA_pins
     {
@@ -98,7 +98,7 @@
         int  pin_no;
     } RSXA_pins;
 
-    /*! @typedef struct RSXA_hw
+    /*! @struct RSXA_hw
      *  @brief Structure populated by RSXA_parse_json
      */
     typedef struct RSXA_hw 
@@ -121,7 +121,7 @@
 
     }RSXA_hw;
 
-    /** @typedef struct RSXA
+    /** @struct RSXA
      * Root struct with all Robot Settings */
     typedef struct RSXA
     {

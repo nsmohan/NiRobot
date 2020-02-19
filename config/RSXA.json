@@ -2,17 +2,17 @@
     "_comment" : "Robot Operation Settings",
     "log_dir"  : "/var/log/NiRobot",
     "hw": [{
-            "hw_name"    : "PCA9685_PWM_DRIVER",
-            "hw_sim_mode": true,
+            "hw_name"     : "PCA9685_PWM_DRIVER",
+            "hw_sim_mode" : true,
             "hw_interface": []
           },
           {
-            "hw_name"    : "LD27MG_MOTORS",
-            "hw_sim_mode": true,
+            "hw_name"     : "LD27MG_MOTORS",
+            "hw_sim_mode" : true,
             "hw_interface": []
           },
-          { "hw_name"    : "HCxSR04_Front",
-            "hw_sim_mode": true,
+          { "hw_name"     : "HCxSR04_Front",
+            "hw_sim_mode" : true,
             "hw_interface": [{ "pin_name": "echoPin",
                               "pin_no"  : 0
                             },
@@ -21,8 +21,8 @@
                              "pin_no"   : 4
                             }]
           },
-          { "hw_name"    : "HCxSR04_Back",
-            "hw_sim_mode": true,
+          { "hw_name"     : "HCxSR04_Back",
+            "hw_sim_mode" : true,
             "hw_interface": [{
                              "pin_name": "echoPin",
                              "pin_no"  : 1
@@ -32,8 +32,8 @@
                              "pin_no"   : 4
                             }]
           },
-          { "hw_name"    : "HCxSR04_Left",
-            "hw_sim_mode": true,
+          { "hw_name"     : "HCxSR04_Left",
+            "hw_sim_mode" : true,
             "hw_interface": [{
                              "pin_name": "echoPin",
                              "pin_no"  : 2
@@ -43,8 +43,8 @@
                              "pin_no"   : 4
                             }]
           },
-          { "hw_name"    : "HCxSR04_Right",
-            "hw_sim_mode": true,
+          { "hw_name"     : "HCxSR04_Right",
+            "hw_sim_mode" : true,
             "hw_interface": [{
                              "pin_name": "echoPin",
                              "pin_no"  : 3
