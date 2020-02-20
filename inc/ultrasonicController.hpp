@@ -32,6 +32,7 @@
 /*--------------------------------------------------/
 /                   Data Definitions                 /
 /--------------------------------------------------*/
+//! \todo Get these values from JSON file itself, reducing number of dependencies and allowing for differing sensor configurations
 typedef enum {US_echoPin_front, 
               US_echoPin_back, 
               US_echoPin_left, 
