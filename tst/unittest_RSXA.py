@@ -19,107 +19,164 @@ import sys
 #                   Constants                       #
 #---------------------------------------------------#
 RS_PATH     = "/etc/NiBot/RSXA.json"
-OK = 0
-NOK = 1
 
 #---------------------------------------------------#
 #                   Local Imports                   #
 #---------------------------------------------------#
-from lib_py.RSXA import RSXA_hw
+from lib_py.RSXA import RSXA
+from lib_py.RSXA import rsxa
+from lib_py.NMT_stdlib_py import NMT_result
 import NMT_log_test
 
 class NMT_RSXA_test(unittest.TestCase):
     
     def setUp(self):
-        self.rsxa = CDLL("Obj/libRSXA.so")
         self.backup_file = "%s.backup"%RS_PATH
         os.system("cp %s %s"%(RS_PATH, self.backup_file))
         NMT_log_test.NMT_log_test(__file__)
-        self.rsxa_file_obj = self.read_rsxa_file()
         print "Running Test:", self._testMethodName
     
-    def read_rsxa_file(self):
-        #Read contents of current config file
-        rsxa_file = open(RS_PATH, "r")
-        rsxa_file_obj = rsxa_file.read()
-        rsxa_file.close()
-        return rsxa_file_obj
-
-    def test_RSXA_get_mode_GW(self):
-        #Description - Verify Mode is correct with customer JSON File
+    def test_RSXA_init_GW(self):
+        #Description - Create custom RSXA.json file and confrim
+        #              that structures are populated properly
 
         #Initialize Variables
-        sim_mode  = c_bool()
-        hw_settings_obj = RSXA_hw()
+        RSXA_Object = RSXA()
 
         # -- Prepare Test -- #
-        test_data = [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False},
-                     {"hw_name": "UnitTest_HW2", "hw_sim_mode": True}]
-
-        #Inject test_data into file
-        rsxa_file_json = json.loads(self.rsxa_file_obj)
-        rsxa_file_json["hw"] = test_data
+        test_data = {"log_dir": "/test/test_file",
+                     "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False, 
+                             "hw_interface":[{"pin_name": "p1", "pin_no": 1}, 
+                                             {"pin_name": "p2", "pin_no": 2}]},
+                            {"hw_name": "UnitTest_HW2", "hw_sim_mode": True,
+                             "hw_interface": [{"pin_name": "p3", "pin_no": 3}, 
+                                              {"pin_name": "p4", "pin_no": 4}]},
+                            {"hw_name": "UnitTest_HW2", "hw_sim_mode": True,
+                             "hw_interface": []}]}
 
         with open(RS_PATH, "w") as n_rsxa_file:
-            json.dump(rsxa_file_json, n_rsxa_file)
+            json.dump(test_data, n_rsxa_file)
 
+        result = rsxa.RSXA_init(byref(RSXA_Object))
+        self.assertEqual(result, NMT_result.OK)
 
-        # -- Start of Actual Test -- #
+        # Check log_dir
+        self.assertEqual(test_data["log_dir"], RSXA_Object.log_dir)
 
-        #Initialze RSXA
-        result = self.rsxa.RSXA_init(byref(hw_settings_obj))
-        self.assertEqual(result, OK)
+        # Check hw structure 
+        for i in range(0, len(test_data["hw"])):
+            self.assertEqual(len(test_data["hw"]), RSXA_Object.array_len_hw)
+            self.assertEqual(test_data["hw"][i]["hw_name"], RSXA_Object.hw[i].hw_name)
+            self.assertEqual(test_data["hw"][i]["hw_sim_mode"], RSXA_Object.hw[i].hw_sim_mode)
+            for j in range(0, len(test_data["hw"][i]["hw_interface"])):
+                self.assertEqual(len(test_data["hw"][i]["hw_interface"]),
+                                 RSXA_Object.hw[i].array_len_hw_int)
+                self.assertEqual(test_data["hw"][i]["hw_interface"][j]["pin_name"],
+                                 RSXA_Object.hw[i].hw_interface[j].pin_name)
+                self.assertEqual(test_data["hw"][i]["hw_interface"][j]["pin_no"], 
+                                 RSXA_Object.hw[i].hw_interface[j].pin_no)
 
-        #Verify Sim mode by RSXA_get_mode
-        for data in test_data:
-            result = self.rsxa.RSXA_get_mode(data["hw_name"], byref(sim_mode), hw_settings_obj)
-            self.assertEqual(data["hw_sim_mode"], sim_mode.value)
-            self.assertEqual(result, OK)
-
-    def test_RSXA_get_mode_BW(self):
-        #Description - Verify Error is thrown when keys are incorrect
+    def test_RSXA_init_BW_1(self):
+        #Description - Verify result is NOK if log_dir key is missing
 
         #Initialize Variables
-        sim_mode  = c_bool()
-        hw_settings_obj = RSXA_hw()
+        RSXA_Object = RSXA()
 
-        test_data = [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False},
-                     {"hw_name": "UnitTest_HW2", "hw_sim_mode_BW": True}]
-
-        #Inject test_data into file
-        rsxa_file_json = json.loads(self.rsxa_file_obj)
-        rsxa_file_json["hw"] = test_data
+        # -- Prepare Test -- #
+        test_data = {"log_dirs": "/test/test_file",
+                     "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False, 
+                             "hw_interface":[{"pin_name": "p1", "pin_no": 1}]}]}
 
         with open(RS_PATH, "w") as n_rsxa_file:
-            json.dump(rsxa_file_json, n_rsxa_file)
+            json.dump(test_data, n_rsxa_file)
 
-        #Initialze RSXA and confirm result is NOK file has invalid key
-        result = self.rsxa.RSXA_init(byref(hw_settings_obj))
-        self.assertEqual(result, NOK)
+        result = rsxa.RSXA_init(byref(RSXA_Object))
+        self.assertEqual(result, NMT_result.NOK)
 
-    def test_RSXA_get_mode_BW_blank_array(self):
-        #Description - Verify Error is thrown when array is passed in is empty
+    def test_RSXA_init_BW_2(self):
+        #Description - Verify result is NOK if hw_name is missing
 
         #Initialize Variables
-        hw_settings_obj = RSXA_hw()
-        sim_mode  = c_bool()
-        test_data = []
-        hw_name       = "UnitTest_HW3"
+        RSXA_Object = RSXA()
 
-        #Inject test_data into file
-        rsxa_file_json = json.loads(self.rsxa_file_obj)
-        rsxa_file_json["hw"] = test_data
+        # -- Prepare Test -- #
+        test_data = {"log_dir": "/test/test_file",
+                     "hw": [{"hw_names": "UnitTest_HW1", "hw_sim_mode": False, 
+                             "hw_interface":[{"pin_name": "p1", "pin_no": 1}]}]} 
 
         with open(RS_PATH, "w") as n_rsxa_file:
-            json.dump(rsxa_file_json, n_rsxa_file)
-        
-        #Initialze RSXA -> Result is NOK as the array is blank
-        result = self.rsxa.RSXA_init(byref(hw_settings_obj))
-        self.assertEqual(result, NOK)
+            json.dump(test_data, n_rsxa_file)
 
-        #Verify Sim mode by RSXA_get_mode
-        result = self.rsxa.RSXA_get_mode(hw_name, byref(sim_mode), hw_settings_obj)
-        self.assertEqual(result, NOK)
+        result = rsxa.RSXA_init(byref(RSXA_Object))
+        self.assertEqual(result, NMT_result.NOK)
+
+    def test_RSXA_init_BW_3(self):
+        #Description - Verify result is NOK if hw_sim_mode is missing
+
+        #Initialize Variables
+        RSXA_Object = RSXA()
+
+        # -- Prepare Test -- #
+        test_data = {"log_dir": "/test/test_file",
+                     "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_modes": False, 
+                             "hw_interface":[{"pin_name": "p1", "pin_no": 1}]}]} 
+
+        with open(RS_PATH, "w") as n_rsxa_file:
+            json.dump(test_data, n_rsxa_file)
+
+        result = rsxa.RSXA_init(byref(RSXA_Object))
+        self.assertEqual(result, NMT_result.NOK)
+
+    def test_RSXA_init_BW_4(self):
+        #Description - Verify result is NOK if hw_interface is missing
+
+        #Initialize Variables
+        RSXA_Object = RSXA()
+
+        # -- Prepare Test -- #
+        test_data = {"log_dir": "/test/test_file",
+                     "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False, 
+                             "hw_interfaces":[{"pin_name": "p1", "pin_no": 1}]}]} 
+
+        with open(RS_PATH, "w") as n_rsxa_file:
+            json.dump(test_data, n_rsxa_file)
+
+        result = rsxa.RSXA_init(byref(RSXA_Object))
+        self.assertEqual(result, NMT_result.NOK)
+
+    def test_RSXA_init_BW_5(self):
+        #Description - Verify result is NOK if pin_names is missing
+
+        #Initialize Variables
+        RSXA_Object = RSXA()
+
+        # -- Prepare Test -- #
+        test_data = {"log_dir": "/test/test_file",
+                     "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False, 
+                             "hw_interface":[{"pin_names": "p1", "pin_no": 1}]}]} 
+
+        with open(RS_PATH, "w") as n_rsxa_file:
+            json.dump(test_data, n_rsxa_file)
+
+        result = rsxa.RSXA_init(byref(RSXA_Object))
+        self.assertEqual(result, NMT_result.NOK)
+
+    def test_RSXA_init_BW_5(self):
+        #Description - Verify result is NOK if pin_no is missing
+
+        #Initialize Variables
+        RSXA_Object = RSXA()
+
+        # -- Prepare Test -- #
+        test_data = {"log_dir": "/test/test_file",
+                     "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False, 
+                             "hw_interface":[{"pin_name": "p1", "pin_nos": 1}]}]} 
+
+        with open(RS_PATH, "w") as n_rsxa_file:
+            json.dump(test_data, n_rsxa_file)
+
+        result = rsxa.RSXA_init(byref(RSXA_Object))
+        self.assertEqual(result, NMT_result.NOK)
 
     def tearDown(self):
         os.system("cp %s %s"%(self.backup_file, RS_PATH))

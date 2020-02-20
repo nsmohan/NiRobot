@@ -20,7 +20,6 @@
 /--------------------------------------------------*/
 #include "RSXA.h"
 #include "NMT_stdlib.h"
-#include "NMT_log.h"
 
 /*--------------------------------------------------/
 /                   Macros                          /
@@ -30,12 +29,42 @@
 */
 #define RS_SETTINGS_PATH "/etc/NiBot/RSXA.json"
 
-//------------------Structs & Enums----------------//
+/*--------------------------------------------------/
+/                   Global Variables                /
+/--------------------------------------------------*/
+/** @var LOG_DIR
+ *  log_dir key */
+const char *LOG_DIR     = "log_dir";
+
+/** @var HW
+ *  hw key */
+const char *HW          = "hw";
+
+/** @var HW_NAME
+ *  hw_name key */
+const char *HW_NAME     = "hw_name";
+
+/** @var HW_SIM_MODE
+ *  hw_sim_mode key */
+const char *HW_SIM_MODE = "hw_sim_mode";
+
+/** @var HW_GPIO_PIN
+ *  hw_interface key */
+const char *HW_GPIO_PIN = "hw_interface";
+
+/** @var PIN_NAME
+ *  pin_name key */
+const char *PIN_NAME    = "pin_name";
+
+/** @var PIN_NO
+ *  pin_no key */
+const char *PIN_NO      = "pin_no";
 
 /*------------------Prototypes----------------------*/
-static NMT_result RSXA_parse_json(char *data_to_parse, RSXA_hw *hw);
+static NMT_result RSXA_parse_json(char *data_to_parse, RSXA *RSXA_Object);
+static NMT_result RSXA_find_key(json_object *in_obj, const char *key, json_object **out_obj);
 
-NMT_result RSXA_init(RSXA_hw *hw)
+NMT_result RSXA_init(RSXA *RSXA_Object)
 {
     /*!
      *  @brief     Read RSXA.json file and parse to RSXA_parse_json
@@ -44,7 +73,7 @@ NMT_result RSXA_init(RSXA_hw *hw)
      *  @return    NMT_result
      */
 
-    NMT_log_write(DEBUG, "> ");
+    printf("Initializing RSXA ..... \n");
 
     /* Initialize Variables */
     NMT_result result = OK;
@@ -54,157 +83,159 @@ NMT_result RSXA_init(RSXA_hw *hw)
     result = NMT_stdlib_read_file(RS_SETTINGS_PATH, &file_content);
 
     if (result == OK)
-        result = RSXA_parse_json(file_content, hw);
+        result = RSXA_parse_json(file_content, RSXA_Object);
 
     /* Free Used Memory */
     free(file_content);
 
     /* Exit the Function */
-    NMT_log_write(DEBUG, "< result: %s", result_e2s[result]);
+    printf("Parsed: %s and the result=%s \n", RS_SETTINGS_PATH, 
+                                              result_e2s[result]);
     return result;
 }
 
-NMT_result RSXA_get_mode(char *hw_name, bool *sim_mode, RSXA_hw hw)
+static NMT_result RSXA_find_key(json_object *in_obj, const char *key, json_object **out_obj)
 {
     /*!
-     *  @brief      Read the hw struct and determine the sim mode
-     *  @param[in]  hw
-     *  @param[in]  hw_name
-     *  @param[out] sim_mode
+     *  @brief      Wrapper function for json_object_object_get_ex
+     *  @param[in]  in_obj
+     *  @param[in]  key
+     *  @param[out] out_obj
      *  @return     NMT_result
      */
-
-    NMT_log_write(DEBUG, "> hw_name: %s", hw_name);
 
     /* Initialize Variables */
     NMT_result result = OK;
-    bool hw_name_found = false;
 
-        
-    /* Search for the hardware name of interest */
-    for (int i = 0; i < hw.array_len; i++)
+    if (!(json_object_object_get_ex(in_obj, key, &(*out_obj))))
     {
-        if (!strcmp(hw.hw_name[i], hw_name))
-        {
-            *sim_mode = hw.hw_sim_mode[i];
-            hw_name_found = true;
-            result = OK;
-            break;
-        }
-    }
-
-    if (!hw_name_found)
-    {
-        NMT_log_write(ERROR, "JSON data parse error");
         result = NOK;
+        printf("Parse Error! %s not found in %s \n", key, RS_SETTINGS_PATH);
     }
 
     /* Exit the function */
-    NMT_log_write(DEBUG, "< hw_name: %s sim_mode: %s result: %s",
-                  hw_name, btoa(sim_mode), result_e2s[result]);
-
     return result;
-
 }
 
-static NMT_result RSXA_parse_json(char *data_to_parse, RSXA_hw *hw)
+static NMT_result RSXA_parse_json(char *data_to_parse, RSXA *RSXA_Object)
 {
     /*!
-     *  @brief      Parse JSON data passed and populate the RSXA_hw struct
+     *  @brief      Parse JSON data passed and populate the RSXA Structure
      *  @param[in]  data_to_parse
-     *  @param[out] hw struct
+     *  @param[out] RSXA_Object
      *  @return     NMT_result
      */
 
-    NMT_log_write(DEBUG, "> ");
-
     /* Initialize Variables */
-    NMT_result result   = OK;
-    int array_len       = 0;
-    int key_found       = 0;
-    char *root_key      = "hw";
-    char *child_keys[2] = {"hw_sim_mode", "hw_name"};
-    int  no_of_keys     = sizeof(child_keys)/sizeof(child_keys[0]); 
-    struct json_object *jobj;
-    struct json_object *jvalue;
-    struct json_object *jobj_hw;
+    NMT_result result      = OK;
 
-    /* Parse json file_contents */
-    jobj = json_tokener_parse(data_to_parse);
-    json_object_object_get_ex(jobj, root_key, &jobj_hw);
+    /* Create json-c objects that will be needed */
+    struct json_object *rsxa_root_obj = {0};
+    struct json_object *jobj_hw = {0};
+    struct json_object *jobj_hw_v = {0};
+    struct json_object *jobj_hw_gpio = {0};
+    struct json_object *jobj_hw_gpio_v = {0};
+    struct json_object *jvalues = {0};
+    
+    /* Parse the file */
+    rsxa_root_obj = json_tokener_parse(data_to_parse);
 
-    /* Get Number of elements in the array */
-    array_len = json_object_array_length(jobj_hw);
-    array_len < 1 ? (result = NOK) : (result = OK);
+    /* Get the logger directory */
+    result = RSXA_find_key(rsxa_root_obj, LOG_DIR, &jvalues);
 
-    NMT_log_write(DEBUG, "Array Length: %d", array_len);
+    /* Copy log directory to struct */
+    if (result == OK) {strcpy(RSXA_Object->log_dir, json_object_get_string(jvalues));}
+
+    /* Get the hw object */
+    if (result == OK) {RSXA_find_key(rsxa_root_obj, HW, &jobj_hw);}
+
     if (result == OK)
     {
-        /* Allocate memory based on the array length */
-        hw->hw_name = (char **)malloc(sizeof(char *) * array_len);
-        hw->hw_sim_mode = (bool *)malloc(sizeof(bool) * array_len);
+        /* Get number of hw elements */
+        RSXA_Object->array_len_hw = json_object_array_length(jobj_hw);
 
-        /* Save array length to structure */
-        hw->array_len = array_len;
-       
-        /* Parse each element in the array and populate the structure */
-        for (int i = 0; i < array_len; i++)
+        if (RSXA_Object->array_len_hw < 1)
         {
-            jvalue = json_object_array_get_idx(jobj_hw, i);
-            json_object_object_foreach(jvalue, key, val)
-            {
-                NMT_log_write(DEBUG, "key found is: %s", key);
-                if (!strcmp(key, child_keys[0]))
-                {
-                    key_found += 1;
-                    hw->hw_sim_mode[i] = json_object_get_boolean(val);
-                }
-                else if (!strcmp(key, child_keys[1]))
-                {
-                    key_found += 1;
-                    hw->hw_name[i] = (char *)malloc(sizeof(char) * strlen(json_object_get_string(val)) + 1);
-                    strcpy(hw->hw_name[i], json_object_get_string(val));
-                }
-            }
-        }
-
-        if (key_found < (array_len * no_of_keys))
-        {
+            printf("Error! No elements found hw key \n");
             result = NOK;
-            NMT_log_write(ERROR, "Expecting to find keys %d but found %d", (array_len *no_of_keys), key_found);
         }
     }
-    else
+
+    if (result == OK)
     {
-        NMT_log_write(ERROR, "Invalid array length (array_len=%d)", array_len);
+        /* Allocate Memory for RSXA_hw */
+        RSXA_Object->hw = (RSXA_hw *)malloc(sizeof(RSXA_hw) * RSXA_Object->array_len_hw);
+
+        for (int i = 0; i < RSXA_Object->array_len_hw; i++)
+        {
+            jobj_hw_v = json_object_array_get_idx(jobj_hw, i);
+
+            /* Get and populate hw_name */
+            result = RSXA_find_key(jobj_hw_v, HW_NAME, &jvalues);
+
+            /* Copy hardware name to struct */
+            if (result == OK) {strcpy(RSXA_Object->hw[i].hw_name, json_object_get_string(jvalues));}
+
+            /* Get and populate hw_sim_mode */
+            if (result == OK) {result = RSXA_find_key(jobj_hw_v, HW_SIM_MODE, &jvalues);}
+
+            /* Copy the sim_mode to struct */
+            if (result == OK) {RSXA_Object->hw[i].hw_sim_mode = json_object_get_boolean(jvalues);}
+
+            /* Get hw_gpio elements */
+            if (result == OK) {result = RSXA_find_key(jobj_hw_v, HW_GPIO_PIN, &jobj_hw_gpio);}
+
+            /* Get number of hw_gpio elements */
+            if (result == OK) {RSXA_Object->hw[i].array_len_hw_int = json_object_array_length(jobj_hw_gpio);}
+
+            /* Proceed if array_len_hw_int has elements */
+            if ((result == OK) && (RSXA_Object->hw[i].array_len_hw_int > 0))
+            {
+                /* Allocate Memory for RSXA_pins struct */
+                RSXA_Object->hw[i].hw_interface = 
+                    (RSXA_pins *)malloc(sizeof(RSXA_pins) * RSXA_Object->hw[i].array_len_hw_int);
+
+                for (int j = 0; j < RSXA_Object->hw[i].array_len_hw_int; j++)
+                {
+                    jobj_hw_gpio_v = json_object_array_get_idx(jobj_hw_gpio, j);
+
+                    /* Get the pin number */
+                    result = RSXA_find_key(jobj_hw_gpio_v, PIN_NO, &jvalues);
+
+                    /* Copy Pin number */
+                    if (result == OK)
+                        RSXA_Object->hw[i].hw_interface[j].pin_no = json_object_get_int(jvalues);
+
+                    if (result == OK) {result = RSXA_find_key(jobj_hw_gpio_v, PIN_NAME, &jvalues);} 
+
+                    /* Get the pin name */
+                    if (result == OK) 
+                        strcpy(RSXA_Object->hw[i].hw_interface[j].pin_name, json_object_get_string(jvalues));
+                   }
+                }
+             }
     }
 
     /* Free Memory */
-    json_object_put(jobj);
-
-    NMT_log_write(DEBUG, "< result: %s", result_e2s[result]);
+    json_object_put(rsxa_root_obj);
 
     /* Exit the function */
     return result;
 }
 
-void RSXA_free_hw_struct_mem(RSXA_hw *hw)
+void RSXA_free_mem(RSXA *RSXA_Object)
 {
      /*!
-     *  @brief      Free RSXA_hw object memory
-     *  @param[in]  hw
+     *  @brief      Free RSXA_Object
+     *  @param[in]  RSXA_Object
      *  @return     void
      */
-    
-    NMT_log_write(DEBUG, ">");
 
-    /* Free the Memory */
-    for (int i = 0; i < hw->array_len; i++)
+    for (int i = 0; i < RSXA_Object->array_len_hw; i++)
     {
-        free(hw->hw_name[i]);
+        if (RSXA_Object->hw[i].array_len_hw_int > 0)
+            free(RSXA_Object->hw[i].hw_interface);
     }
-    free(hw->hw_name);
-    free(hw->hw_sim_mode);
 
-    NMT_log_write(DEBUG, "<");
+    free(RSXA_Object->hw);
 }

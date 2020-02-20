@@ -12,6 +12,16 @@ __copyright__          = "Copy Right 2019. NM Technologies"
 import sys
 import os
 import select
+from ctypes import *
+
+#Create NMT_stdlib Python Object
+NMT_stdlib = CDLL("Obj/libNMT_stdlib.so")
+
+#NMT_result ENUM
+class NMT_result():
+    __slots__ = ('OK', 'NOK')
+    OK = 0
+    NOK = 1
 
 class stdout_redirect(object):
 

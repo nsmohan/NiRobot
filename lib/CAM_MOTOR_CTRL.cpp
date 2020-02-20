@@ -11,7 +11,7 @@
 /                   System Imports                  /
 /--------------------------------------------------*/
 #include <iostream>
-#include <string>
+#include <cstring>
 
 /*--------------------------------------------------/
 /                   Local Imports                   /
@@ -20,7 +20,7 @@
 #include "MTDR.h"
 
 using namespace std;
-Camera_Motor_Ctrl::Camera_Motor_Ctrl()
+Camera_Motor_Ctrl::Camera_Motor_Ctrl(RSXA RSXA_Object)
 {
     /*!
      *  @brief    Constructor for Camera_Motor_Ctrl
@@ -31,10 +31,8 @@ Camera_Motor_Ctrl::Camera_Motor_Ctrl()
     this->horizontal_motor = CAM_HRZN_MTR;
     this->vertical_motor = CAM_VERT_MTR;
     this->settings = {0};
-    this->hw_settings_obj = {0};
+    this->RSXA_Object = RSXA_Object;
 
-    /* Get Hardware Settings */
-    RSXA_init(&(this->hw_settings_obj));
 }
 
 Camera_Motor_Ctrl::~Camera_Motor_Ctrl()
@@ -44,7 +42,6 @@ Camera_Motor_Ctrl::~Camera_Motor_Ctrl()
      *  @return   None
      */
 
-    RSXA_free_hw_struct_mem(&(this->hw_settings_obj));
 }
 
 NMT_result Camera_Motor_Ctrl::CAM_MTR_CTRL_MOVE_CAMERA(CAM_MOTOR_CTRL_DIRECTIONS direction, 
@@ -72,7 +69,14 @@ NMT_result Camera_Motor_Ctrl::CAM_MTR_CTRL_MOVE_CAMERA(CAM_MOTOR_CTRL_DIRECTIONS
                   DIRECTION_TO_STR[direction].c_str(), angle_to_move, default_angle);
 
     /* Check if we're in simulation mode */
-    result = RSXA_get_mode((char *)PCA9685_HW_NAME, &sim_mode, this->hw_settings_obj);
+    for (int i = 0; i < this->RSXA_Object.array_len_hw; i++)
+    {
+       if (strcmp(PCA9685_HW_NAME, this->RSXA_Object.hw[i].hw_name) == 0)
+       {
+           sim_mode = this->RSXA_Object.hw[i].hw_sim_mode;
+       } 
+    }
+
     NMT_log_write(DEBUG, (char *)"hw_name=%s sim_mode=%s", 
                   PCA9685_HW_NAME, btoa(sim_mode));
 

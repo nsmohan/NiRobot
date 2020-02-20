@@ -26,12 +26,13 @@ from datetime import datetime
 #                   Local Imports                   #
 #---------------------------------------------------#
 from lib_py import NMT_stdlib_py
+from lib_py.NMT_stdlib_py import NMT_stdlib
 from lib_py.NMT_log import logger
 
 class NMT_stdlib_test(unittest.TestCase):
     
     def setUp(self):
-        self.NMT_stdlib = CDLL("Obj/libNMT_stdlib.so")
+        pass
 
     def test_NMT_stdlib_count(self):
 
@@ -48,7 +49,7 @@ class NMT_stdlib_test(unittest.TestCase):
             no_of_param_c  = 0
             no_of_param_py = 0
 
-            no_of_param_c  = self.NMT_stdlib.NMT_stdlib_count(sp[0], sp[1])
+            no_of_param_c  = NMT_stdlib.NMT_stdlib_count(sp[0], sp[1])
             for p in sp[1]:
                 no_of_param_py += sp[0].count(p)
 
@@ -81,7 +82,7 @@ class NMT_stdlib_test(unittest.TestCase):
             split_param_struct = split_param_struct[:-1]
             split_string_array += re.split(split_param_struct, sp[0])
 
-            self.NMT_stdlib.NMT_stdlib_split(sp[0], sp[1], byref(item_array), byref(no_of_items))
+            NMT_stdlib.NMT_stdlib_split(sp[0], sp[1], byref(item_array), byref(no_of_items))
             for i in range(0, no_of_items.value):
                 for j in range(0, len(split_string_array[i])):
                     c_string += item_array[i][j]
@@ -107,7 +108,7 @@ class NMT_stdlib_test(unittest.TestCase):
         f.close()
 
         #Test Execution
-        file_size = self.NMT_stdlib.NMT_stdlib_get_file_size(file_name)
+        file_size = NMT_stdlib.NMT_stdlib_get_file_size(file_name)
         self.assertEqual(file_size, len(file_content))
 
     def test_NMT_stdlib_read_file(self):
@@ -127,7 +128,7 @@ class NMT_stdlib_test(unittest.TestCase):
         f.close()
 
         #Test Execution
-        self.NMT_stdlib.NMT_stdlib_read_file(file_name, byref(file_content))
+        NMT_stdlib.NMT_stdlib_read_file(file_name, byref(file_content))
         for i in range(0, len(test_string)):
             c_string += file_content[i]
 
@@ -144,7 +145,7 @@ class NMT_stdlib_test(unittest.TestCase):
         write_string = "Testing the NMT_stdlib_write_function"
 
         #Invoke the function
-        self.NMT_stdlib.NMT_stdlib_write_file(file_name, write_string)
+        NMT_stdlib.NMT_stdlib_write_file(file_name, write_string)
 
         #Get Actual Results
         f = open(file_name, "r")

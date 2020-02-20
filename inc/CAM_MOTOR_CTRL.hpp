@@ -75,9 +75,9 @@ class Camera_Motor_Ctrl
 
         /** @var hw_settings_obj
          * RSXA Settings structure */
-        RSXA_hw hw_settings_obj;
+        RSXA RSXA_Object;
 
-        Camera_Motor_Ctrl();
+        Camera_Motor_Ctrl(RSXA RSXA_Object);
         ~Camera_Motor_Ctrl();
 
         NMT_result CAM_MTR_CTRL_MOVE_CAMERA(CAM_MOTOR_CTRL_DIRECTIONS direction, 

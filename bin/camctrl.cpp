@@ -22,12 +22,11 @@
 #include "NMT_stdlib.h"
 #include "NMT_log.h"
 #include "MTDR.h"
+#include "RSXA.h"
 
 /*--------------------------------------------------/
 /                   Macros                          /
 /--------------------------------------------------*/
-/** @def LOG_DIR Directory to the logger file */
-#define LOG_DIR "/var/log/NiRobot"
 
 /*--------------------------------------------------/
 /                   Global Vars                     /
@@ -49,7 +48,7 @@ static struct option long_options[] =
 /                   Prototypes                      /
 /--------------------------------------------------*/
 static void camera_control_print_usage(int es);
-static NMT_result camera_control_move_camera(std::string direction);
+static NMT_result camera_control_move_camera(std::string direction, RSXA RSXA_Object);
 static CAM_MOTOR_CTRL_DIRECTIONS camera_control_dir_to_enum(std::string direction);
 
 using namespace std;
@@ -62,6 +61,7 @@ int main (int argc, char *argv[])
      */
 
     /*Initialize Variables */
+    RSXA       RSXA_Object = {0};
     NMT_result result = OK;
     bool       verbosity = false;
     int        longindex = 0;
@@ -90,11 +90,22 @@ int main (int argc, char *argv[])
         }
     }
 
-    /* Run Program */
-    NMT_log_init((char *)LOG_DIR, verbosity);
-    result = camera_control_move_camera(dir_str_input);
 
-    NMT_log_finish();
+    /* Get Hardware Settings */
+    result = RSXA_init(&RSXA_Object);
+
+    if (result == OK)
+    {
+        /* Initialize the Logger */
+        NMT_log_init((char *)RSXA_Object.log_dir, verbosity);
+
+        /* Run Program */
+        result = camera_control_move_camera(dir_str_input, RSXA_Object);
+
+        RSXA_free_mem(&RSXA_Object);
+        NMT_log_finish();
+    }
+
     return result;
 }
 
@@ -110,7 +121,7 @@ static void camera_control_print_usage(int es)
     exit(es);
 }
 
-static NMT_result camera_control_move_camera(string dir_str_input)
+static NMT_result camera_control_move_camera(string dir_str_input, RSXA RSXA_Object)
 {
     /*!
      *  @brief     Move the camera as per direction input provided
@@ -118,14 +129,14 @@ static NMT_result camera_control_move_camera(string dir_str_input)
      *  @return    NMT_result
      */
 
+    NMT_log_write(DEBUG, (char *)"> direction=%s", dir_str_input.c_str());
+
     /*Initialize Varibles */
     NMT_result result = OK;
     CAM_MOTOR_CTRL_DIRECTIONS direction;
 
     /* Init Camera Object */
-    Camera_Motor_Ctrl camera_control;
-
-    NMT_log_write(DEBUG, (char *)"> direction=%s", dir_str_input.c_str());
+    Camera_Motor_Ctrl camera_control(RSXA_Object);
 
     if (dir_str_input.compare("HOME") != 0)
     {
