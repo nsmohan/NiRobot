@@ -25,9 +25,9 @@ camctrl_LIBS  = -lNMT_log \
                 -lCAM_MOTOR_CTRL
 
 get_distance_LIBS  = -lNMT_log \
-		     -lultrasonicController \
-		     -lNMT_stdlib \
-		     -lHCxSR04
+					 -lultrasonicController \
+					 -lNMT_stdlib \
+					 -lHCxSR04
 
 # -------Update output file name ---------#
 TARGET_BLDS := $(foreach BLD,$(BLDS),$(BLD_DIR)/$(BLD))
