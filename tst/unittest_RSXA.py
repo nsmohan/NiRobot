@@ -19,19 +19,18 @@ import sys
 #                   Constants                       #
 #---------------------------------------------------#
 RS_PATH     = "/etc/NiBot/RSXA.json"
-OK = 0
-NOK = 1
 
 #---------------------------------------------------#
 #                   Local Imports                   #
 #---------------------------------------------------#
 from lib_py.RSXA import RSXA
+from lib_py.RSXA import rsxa
+from lib_py.NMT_stdlib_py import NMT_result
 import NMT_log_test
 
 class NMT_RSXA_test(unittest.TestCase):
     
     def setUp(self):
-        self.rsxa = CDLL("Obj/libRSXA.so")
         self.backup_file = "%s.backup"%RS_PATH
         os.system("cp %s %s"%(RS_PATH, self.backup_file))
         NMT_log_test.NMT_log_test(__file__)
@@ -58,8 +57,8 @@ class NMT_RSXA_test(unittest.TestCase):
         with open(RS_PATH, "w") as n_rsxa_file:
             json.dump(test_data, n_rsxa_file)
 
-        result = self.rsxa.RSXA_init(byref(RSXA_Object))
-        self.assertEqual(result, OK)
+        result = rsxa.RSXA_init(byref(RSXA_Object))
+        self.assertEqual(result, NMT_result.OK)
 
         # Check log_dir
         self.assertEqual(test_data["log_dir"], RSXA_Object.log_dir)
@@ -91,8 +90,8 @@ class NMT_RSXA_test(unittest.TestCase):
         with open(RS_PATH, "w") as n_rsxa_file:
             json.dump(test_data, n_rsxa_file)
 
-        result = self.rsxa.RSXA_init(byref(RSXA_Object))
-        self.assertEqual(result, NOK)
+        result = rsxa.RSXA_init(byref(RSXA_Object))
+        self.assertEqual(result, NMT_result.NOK)
 
     def test_RSXA_init_BW_2(self):
         #Description - Verify result is NOK if hw_name is missing
@@ -108,8 +107,8 @@ class NMT_RSXA_test(unittest.TestCase):
         with open(RS_PATH, "w") as n_rsxa_file:
             json.dump(test_data, n_rsxa_file)
 
-        result = self.rsxa.RSXA_init(byref(RSXA_Object))
-        self.assertEqual(result, NOK)
+        result = rsxa.RSXA_init(byref(RSXA_Object))
+        self.assertEqual(result, NMT_result.NOK)
 
     def test_RSXA_init_BW_3(self):
         #Description - Verify result is NOK if hw_sim_mode is missing
@@ -125,8 +124,8 @@ class NMT_RSXA_test(unittest.TestCase):
         with open(RS_PATH, "w") as n_rsxa_file:
             json.dump(test_data, n_rsxa_file)
 
-        result = self.rsxa.RSXA_init(byref(RSXA_Object))
-        self.assertEqual(result, NOK)
+        result = rsxa.RSXA_init(byref(RSXA_Object))
+        self.assertEqual(result, NMT_result.NOK)
 
     def test_RSXA_init_BW_4(self):
         #Description - Verify result is NOK if hw_interface is missing
@@ -142,8 +141,8 @@ class NMT_RSXA_test(unittest.TestCase):
         with open(RS_PATH, "w") as n_rsxa_file:
             json.dump(test_data, n_rsxa_file)
 
-        result = self.rsxa.RSXA_init(byref(RSXA_Object))
-        self.assertEqual(result, NOK)
+        result = rsxa.RSXA_init(byref(RSXA_Object))
+        self.assertEqual(result, NMT_result.NOK)
 
     def test_RSXA_init_BW_5(self):
         #Description - Verify result is NOK if pin_names is missing
@@ -159,8 +158,8 @@ class NMT_RSXA_test(unittest.TestCase):
         with open(RS_PATH, "w") as n_rsxa_file:
             json.dump(test_data, n_rsxa_file)
 
-        result = self.rsxa.RSXA_init(byref(RSXA_Object))
-        self.assertEqual(result, NOK)
+        result = rsxa.RSXA_init(byref(RSXA_Object))
+        self.assertEqual(result, NMT_result.NOK)
 
     def test_RSXA_init_BW_5(self):
         #Description - Verify result is NOK if pin_no is missing
@@ -176,8 +175,8 @@ class NMT_RSXA_test(unittest.TestCase):
         with open(RS_PATH, "w") as n_rsxa_file:
             json.dump(test_data, n_rsxa_file)
 
-        result = self.rsxa.RSXA_init(byref(RSXA_Object))
-        self.assertEqual(result, NOK)
+        result = rsxa.RSXA_init(byref(RSXA_Object))
+        self.assertEqual(result, NMT_result.NOK)
 
     def tearDown(self):
         os.system("cp %s %s"%(self.backup_file, RS_PATH))

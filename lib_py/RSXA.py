@@ -11,6 +11,9 @@ __copyright__          = "Copy Right 2019. NM Technologies"
 #---------------------------------------------------#
 from ctypes import *
 
+#Create RSXA Object
+rsxa = CDLL("Obj/libRSXA.so")
+
 #RSXA Pins Struct
 class RSXA_pins(Structure):
     _fields_ = [('pin_name', c_char * 20),

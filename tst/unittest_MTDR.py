@@ -22,9 +22,9 @@ import os
 #                   Local Imports                   #
 #---------------------------------------------------#
 from lib_py.PCA9685 import PCA9685_settings
+from lib_py.NMT_stdlib_py import NMT_result
 import NMT_log_test
 
-RESULT_ENUM = ["OK", "NOK"]
 SIM_MODE = True
 LD27MG_FREQ = 50.00
 FNAME = __file__.split(".")[0].split("/")[-1]
@@ -49,7 +49,7 @@ class MTDR_Test(unittest.TestCase):
         result = self.MTDR.MTDR_get_pca9685_status(byref(settings), byref(initialized), SIM_MODE)
 
         #Check if the result is OK
-        self.assertEqual(result, RESULT_ENUM.index("OK"))
+        self.assertEqual(result, NMT_result.OK)
         self.assertEqual(False, initialized.value)
 
     def test_MTDR_get_current_postion(self):
@@ -67,7 +67,7 @@ class MTDR_Test(unittest.TestCase):
         result = self.MTDR.MTDR_get_current_position(motor, byref(angle), byref(settings), SIM_MODE)
 
         #Check if the result is OK
-        self.assertEqual(result, RESULT_ENUM.index("OK"))
+        self.assertEqual(result, NMT_result.OK)
 
         #Check Actual vs Expected
         self.assertEqual(expected_angle, float(angle.value))
@@ -95,7 +95,7 @@ class MTDR_Test(unittest.TestCase):
         result = self.MTDR.MTDR_move_motor(motor, angle, byref(settings), SIM_MODE)
 
         #Ensure the result is OK
-        self.assertEqual(result, RESULT_ENUM.index("OK"))
+        self.assertEqual(result, NMT_result.OK)
 
         #Read Log File
         f = open(self.log_file, "r")
@@ -143,7 +143,7 @@ class MTDR_Test(unittest.TestCase):
         result = self.MTDR.MTDR_init(byref(settings), SIM_MODE)
 
         #Check that the result is OK and Frequency is as expected
-        self.assertEqual(result, RESULT_ENUM.index("OK"))
+        self.assertEqual(result, NMT_result.OK)
         self.assertEqual(settings.freq, LD27MG_FREQ)
 
         #Read Log File

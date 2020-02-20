@@ -129,14 +129,14 @@ static NMT_result camera_control_move_camera(string dir_str_input, RSXA RSXA_Obj
      *  @return    NMT_result
      */
 
+    NMT_log_write(DEBUG, (char *)"> direction=%s", dir_str_input.c_str());
+
     /*Initialize Varibles */
     NMT_result result = OK;
     CAM_MOTOR_CTRL_DIRECTIONS direction;
 
     /* Init Camera Object */
     Camera_Motor_Ctrl camera_control(RSXA_Object);
-
-    NMT_log_write(DEBUG, (char *)"> direction=%s", dir_str_input.c_str());
 
     if (dir_str_input.compare("HOME") != 0)
     {

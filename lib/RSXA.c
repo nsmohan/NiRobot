@@ -106,16 +106,11 @@ static NMT_result RSXA_find_key(json_object *in_obj, const char *key, json_objec
 
     /* Initialize Variables */
     NMT_result result = OK;
-    struct json_object *jvalues;
 
-    if (!(json_object_object_get_ex(in_obj, key, &jvalues)))
+    if (!(json_object_object_get_ex(in_obj, key, &(*out_obj))))
     {
         result = NOK;
         printf("Parse Error! %s not found in %s \n", key, RS_SETTINGS_PATH);
-    }
-    else
-    {
-        *out_obj = jvalues;
     }
 
     /* Exit the function */
