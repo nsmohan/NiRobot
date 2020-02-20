@@ -72,7 +72,7 @@
             char log_dir[100];
 
             /** @var hw
-             *  Contains all hardware settnigs */
+             *  Contains all hardware settings */
             RSXA_hw *hw;
 
             /** @var array_len_hw
