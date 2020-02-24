@@ -48,7 +48,7 @@ class sensorController{
          * @param[in] echoDirection - The queried sensor direction (ex: "Front")
          * @return Constructed object
          */
-		sensorController(std::string echoDirection);
+		sensorController(std::string echoDir);
 		
         /*!
          * @fn ~sensorController( bool ) 
@@ -70,7 +70,7 @@ class sensorController{
          * @var chosenSensor
          * @brief Wrapper for ultrasonic sensor
          */
-		HCxSR04 chosenSensor;
+		std::vector< HCxSR04 > chosenSensor;
         
         /*!
          * @var echoDirection

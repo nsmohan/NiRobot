@@ -24,6 +24,8 @@
 //---------------------Macros----------------------//
 //! @def Hardware string archetype
 #define hwStrArch "HCxSR04_"
+
+#define RS_SETTINGS_PATH "/etc/NiBot/RSXA.json"
 /*--------------------------------------------------/
 /                   Structures                      /
 /--------------------------------------------------*/
@@ -34,22 +36,37 @@
 using namespace std;
 HCxSR04::HCxSR04( string echoDir )
 {
-    //get info from RSXA.json
+    //! @var hw_config - Info from RSXA.json
     RSXA* hw_config = new RSXA;
+    RSXA_init( hw_config );
+    NMT_log_write(DEBUG, (char *)"> JSON hardware length=%d ", hw_config->array_len_hw);
+
+    
     string fullHWName = hwStrArch + echoDir;
     int hwInd = 0; 
     
     //Get hardware specific content from JSON file
     for( int iHardware = 0; iHardware < hw_config->array_len_hw; iHardware++ ){
-        string currentHW = hw_config->hw[iHardware].hw_name;
+        string currentHW( hw_config->hw[iHardware].hw_name );
+        NMT_log_write(DEBUG, (char *)"> searchingFor %s in %s ", hwStrArch, currentHW.c_str());
         
-        if( currentHW.find( hwStrArch ) ){
-            if( currentHW.find( echoDir ) ){
+        size_t foundHW = currentHW.find( hwStrArch );
+        NMT_log_write(DEBUG, (char *)"> strPos=%lu ", foundHW);
+        if( foundHW != string::npos ){
+            NMT_log_write(DEBUG, (char *)"> found hardware type ");
+            
+            size_t foundSpecHW = currentHW.find( echoDir );
+            NMT_log_write(DEBUG, (char *)"> specificStrPos=%lu ", foundSpecHW);
+            if( foundSpecHW != string::npos ){
+                NMT_log_write(DEBUG, (char *)"> found specific hardware ");
                 hwInd = iHardware;
                 break;
             }
         }
     }
+    
+    NMT_log_write(DEBUG, (char *)"> foundHWIndex=%d ", hwInd);
+    NMT_log_write(DEBUG, (char *)"> hwName=%s ", hw_config->hw[hwInd].hw_name );
     
     //Populate object
     this->trigger   = hw_config->hw[hwInd].hw_interface[1].pin_no;
@@ -60,6 +77,8 @@ HCxSR04::HCxSR04( string echoDir )
     this->init_hw();
     
     //Cleanup
+    NMT_log_write(DEBUG, (char *)"> HCxSR04 successfully constructed ");
+
     delete hw_config; 
 } 
 

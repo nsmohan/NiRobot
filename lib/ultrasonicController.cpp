@@ -18,6 +18,7 @@
 /*--------------------------------------------------/
 /                   Macros                          /
 /--------------------------------------------------*/
+using std::string;
 
 /*--------------------------------------------------/
 /                   Globals                         /
@@ -38,8 +39,8 @@
 /             Prototypes (Protos in header)         /
 /--------------------------------------------------*/
 
-using std::string;
-sensorController::sensorController(string echoDirection){
+sensorController::sensorController(string echoDir)
+    : echoDirection( echoDir ){
 	/*!
      * @class sensorController
      * @brief Abstraction layer for querying ultrasonic sensors
@@ -47,13 +48,12 @@ sensorController::sensorController(string echoDirection){
      */
      NMT_log_write( DEBUG, (char*) "> Acquiring %s sensor ", echoDirection.c_str() );
      
-     this->echoDirection    = echoDirection;
-     this->chosenSensor     = HCxSR04( echoDirection );
+     this->chosenSensor.emplace_back( HCxSR04( this->echoDirection ) );     
      
-     NMT_log_write( DEBUG, (char*) "> %s Sensor Acquired ", echoDirection.c_str() );
-     
+     NMT_log_write( DEBUG, (char*) "> %s sensor acquired ", echoDirection.c_str() );
+
      //Clean Up
-     NMT_log_finish();
+     //NMT_log_finish();
 }
 
 sensorController::~sensorController(){
@@ -64,7 +64,7 @@ sensorController::~sensorController(){
     NMT_log_write( DEBUG, (char*) "> Destroying %s sensor ", this->echoDirection.c_str() );
     
     //cleanup
-    NMT_log_finish();
+    //NMT_log_finish();
 }
 
 double sensorController::getDistance(){
@@ -75,11 +75,10 @@ double sensorController::getDistance(){
     NMT_log_write(DEBUG, (char *)"> Sensor Request=%s", this->echoDirection.c_str());
 
 
-    double measuredDistance = this->chosenSensor.distance();
+    double measuredDistance = this->chosenSensor[0].distance();
 
 
     /* Exit Function */    
     NMT_log_write(DEBUG, (char *)"> Measured Distance=%.6f", measuredDistance);
-    NMT_log_finish();
     return measuredDistance;	
 }
