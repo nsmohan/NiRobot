@@ -50,7 +50,6 @@ static struct option long_options[] =
 /                   Prototypes                      /
 /--------------------------------------------------*/
 static NMT_result sensorControl_querySensors(std::string selSensor, double* returnedDistance, bool verbosity);
-static int US_queryStrToEnum( std::string* command, bool verbosity );
 static void US_ctrl_print_usage(int es);
 
 int main( int argc, char** argv ){
@@ -94,7 +93,7 @@ int main( int argc, char** argv ){
     result = sensorControl_querySensors(queriedSensor, &returnedDistance, verbosity);
     NMT_log_write(DEBUG, (char *)"< distance=%f", returnedDistance);
 
-	NMT_log_finish();
+	//NMT_log_finish();
 	return result;
 }
 
@@ -129,34 +128,3 @@ static NMT_result sensorControl_querySensors( string s_selSensor, double* return
 	return result;
 	
 }
-
-
-//static int US_queryStrToEnum( string* command, bool verbosity ){
-//    //Input     : US Query String
-//    //Output    : US Query ENUM
-//    //Function  : Convert US Query string to enum
-    
-    
-//    /*Initialize Variables */
-//   int queriedSensor;
-    
-//    NMT_log_write( DEBUG, (char*)"> Sensor=%s", (*command).c_str() );
-    
-    /* Convert String to Enum */
-//    vector<string> options = {"Front", "Back", "Left", "Right"};
-    
-    
-//    for( unsigned int selOpt = 0; selOpt < options.size(); selOpt++ ){
-//		if( (*command).compare( options[selOpt] ) == 0 ){
-//						
-//			queriedSensor = selOpt;
-//			break;
-//			
-//		}
-//   }
-//        
-//    NMT_log_write( DEBUG, (char*) "< sensorEnum=%d", queriedSensor );
-//    
-//    return queriedSensor;
-//
-// }
