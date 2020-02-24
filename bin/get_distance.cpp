@@ -42,15 +42,15 @@ static struct option long_options[] =
 {
     {"sensor",               required_argument, NULL, 's'},
     {"help",                 no_argument,       NULL,  0},
-    {"sim_mode",             no_argument,       NULL, 'S'},
+//    {"sim_mode",             no_argument,       NULL, 'S'}, //defined in JSON
     {NULL, 0, NULL, 0}
 };
 
 /*--------------------------------------------------/
 /                   Prototypes                      /
 /--------------------------------------------------*/
-static NMT_result sensorControl_querySensors(std::string selSensor, double* returnedDistance, bool verbosity, bool sim_mode);
-static US_pinout US_queryStrToEnum( std::string command, bool verbosity );
+static NMT_result sensorControl_querySensors(std::string selSensor, double* returnedDistance, bool verbosity);
+static int US_queryStrToEnum( std::string* command, bool verbosity );
 static void US_ctrl_print_usage(int es);
 
 int main( int argc, char** argv ){
@@ -63,7 +63,7 @@ int main( int argc, char** argv ){
     bool       	verbosity = false;
     int        	longindex = 0;
     int        	opt;
-    bool        sim_mode = false;;
+    //bool        sim_mode = false; //obtained from JSON
 
     double returnedDistance;
     string queriedSensor; 
@@ -82,10 +82,6 @@ int main( int argc, char** argv ){
                 cout << "Help Menu" << endl;
                 US_ctrl_print_usage(0);
                 break;
-            case 'S':
-                cout << "Running in SIM_MODE................." << endl;
-                sim_mode = true;
-                break;
             case '?':
                 cout << "Unknown Argument Provided" << endl;
                 US_ctrl_print_usage(0);
@@ -95,7 +91,7 @@ int main( int argc, char** argv ){
     
     /* RUN PROGRAM */
     NMT_log_init((char *)LOG_DIR, verbosity);
-    result = sensorControl_querySensors(queriedSensor, &returnedDistance, verbosity, sim_mode);
+    result = sensorControl_querySensors(queriedSensor, &returnedDistance, verbosity);
     NMT_log_write(DEBUG, (char *)"< distance=%f", returnedDistance);
 
 	NMT_log_finish();
@@ -111,27 +107,22 @@ static void US_ctrl_print_usage(int es){
     exit( es );
 }
 
-static NMT_result sensorControl_querySensors( string s_selSensor, double* returnedDistance, bool verbosity, bool sim_mode ){
+static NMT_result sensorControl_querySensors( string s_selSensor, double* returnedDistance, bool verbosity){
 	//Input     : String with sensor choice
     //Output    : N/A
     //Function  : Command sensor to take distance data
     
 	/* Initialize Variables */
 	NMT_result result = OK;
-	double sensorDistance;
-	US_pinout queriedSensor;
+	//double sensorDistance;
 	
 	/* Create sensor object */
-	sensorController sensorBank( sim_mode ); 
+	sensorController US_sensor( s_selSensor ); 
 	
 	NMT_log_write(DEBUG, (char *)"> US_sensor=%s", s_selSensor.c_str());
-	
-	/* Get sensor to query */
-	queriedSensor = US_queryStrToEnum( s_selSensor, verbosity );
-	
+		
 	/* Get sensor data */
-	sensorDistance = sensorBank.getDistance( queriedSensor );
-	(*returnedDistance) = sensorDistance;
+	(*returnedDistance) = US_sensor.getDistance();
 	
 	/* Exit */
 	NMT_log_write(DEBUG, (char *)"< result=%s", result_e2s[result]);
@@ -139,32 +130,33 @@ static NMT_result sensorControl_querySensors( string s_selSensor, double* return
 	
 }
 
-static US_pinout US_queryStrToEnum( string command, bool verbosity ){
-    //Input     : US Query String
-    //Output    : US Query ENUM
-    //Function  : Convert US Query string to enum
+
+//static int US_queryStrToEnum( string* command, bool verbosity ){
+//    //Input     : US Query String
+//    //Output    : US Query ENUM
+//    //Function  : Convert US Query string to enum
     
     
-    /*Initialize Variables */
-    US_pinout queriedSensor;
+//    /*Initialize Variables */
+//   int queriedSensor;
     
-    NMT_log_write( DEBUG, (char*)"> Sensor=%s", command.c_str() );
+//    NMT_log_write( DEBUG, (char*)"> Sensor=%s", (*command).c_str() );
     
     /* Convert String to Enum */
-    vector<string> options = {"Front", "Back", "Left", "Right"};
+//    vector<string> options = {"Front", "Back", "Left", "Right"};
     
     
-    for( unsigned int selOpt = 0; selOpt < options.size(); selOpt++ ){
-		if( command.compare( options[selOpt] ) == 0 ){
-						
-			queriedSensor = (US_pinout) selOpt;
-			break;
-			
-		}
-    }
-        
-    NMT_log_write( DEBUG, (char*) "< sensorEnum=%d", queriedSensor );
-    
-    return static_cast<US_pinout>( queriedSensor );
-
-}
+//    for( unsigned int selOpt = 0; selOpt < options.size(); selOpt++ ){
+//		if( (*command).compare( options[selOpt] ) == 0 ){
+//						
+//			queriedSensor = selOpt;
+//			break;
+//			
+//		}
+//   }
+//        
+//    NMT_log_write( DEBUG, (char*) "< sensorEnum=%d", queriedSensor );
+//    
+//    return queriedSensor;
+//
+// }
