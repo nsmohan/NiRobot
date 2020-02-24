@@ -93,7 +93,7 @@ int main( int argc, char** argv ){
     result = sensorControl_querySensors(queriedSensor, &returnedDistance, verbosity);
     NMT_log_write(DEBUG, (char *)"< distance=%f", returnedDistance);
 
-	//NMT_log_finish();
+	NMT_log_finish();
 	return result;
 }
 
