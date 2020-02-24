@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""unittest_US.py:   Test all functions in ultrasonicController
+"""unittest_US.py:   Test all functions in HCxSR04
 
 __author__             = "Mickey T Da Silva"
 __copyright__          = "Copyright 2020. NM Technologies"
@@ -40,7 +40,7 @@ class US_test( unittest.TestCase ):
     def tearDownClass( cls ): #something done after all tests
         pass;
 
-    def setUp(self):
+    def setUp(self): #something done before each individual test
         self.controller = CDLL( "Obj/libultrasonicController.so");
         self.driver     = CDLL( "Obj/libHCxSR04.so" );
         NMT_log_test.NM_log_test(__file__);
@@ -51,7 +51,7 @@ class US_test( unittest.TestCase ):
         self.assertEqual( distance, 0.171500 );
         
         
-    def tearDown(self):
+    def tearDown(self): #something done after each individual test
         os.system("rm -rf %s"%self.log_file)
 
     
