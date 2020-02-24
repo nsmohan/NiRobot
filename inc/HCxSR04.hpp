@@ -32,21 +32,13 @@ class HCxSR04
 {
   public:
     /*!
-     * @fn HCxSR04( std::string, int, bool ) 
+     * @fn HCxSR04( std::string ) 
      * @brief Constructor for Ultrasonic controller
-     * @param[in] hw_name       Name of ultrasonic sensor defined in RSXA.json
-     * @param[in] echo          Data return pin
-     * @param[in] sim_mode      Simulate hardware with hard-coded return values 
-     * @param[in] trigger       Pin which causes ultrasonic sensor to return value from echo pin
+     * @param[in] echoDirection - Position of queried sensor as defined in RSXA.json
      * @return Constructed object
      */
-    HCxSR04(std::string hw_name, int trigger, int echo, bool sim_mode);
-    
-    /*!
-     * @var distanceMeters
-     * @brief Distance measured by ultrasonic sensor in units of \f$ [m] \f$
-     */
-    double distanceMeters;
+    HCxSR04(std::string echoDirection);
+        
     
     /*!
      * @fn double distance()
@@ -67,6 +59,12 @@ class HCxSR04
      */
     int trigger;
     
+        /*!
+     * @var distanceMeters
+     * @brief Distance measured by ultrasonic sensor in units of \f$ [m] \f$
+     */
+    double distanceMeters;
+
     /*!
      * @var int echo
      * @brief Pin which returns ultrasonic sensor data

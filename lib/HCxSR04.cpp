@@ -22,7 +22,8 @@
 #include "RSXA.h"
 
 //---------------------Macros----------------------//
-
+//! @def Hardware string archetype
+#define hwStrArch "HCxSR04_"
 /*--------------------------------------------------/
 /                   Structures                      /
 /--------------------------------------------------*/
@@ -31,14 +32,37 @@
 
 
 using namespace std;
-HCxSR04::HCxSR04(string hw_name, int trigger, int echo, bool sim_mode)
+HCxSR04::HCxSR04( string echoDir )
 {
-    this->trigger = trigger;
-    this->echo = echo;
-    this->hw_name = hw_name;
-    this->sim_mode = sim_mode;
+    //get info from RSXA.json
+    RSXA* hw_config = new RSXA;
+    string fullHWName = hwStrArch + echoDir;
+    int hwInd = 0; 
+    
+    //Get hardware specific content from JSON file
+    for( int iHardware = 0; iHardware < hw_config->array_len_hw; iHardware++ ){
+        string currentHW = hw_config->hw[iHardware].hw_name;
+        
+        if( currentHW.find( hwStrArch ) ){
+            if( currentHW.find( echoDir ) ){
+                hwInd = iHardware;
+                break;
+            }
+        }
+    }
+    
+    //Populate object
+    this->trigger   = hw_config->hw[hwInd].hw_interface[1].pin_no;
+    this->echo      = hw_config->hw[hwInd].hw_interface[0].pin_no;
+    this->hw_name   = hw_config->hw[hwInd].hw_name;
+    this->sim_mode  = hw_config->hw[hwInd].hw_sim_mode;
+    
     this->init_hw();
+    
+    //Cleanup
+    delete hw_config; 
 } 
+
 
 void HCxSR04::init_hw()
 {
