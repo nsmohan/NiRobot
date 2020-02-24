@@ -1,4 +1,4 @@
-/**
+/*!
  *  @file ultrasonicController.cpp
  *  @brief Hardware abstraction for ultrasonic sensors
  *  @author Mickey T Da Silva
@@ -22,12 +22,6 @@
 /*--------------------------------------------------/
 /                   Globals                         /
 /--------------------------------------------------*/
-//! Enumerated type based on the hardware names of the ultrasonic sensors
-//! \todo Get this string from the JSON file itself, reducing number of dependencies
-std::vector<std::string> US_sensorNames = {"HCxSR04_Front", 
-  					   "HCxSR04_Back", 
-					   "HCxSR04_Right", 
-					   "HCxSR04_Left"};
 
 /*--------------------------------------------------/
 /                   Structures                      /
@@ -41,45 +35,51 @@ std::vector<std::string> US_sensorNames = {"HCxSR04_Front",
  * SC = Sensor Controller (wrapper object)
  */
 /*--------------------------------------------------/
-/                   Prototypes (Protos in header)   /
+/             Prototypes (Protos in header)         /
 /--------------------------------------------------*/
-sensorController::sensorController(bool sim_mode){
-	//In     : N/A
-    //Out    : N/A (CTOR)
-    //Description  : Package sensors with query logic
-    
-    for( unsigned int iSensor = 0; iSensor < US_sensorNames.size(); iSensor++ ){				
-				
-	//Emplace Sensors
-	this->US_sensorBank.emplace_back( HCxSR04(US_sensorNames[iSensor], 
-						  iSensor, 
-						  US_triggerPin,
-						  sim_mode ) 
-									);  
-    }	
-	
+
+using std::string;
+sensorController::sensorController(string echoDirection){
+	/*!
+     * @class sensorController
+     * @brief Abstraction layer for querying ultrasonic sensors
+     * @param[in] echoDirection - The direction of the ultrasonic sensor to be queried (ex: "Front", "Back", "Left", "Right")
+     */
+     NMT_log_write( DEBUG, (char*) "> Acquiring %s sensor ", echoDirection.c_str() );
+     
+     this->echoDirection    = echoDirection;
+     this->chosenSensor     = HCxSR04( echoDirection );
+     
+     NMT_log_write( DEBUG, (char*) "> %s Sensor Acquired ", echoDirection.c_str() );
+     
+     //Clean Up
+     NMT_log_finish();
 }
 
 sensorController::~sensorController(){
 	//In     : N/A
     //Out    : N/A (DTOR)
     //Description  : Destructor (Unnecessary but included for completeness or debugging)
-
-	//std::cout << "Ah! You've destroyed my ultrasonic sensor!" << std::endl;
+    
+    NMT_log_write( DEBUG, (char*) "> Destroying %s sensor ", this->echoDirection.c_str() );
+    
+    //cleanup
+    NMT_log_finish();
 }
 
-double sensorController::getDistance( US_pinout selSensor ){
+double sensorController::getDistance(){
     //In     : selSensor - Sensor choice (datatype determines which sensor
     //Out    : Distance measured by sensor
     //Description  : Get the distance measured by the requested sensor
     
-    NMT_log_write(DEBUG, (char *)"> Sensor Request=%d", selSensor);
+    NMT_log_write(DEBUG, (char *)"> Sensor Request=%s", this->echoDirection.c_str());
 
 
-    double measuredDistance = this->US_sensorBank[selSensor].distance();
+    double measuredDistance = this->chosenSensor.distance();
 
 
     /* Exit Function */    
     NMT_log_write(DEBUG, (char *)"> Measured Distance=%.6f", measuredDistance);
+    NMT_log_finish();
     return measuredDistance;	
 }

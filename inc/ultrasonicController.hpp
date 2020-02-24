@@ -1,4 +1,4 @@
-/**
+/*!
  *  @file ultrasonicController.hpp
  *  @brief Hardware abstraction header
  *  @author Mickey T Da Silva
@@ -32,12 +32,6 @@
 /*--------------------------------------------------/
 /                   Data Definitions                 /
 /--------------------------------------------------*/
-//! \todo Get these values from JSON file itself, reducing number of dependencies and allowing for differing sensor configurations
-typedef enum {US_echoPin_front, 
-              US_echoPin_back, 
-              US_echoPin_left, 
-              US_echoPin_right,
-              US_triggerPin} US_pinout;
 
 /*!
  * @class sensorController
@@ -51,10 +45,10 @@ class sensorController{
         /*!
          * @fn sensorController( bool ) 
          * @brief Container for ultrasonic sensors
-         * @param[in] sim_mode      Simulation mode for ultrasonic sensors (true == Simulated, false == real)
+         * @param[in] echoDirection - The queried sensor direction (ex: "Front")
          * @return Constructed object
          */
-		sensorController(bool sim_mode);
+		sensorController(std::string echoDirection);
 		
         /*!
          * @fn ~sensorController( bool ) 
@@ -68,20 +62,21 @@ class sensorController{
          * @param[in] sim_mode      Simulation mode for ultrasonic sensors (true == Simulated, false == real)
          * @return Constructed object
          */
-		double getDistance(US_pinout selSensor);
+		double getDistance();
 
 	private:
     
         /*!
-         * @var US_sensorBank
-         * @brief Container for ultrasonic sensors
+         * @var chosenSensor
+         * @brief Wrapper for ultrasonic sensor
          */
-
-		std::vector< HCxSR04 > US_sensorBank;
+		HCxSR04 chosenSensor;
+        
+        /*!
+         * @var echoDirection
+         * @brief Name of queried direction for debugging purposes
+         */
+        std::string echoDirection;
 };
-
-
-
-
 
 #endif
