@@ -13,7 +13,8 @@ OBJS        = NMT_stdlib.so \
               PCA9685.so \
               MTDR.so \
               CAM_MOTOR_CTRL.so \
-              HCxSR04.so
+              HCxSR04.so \
+              NMT_sock.so
 
 #---------------------------------------#
 #                                       #
@@ -67,6 +68,10 @@ HCxSR04_LIBS        = -lNMT_log \
                       -lm \
                       -lrt
 
+NMT_sock_LIBS       = -lNMT_stdlib \
+                      -lNMT_log \
+                      -lboost_python
+
 # -------Update output file name ---------#
 TARGET_OBJS := $(foreach OBJ,$(OBJS),$(OBJ_DIR)/lib$(OBJ))
 
@@ -80,6 +85,7 @@ $(OBJ_DIR)/lib%.so: $(LIB_DIR)/%.c $(INC_DIR)/%.h
 # -----Build C++ Files ---------#
 $(OBJ_DIR)/lib%.so: $(LIB_DIR)/%.cpp $(INC_DIR)/%.hpp
 	g++ $(CFLAGS) $(SFLAGS) $(RPATH) -o  $@ $< $($(*)_LIBS)
+
 
 clean:
 	rm -rf $(OBJ_DIR)/*.so
