@@ -94,16 +94,32 @@ NMT_result NMT_sock_multicast::NMT_init_multicast_client()
 
     NMT_log_write(DEBUG, (char *)"> ");
     NMT_result result = OK;
+    struct timeval tv; 
 
-    if ((this->sock = socket(AF_INET, SOCK_DGRAM, 0) < 0))
+    if ((this->sock = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
         result = NOK;
 
     if (result == OK)
     {
         /* Allow multiple sockets to use the same PORT number */
         unsigned int opt = 1;
-        if (setsockopt(this->sock, SOL_SOCKET, SO_REUSEADDR, 
-                       (char*) &opt, sizeof(opt)) < 0) {result = NOK;}
+        if (setsockopt(this->sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) 
+        {
+            NMT_log_write(ERROR, (char *)"Failed to set Reuse Address for socket! errno=%d", errno);
+            result = NOK;
+        }
+    }
+
+    if (result == OK)
+    {
+        /* Set socket timeout */
+        tv.tv_sec = 0;
+        tv.tv_usec = 100000;
+        if (setsockopt(this->sock, SOL_SOCKET, SO_RCVTIMEO,&tv, sizeof(tv)) < 0)
+        {
+            NMT_log_write(ERROR, (char *)"Failed to set socket timeout errno=%d", errno);
+            result = NOK;
+        }
     }
 
     if (result == OK)
@@ -116,7 +132,11 @@ NMT_result NMT_sock_multicast::NMT_init_multicast_client()
 
         /* Bind to receive address */
         if (bind(this->sock, (struct sockaddr*) &(this->my_address), 
-                 sizeof(this->my_address)) < 0) {result = NOK;}
+                 sizeof(this->my_address)) < 0) 
+        {
+            NMT_log_write(ERROR, (char *)"Socket Bind  Failed");     
+            result = NOK;
+        }
     }
 
     /* Use setsockopt() to request that the kernel join a multicast group */
@@ -126,7 +146,12 @@ NMT_result NMT_sock_multicast::NMT_init_multicast_client()
         mreq.imr_multiaddr.s_addr = inet_addr(this->multicast_ip.c_str());
         mreq.imr_interface.s_addr = htonl(INADDR_ANY);
         if (setsockopt(this->sock, IPPROTO_IP, IP_ADD_MEMBERSHIP,
-                      (char*) &mreq, sizeof(mreq)) < 0){ result = NOK;}
+                      (char*) &mreq, sizeof(mreq)) < 0)
+        {
+            
+            NMT_log_write(ERROR, (char *)"Failed to join multicast group!");
+            result = NOK;
+        }
     }
 
     /* Exit the function */
@@ -181,6 +206,7 @@ NMT_result NMT_sock_multicast::NMT_read_socket(char **message)
     if (nbytes < 0) 
     {
         result = NOK;
+        NMT_log_write(WARNING, (char *)"No Message recived in socket");
     }
     else
     {
@@ -189,6 +215,6 @@ NMT_result NMT_sock_multicast::NMT_read_socket(char **message)
         strcpy(*message, msgbuf);
     }
 
-    NMT_log_write(DEBUG, (char *)"< ");
+    NMT_log_write(DEBUG, (char *)"< result=%s", result_e2s[result]);
     return result;
 }

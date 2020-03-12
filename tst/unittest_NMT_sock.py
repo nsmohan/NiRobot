@@ -31,15 +31,6 @@ from Obj.libNMT_sock import NMT_result
 from Obj.libNMT_sock import sock_mode
 
 #---------------- Start of Program ------------------#
-#sock_multi = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
-#sock_multi.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-#sock_multi.bind((MULTICAST_IP, MULTICAST_PORT))
-#mreq = struct.pack("4sl", socket.inet_aton(MULTICAST_IP), socket.INADDR_ANY)
-#sock_multi.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
-
-#while True:
-#    data = sock_multi.recv(10240)
-#    print data
 
 class MTDR_Test(unittest.TestCase):
 
@@ -48,18 +39,65 @@ class MTDR_Test(unittest.TestCase):
         self.log_file = "%s/%s.log"%(NMT_log_test.LOG_DIR, FNAME)
 
     def test_01(self):
+
+        ##
+         # @test Test that client is able to recieve data that the server sends
+         # @step 1. Create 3 instnaces of the socket object (Server and 2 Clients)
+         # @step 2. Server sends messages on socket
+         # @step 3. Client is able to recieve the message that was sent by the server
+         #
+
+        #@var Test messaget that is sent 
+        message_tx = "This is a test message"
+
+        # - Create instnace of the server object and check the result is ok
         server_object = NMT_sock.NMT_sock_multicast(MULTICAST_PORT, MULTICAST_IP, sock_mode.SOCK_SERVER)
         self.assertEqual(server_object.NMT_get_result(), NMT_result.OK)
 
+        # - Create instance of the first client object
         client_object = NMT_sock.NMT_sock_multicast(MULTICAST_PORT, MULTICAST_IP, sock_mode.SOCK_CLIENT)
         self.assertEqual(client_object.NMT_get_result(), NMT_result.OK)
 
-        result = server_object.NMT_write_socket("This is a test message")
+        # Create instance of the second client object
+        client_object2 = NMT_sock.NMT_sock_multicast(MULTICAST_PORT, MULTICAST_IP, sock_mode.SOCK_CLIENT)
+        self.assertEqual(client_object2.NMT_get_result(), NMT_result.OK)
+
+        # Write Message to socket and check the result
+        result = server_object.NMT_write_socket(message_tx)
         self.assertEqual(result, NMT_result.OK)
 
-        result = client_object.NMT_read_socket()
+        #Read message of the first client socket
+        result, message_rx = client_object.NMT_read_socket()
         self.assertEqual(result, NMT_result.OK)
 
+        #Read message on the second client socket
+        result2, message_rx2 = client_object2.NMT_read_socket()
+        self.assertEqual(result2, NMT_result.OK)
+
+        # Data Validation
+        print ("Message from first client socket=%s"%message_rx)
+        print ("Message from second client socket=%s"%message_rx2)
+        self.assertEqual(message_tx, message_rx)
+        self.assertEqual(message_tx, message_rx2)
+
+    def test_02(self):
+
+        ##
+         # @test Test scenario where no message is recieved on the socket
+         # @step 1. Create 2 instnaces of the socket object (Server and Client)
+         # @step 2. CLient listens on the socket for 100ms and returns NOk as nothing is recieved
+         #
+
+        # - Create instance of socket client
+        client_object = NMT_sock.NMT_sock_multicast(MULTICAST_PORT, MULTICAST_IP, sock_mode.SOCK_CLIENT)
+        self.assertEqual(client_object.NMT_get_result(), NMT_result.OK)
+
+        #Read message on socket
+        result, message_rx = client_object.NMT_read_socket()
+        self.assertEqual(result, NMT_result.NOK)
+
+        #Message should be empty
+        self.assertEqual("", message_rx)
 
 if __name__ == '__main__':
     unittest.main()
