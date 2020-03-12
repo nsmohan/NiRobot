@@ -34,6 +34,7 @@ NMT_sock_multicast::NMT_sock_multicast(unsigned int port, string multicast_ip,
      *  @brief     Constructor for NMT_sock_multicast
      *  @param[in] port
      *  @param[in] multicast_ip
+     *  @param[in] socket_mode
      *  @return    NMT_result
      */
 
@@ -89,8 +90,6 @@ NMT_result NMT_sock_multicast::NMT_init_multicast_client()
      *  @brief     Initialize the multicast protocol in client mode
      *  @return    NMT_result
      */
-    // create what looks like an ordinary UDP socket
-    //
 
     NMT_log_write(DEBUG, (char *)"> ");
     NMT_result result = OK;

@@ -77,6 +77,12 @@ class NMT_sock_multicast
 
 boost::python::tuple NMT_read_socket_py(NMT_sock_multicast &nmt_sock_multicast)
 {
+    /*!
+     *  @brief     A python wrapper function for NMT_read_socket
+     *  @param[in] nmt_sock_multicast
+     *  @return    NMT_result, message
+     */
+
     char *message;
     NMT_result result = OK;
     result = nmt_sock_multicast.NMT_read_socket(&message);
@@ -91,9 +97,16 @@ boost::python::tuple NMT_read_socket_py(NMT_sock_multicast &nmt_sock_multicast)
     }
         
 }
-/* Opening Interface for Python */
+
+
 BOOST_PYTHON_MODULE(libNMT_sock)
 {
+    /*!
+     *  @brief     Function to expose C++ functions to python
+     *  @param[in] libNMT_sock
+     *  @return    N/A
+     */
+
     using namespace boost::python;
 
     /* NMT_result ENUM for Python */
