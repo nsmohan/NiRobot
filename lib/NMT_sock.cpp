@@ -148,7 +148,7 @@ NMT_result NMT_sock_multicast::NMT_init_multicast_client()
                       (char*) &mreq, sizeof(mreq)) < 0)
         {
             
-            NMT_log_write(ERROR, (char *)"Failed to join multicast group!");
+            NMT_log_write(ERROR, (char *)"Failed to join multicast group! errno=%d", errno);
             result = NOK;
         }
     }
@@ -185,7 +185,7 @@ NMT_result NMT_sock_multicast::NMT_read_socket(char **message)
 {
 
     /*!
-     *  @brief     Function to send message on socket
+     *  @brief     Function to read message on the socket
      *  @param[out] message
      *  @return    NMT_result
      */
@@ -205,7 +205,7 @@ NMT_result NMT_sock_multicast::NMT_read_socket(char **message)
     if (nbytes < 0) 
     {
         result = NOK;
-        NMT_log_write(WARNING, (char *)"No Message recived in socket");
+        NMT_log_write(WARNING, (char *)"No Message recived on socket");
     }
     else
     {
