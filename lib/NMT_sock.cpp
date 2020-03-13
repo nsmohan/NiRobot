@@ -147,7 +147,6 @@ NMT_result NMT_sock_multicast::NMT_init_multicast_client()
         if (setsockopt(this->sock, IPPROTO_IP, IP_ADD_MEMBERSHIP,
                       (char*) &mreq, sizeof(mreq)) < 0)
         {
-            
             NMT_log_write(ERROR, (char *)"Failed to join multicast group! errno=%d", errno);
             result = NOK;
         }
@@ -183,7 +182,6 @@ NMT_result NMT_sock_multicast::NMT_write_socket(char *message)
 
 NMT_result NMT_sock_multicast::NMT_read_socket(char **message)
 {
-
     /*!
      *  @brief     Function to read message on the socket
      *  @param[out] message

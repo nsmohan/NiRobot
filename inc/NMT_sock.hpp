@@ -26,8 +26,6 @@ typedef enum sock_mode {SOCK_CLIENT, SOCK_SERVER}sock_mode;
 class NMT_sock_multicast
 {
     public:
-
-
         /* Constructor */
         NMT_sock_multicast(unsigned int port, std::string multicast_ip,
                            sock_mode socket_mode);
@@ -42,7 +40,6 @@ class NMT_sock_multicast
         NMT_result NMT_get_result() {return this->result;}
 
     private:
-
         /** @var result
          *  Varible to set the overall state of the object */
         NMT_result result = OK;
@@ -97,7 +94,6 @@ boost::python::tuple NMT_read_socket_py(NMT_sock_multicast &nmt_sock_multicast)
     }
         
 }
-
 
 BOOST_PYTHON_MODULE(libNMT_sock)
 {
