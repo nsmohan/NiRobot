@@ -3,6 +3,7 @@
 #__copyright__   = "Copy Right 2018. NM Technologies"
 
 export PROJ_DIR    = /home/nmohan/github/NiRobot
+export PY_DIR      = /usr/include/python2.7
 export BIN_DIR     = $(PROJ_DIR)/bin
 export OBJ_DIR     = $(PROJ_DIR)/Obj
 export INC_DIR     = $(PROJ_DIR)/inc
@@ -10,7 +11,7 @@ export LIB_DIR     = $(PROJ_DIR)/lib
 export LIBPY_DIR   = $(PROJ_DIR)/lib_py
 export BLD_DIR     = $(PROJ_DIR)/bld
 export TST_DIR     = $(PROJ_DIR)/tst
-export CFLAGS      = -g -Wall -Wextra -I $(INC_DIR) \
+export CFLAGS      = -g -Wall -Wextra -I $(INC_DIR) -I $(PY_DIR) \
                      -Wno-missing-field-initializers 
 export SFLAGS      = -fPIC -shared
 export RPATH       = -L$(OBJ_DIR) -Wl,-rpath=$(OBJ_DIR)
