@@ -80,8 +80,8 @@ NMT_result PCA9685_init(PCA9685_settings *settings, bool sim_mode)
     /* Initialize Variables */
     NMT_result result   = OK;
 
-    NMT_log_write(DEBUG, "> freq: %f duty_cycle: %f delay_time: %f",settings->freq, settings->duty_cycle,
-                                                                    settings->delay_time);
+    NMT_log_write(DEBUG, "> freq: %f" ,settings->freq);
+
     /* Set prescale freq */
     result = PCA9685_setFreq(settings, sim_mode);
 
@@ -149,8 +149,7 @@ static NMT_result PCA9685_setFreq(PCA9685_settings *settings, bool sim_mode)
     /* Initialize Variables */
     NMT_result result = OK;
 
-    NMT_log_write(DEBUG, "> freq: %f duty_cycle: %f delay_time: %f fd: %d",settings->freq, settings->duty_cycle,
-                                                                           settings->delay_time, settings->fd);
+    NMT_log_write(DEBUG, "> freq: %f", settings->freq);
     /* Check if we have a valid slave address */
     if (settings->fd < 0)
         return result = NOK;

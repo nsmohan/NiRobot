@@ -23,6 +23,10 @@
          * Name of PCA9685 Driver */
         #define PCA9685_HW_NAME "PCA9685_PWM_DRIVER"
 
+        /**@def PCA9685_I2C_ADDRESS
+         * PCA9685 I2C Address */
+        #define PCA9685_I2C_ADDRESS 0x40
+
         /** @enum PCA9685_PWM_CHANNEL
          * Enumatation of PWM Channels */
         typedef enum {CHANNEL_0,
@@ -105,6 +109,10 @@
     /** @def PCA9685_HW_NAME
      * Name of PCA9685 Driver */
     #define PCA9685_HW_NAME "PCA9685_PWM_DRIVER"
+
+    /**@def PCA9685_I2C_ADDRESS
+     * PCA9685 I2C Address */
+    #define PCA9685_I2C_ADDRESS 0x40
 
     /** @enum PCA9685_PWM_CHANNEL
      * Enumatation of PWM Channels */
