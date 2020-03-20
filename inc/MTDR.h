@@ -34,59 +34,47 @@
 /                   Structures                      /
 /--------------------------------------------------*/
 
-/** @var MTDR_motors[]
- * Mapping for motors and channels*/
-const struct
-{
-    /** @var channel PWM channmel
-     *  @var motor   Name of the motor */
-    PCA9685_PWM_CHANNEL channel;
-    const char          *motor;
-} MTDR_motors [] = 
-{
-    {CHANNEL_15, CAM_HRZN_MTR},
-    {CHANNEL_14, CAM_VERT_MTR}
-};
-
-/** MAX_NR_OF_MOTORS no. of LD27MG connected */
-const int MAX_NR_OF_MOTORS = 2;
-
-//------------------Prototypes----------------------//
 #ifdef __cplusplus
     extern "C" 
     {
-        NMT_result MTDR_move_motor(char *motor, double angle,
-                                   PCA9685_settings *settings,
-                                   bool sim_mode);
+#endif
 
-        NMT_result MTDR_get_current_position(char *motor, double *angle,
-                                             PCA9685_settings *settings,
-                                             bool sim_mode);
+    /** MAX_NR_OF_MOTORS no. of LD27MG connected */
+    const int MAX_NR_OF_MOTORS = 2;
 
-        NMT_result MTDR_get_pca9685_status(PCA9685_settings *settings,
-                                           bool *initialized,
-                                           bool sim_mode);
+    /** @var MTDR_motors[]
+     * Mapping for motors and channels*/
+    const struct
+    {
+        /** @var channel PWM channmel
+         *  @var motor   Name of the motor */
+        PCA9685_PWM_CHANNEL channel;
+        const char          *motor;
+    } MTDR_motors [] = 
+    {
+        {CHANNEL_15, CAM_HRZN_MTR},
+        {CHANNEL_14, CAM_VERT_MTR}
+    };
 
-        NMT_result MTDR_init(PCA9685_settings *settings, bool sim_mode);
+    
+    //------------------Prototypes----------------------//
+    extern NMT_result MTDR_move_motor(char *motor, double angle,
+                                      PCA9685_settings *settings,
+                                      bool sim_mode);
 
-        NMT_result MTDR_seti2c(PCA9685_settings *settings);
+    extern NMT_result MTDR_get_current_position(char *motor, double *angle,
+                                                PCA9685_settings *settings,
+                                                bool sim_mode);
+
+    extern NMT_result MTDR_get_pca9685_status(PCA9685_settings *settings,
+                                              bool *initialized,
+                                              bool sim_mode);
+
+    extern NMT_result MTDR_init(PCA9685_settings *settings, bool sim_mode);
+
+    extern NMT_result MTDR_seti2c(PCA9685_settings *settings);
+
+#ifdef __cplusplus
     }
-
-#else
-        NMT_result MTDR_move_motor(char *motor, double angle,
-                                   PCA9685_settings *settings,
-                                   bool sim_mode);
-
-        NMT_result MTDR_get_current_position(char *motor, double *angle,
-                                             PCA9685_settings *settings,
-                                             bool sim_mode);
-
-        NMT_result MTDR_get_pca9685_status(PCA9685_settings *settings,
-                                           bool *initialized,
-                                           bool sim_mode);
-
-        NMT_result MTDR_init(PCA9685_settings *settings, bool sim_mode);
-
-        NMT_result MTDR_seti2c(PCA9685_settings *settings);
 #endif
 #endif
