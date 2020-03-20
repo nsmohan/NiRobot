@@ -11,10 +11,10 @@ OBJS        = NMT_stdlib.so \
               NMT_log.so \
               RSXA.so \
               PCA9685.so \
-              MTDR.so \
-              CAM_MOTOR_CTRL.so \
+              LD27MG.so \
               HCxSR04.so \
-              NMT_sock.so
+              NMT_sock.so \
+              RMDR.so
 
 #---------------------------------------#
 #                                       #
@@ -40,25 +40,20 @@ PCA9685_LIBS        = -lNMT_stdlib \
                       -lrt \
                       -lRSXA
 
-MTDR_LIBS           = -lNMT_stdlib \
+LD27MG_LIBS         = -lNMT_stdlib \
                       -lNMT_log \
-                      -lwiringPi \
                       -lPCA9685 \
-                      -lcrypt \
-                      -lm \
-                      -lrt \
                       -lRSXA
 
 CAM_MOTOR_CTRL_LIBS = -lNMT_stdlib \
                       -lNMT_log \
                       -lwiringPi \
-                      -lMTDR \
+                      -lLD27MG \
                       -lPCA9685 \
                       -lcrypt \
                       -lm \
                       -lrt \
                       -lRSXA
-
 
 HCxSR04_LIBS        = -lNMT_log \
                       -lNMT_stdlib \
@@ -71,6 +66,15 @@ HCxSR04_LIBS        = -lNMT_log \
 NMT_sock_LIBS       = -lNMT_stdlib \
                       -lNMT_log \
                       -lboost_python
+
+RMDR_LIBS           = -lNMT_stdlib \
+                      -lNMT_log \
+                      -lPCA9685 \
+                      -lLD27MG \
+                      -lwiringPi \
+                      -lcrypt \
+                      -lm \
+                      -lrt
 
 # -------Update output file name ---------#
 TARGET_OBJS := $(foreach OBJ,$(OBJS),$(OBJ_DIR)/lib$(OBJ))
