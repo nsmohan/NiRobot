@@ -10,7 +10,10 @@
 #ifndef _NMT_stdlib_
 #define _NMT_stdlib_
 
+
+/* --- Macros ----*/
 #define btoa(x) ((x)?"true":"false")
+
 #ifdef __cplusplus
     extern "C" 
     {
