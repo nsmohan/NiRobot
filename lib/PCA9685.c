@@ -113,6 +113,10 @@ NMT_result PCA9685_chgFreq(PCA9685_settings *settings, bool sim_mode)
     int orig_reg_value;
     int sleep_reg_value;
 
+    /* Check if we have a valid slave address */
+    if (settings->fd < 0)
+        return result = NOK;
+
     if ((result == OK) && (!sim_mode))
     {
         /* Read current register value and set bit to put chip into sleep mode */
@@ -150,6 +154,7 @@ static NMT_result PCA9685_setFreq(PCA9685_settings *settings, bool sim_mode)
     NMT_result result = OK;
 
     NMT_log_write(DEBUG, "> freq: %f", settings->freq);
+
     /* Check if we have a valid slave address */
     if (settings->fd < 0)
         return result = NOK;
@@ -187,6 +192,9 @@ NMT_result PCA9685_setPWM(PCA9685_settings *settings,
 
     /*Initialize Variables */
     NMT_result result = OK;
+
+    if (settings->fd < 0)
+        return result = NOK;
 
     NMT_log_write(DEBUG, "> freq: %f duty_cycle: %f delay_time: %f fd: %d channel: %d",
                   settings->freq, settings->duty_cycle, settings->delay_time, settings->fd, 
@@ -243,6 +251,9 @@ NMT_result PCA9685_getPWM(PCA9685_settings *settings,
     NMT_result result = OK;
     int tics_on_duration;
 
+    if (settings->fd < 0)
+        return result = NOK;
+
     NMT_log_write(DEBUG, "> channel=%s", PCA9685_PWM_CHANNEL_e2s[channel]);
 
     if (!sim_mode)
@@ -288,6 +299,9 @@ NMT_result PCA9685_get_init_status(PCA9685_settings *settings,
     int mode_1_reg    = 0;
     int mode_2_reg    = 0;
     int pre_scale     = 0;
+
+    if (settings->fd < 0)
+        return result = NOK;
 
     NMT_log_write(DEBUG, "> fd=%d", settings->fd);
 

@@ -24,5 +24,7 @@ all:
 
 clean:
 	rm -rf $(OBJ_DIR)/*.so
+	rm -rf $(OBJ_DIR)/*.o
+	rm -rf $(TST_DIR)/bld/*
 	rm -rf $(BLD_DIR)/*
 	rm -rf $(LIBPY_DIR)/*pyc
