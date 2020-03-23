@@ -2,38 +2,49 @@
 #__author__      = "Nitin Mohan
 #__copyright__   = "Copy Right 2018. NM Technologies"
  
-CMOCK= /usr/local
+# --- Global Variables ------#
+CMOCK     = /usr/local
+GMOCK     = /usr/src/gmock
+GTEST     = /usr/src/gtest
+STUB_DIR  = $(TST_DIR)/stubs
+TBLD_DIR  = $(TST_DIR)/bld
+CFLAGS_T  = $(shell $(CMOCK)/bin/cmock-config --cflags)
+LDFLAGS_T = $(shell $(CMOCK)/bin/cmock-config --libs $(GMOCK) $(GTEST))
+
+ACTIONS   = mkdirs
+
 GTST_LIBS = -lgtest_main \
             -lgtest \
             -lgmock \
             -lgmock_main \
             -lpthread
 
-GMOCK = /usr/src/gmock
-GTEST = /usr/src/gtest
+# ----List of Test Binairies ---- #
+TSTS            = $(TBLD_DIR)/unittest_PCA9685
 
-CFLAGS_T=$(shell $(CMOCK)/bin/cmock-config --cflags)
-LDFLAGS_T=$(shell $(CMOCK)/bin/cmock-config --libs $(GMOCK) $(GTEST))
+unittest_PCA9685_LIBS = $(GTST_LIBS) \
+                        -lwiringPi \
+                        -lcrypt \
+                        -lm \
+                        -lrt \
+                        -lNMT_log \
+                        -lNMT_stdlib \
+                        -lPCA9685
 
-SRCS=unittest_PCA9685.cpp
-STUBS=$(TST_DIR)/wiringPi_stub.o
-
-UT_PCA9685_LIBS = -lNMT_stdlib \
-                  -lPCA9685 \
-                  -lNMT_log
-
-TARGET_BLDS := $(foreach TST,$(TSTS),$(TST_DIR)/$(TST))
-
-all: $(TST_DIR)/UT_PCA9685
-	if [ ! -d "Obj" ]; then ln -s $(OBJ_DIR) $(TST_DIR); fi
-	if [ ! -d "lib_py" ]; then ln -s $(LIBPY_DIR) $(TST_DIR); fi
+all: $(ACTIONS) \
+     $(TSTS)
 .PHONY: all
 
-$(TST_DIR)/wiringPi_stub.o: $(TST_DIR)/wiringPi_stub.cc
-	g++ $(CFLAGS_T) -c $^ -o $@ 
+mkdirs:
+	if [ ! -d "Obj" ]; then ln -s $(OBJ_DIR) $(TST_DIR); fi
+	if [ ! -d "lib_py" ]; then ln -s $(LIBPY_DIR) $(TST_DIR); fi
+	if [ ! -d "bld" ]; then mkdir $(TST_DIR)/bld; fi
 
-$(TST_DIR)/unittest_PCA9685.o: $(TST_DIR)/unittest_PCA9685.cc
-	g++ $(CFLAGS_T) -I $(INC_DIR) $(UT_PCA9685) -c $^ -o $@
+$(OBJ_DIR)/%.o: $(STUB_DIR)/%.cc
+	g++ $(CFLAGS_T) -I $(INC_DIR) -c $^ -o $@ 
 
-$(TST_DIR)/UT_PCA9685: $(TST_DIR)/wiringPi_stub.o
-	g++  $(LDFLAGS_T) -H -I $(INC_DIR) -o $@ $^ $(GTST_LIBS) -lwiringPi -lcrypt -lm -lrt
+$(OBJ_DIR)/%.o: $(TST_DIR)/%.cc
+	g++ $(CFLAGS_T) -I $(INC_DIR) -I $(STUB_DIR) -c $^ -o $@ 
+
+$(TBLD_DIR)/%: $(OBJ_DIR)/wiringPi_stub.o $(OBJ_DIR)/unittest_PCA9685.o
+	g++  $(LDFLAGS_T) $(RPATH) -I $(INC_DIR) -o $@ $^ $($(*)_LIBS)
