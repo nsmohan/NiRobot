@@ -37,7 +37,7 @@
 
         /** enum LD27MG_m2s
          *  Convert LD27MG_MOTORS to string */
-        const char *LD27MG_m2s[] = {"CAM_HRZN_MTR", "CAM_VERT_MTR"};
+        const char* const LD27MG_m2s[] = {"CAM_HRZN_MTR", "CAM_VERT_MTR"};
 
         NMT_result LD27MG_move_motor(LD27MG_MOTORS motor, double angle,
                                    PCA9685_settings *settings,
@@ -58,7 +58,7 @@
 
         /** enum LD27MG_m2s
          *  Convert LD27MG_MOTORS to string */
-        const char *LD27MG_m2s[] = {"CAM_HRZN_MTR", "CAM_VERT_MTR"};
+        const char* const LD27MG_m2s[] = {"CAM_HRZN_MTR", "CAM_VERT_MTR"};
 
         NMT_result LD27MG_move_motor(LD27MG_MOTORS motor, double angle,
                                    PCA9685_settings *settings,

@@ -1,27 +1,46 @@
+/** 
+ *  @file      unittest_PCA9685.cc
+ *  @brief     Unittests for PCA9685 Driver
+ *  @details   Unittests for PWM Driver
+ *  @author    Nitin Mohan
+ *  @date      March 22, 2019
+ *  @copyright 2020 - NM Technologies
+ */
+
+/*--------------------------------------------------/
+/                   System Imports                  /
+/--------------------------------------------------*/
 #include <gtest/gtest.h>
+
+/*--------------------------------------------------/
+/                   Local Imports                   /
+/--------------------------------------------------*/
 #include "PCA9685.h"
 #include "wiringPi_stub.h"
 #include "NMT_stdlib.h"
 #include "NMT_log.h"
-#include <iostream>
 
+/* -- Macros -----*/
 #define MODE1 0x00
 #define MODE2 0x01
 #define PRE_SCALE 0xFE
-
 #define MODE1_INIT 0x21
 #define MODE2_INIT 0x04
 
+/* @class MyEnvironment
+ *  Environment Setup for Test */
 class MyEnvironment: public ::testing::Environment
 {
 public:
   virtual ~MyEnvironment() = default;
 
-  virtual void SetUp() {NMT_log_init((char *)"/var/log/NiRobot", false);}
+  virtual void SetUp() {NMT_log_init((char *)"/tmp/", false);}
 
   virtual void TearDown() {NMT_log_finish();}
 };
 
+/* @class PCA9685_Test_Fixture
+ * Test Fixture for unittests */
 class PCA9685_Test_Fixture : public ::testing::Test
 {
     public:
@@ -35,18 +54,9 @@ class PCA9685_Test_Fixture : public ::testing::Test
            this->sim_mode = false;
            this->hw_settings = {0};
        }
-
-    protected:
-
-         virtual void SetUp()
-         {       
-         } 
-
-         virtual void TearDown()
-         {
-         }
 };
 
+/* ---- Start of Tests -------------*/
 using namespace testing;
 TEST_F(PCA9685_Test_Fixture, TestPCA9685InitGw)
 {

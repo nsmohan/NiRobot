@@ -75,10 +75,13 @@ const int MAX_NR_OF_MOTORS = 2;
 /*--------------------------------------------------/
 /                   Prototypes                      /
 /--------------------------------------------------*/
-static NMT_result LD27MG_m2c(LD27MG_MOTORS motor, PCA9685_PWM_CHANNEL *channel);
-static double     LD27MG_get_duty_cycle(double angle, double freq);
-static double     LD27MG_get_angle(double duty_cycle, double freq);
+static PCA9685_PWM_CHANNEL LD27MG_m2c(LD27MG_MOTORS motor);
+static double              LD27MG_get_duty_cycle(double angle, double freq);
+static double              LD27MG_get_angle(double duty_cycle, double freq);
 
+/*--------------------------------------------------/
+/                   Start of Program                /
+/--------------------------------------------------*/
 NMT_result LD27MG_get_current_position(LD27MG_MOTORS motor, double *angle, 
                                      PCA9685_settings *settings,
                                      bool sim_mode)
@@ -100,17 +103,10 @@ NMT_result LD27MG_get_current_position(LD27MG_MOTORS motor, double *angle,
     PCA9685_PWM_CHANNEL channel;
 
     /* Get corresponding channel to motor string */
-    result = LD27MG_m2c(motor, &channel);
+    channel = LD27MG_m2c(motor);
 
     /* Get duty cycle */
-    if (result == OK)
-    {
-        result = PCA9685_getPWM(settings, channel, sim_mode);
-    }
-    else
-    {
-        NMT_log_write(ERROR, "Unable to find motor=%s in list of known motors", LD27MG_m2s[motor]);
-    }
+    result = PCA9685_getPWM(settings, channel, sim_mode);
 
     if (result == OK)
     {
@@ -142,18 +138,13 @@ NMT_result LD27MG_move_motor(LD27MG_MOTORS motor, double angle,
     PCA9685_PWM_CHANNEL channel;
 
     /* Get corresponding channel to motor string */
-    result = LD27MG_m2c(motor, &channel);
+    channel = LD27MG_m2c(motor);
 
     /* Set PWM for the corresponding channel */
-    if (result == OK)
-    {
-        settings->duty_cycle = LD27MG_get_duty_cycle(angle, settings->freq);
-        result = PCA9685_setPWM(settings, channel, sim_mode);
-    }
-    else
-    {
-        NMT_log_write(ERROR, "Unable to find motor=%s in list of known motors", LD27MG_m2s[motor]);
-    }
+    settings->duty_cycle = LD27MG_get_duty_cycle(angle, settings->freq);
+    
+    settings->delay_time = 0;
+    result = PCA9685_setPWM(settings, channel, sim_mode);
 
     NMT_log_write(DEBUG, "< result=%s",result_e2s[result]);
     return result;
@@ -194,7 +185,7 @@ NMT_result LD27MG_init(PCA9685_settings *settings, bool sim_mode)
 }
 
 
-static NMT_result LD27MG_m2c(LD27MG_MOTORS motor, PCA9685_PWM_CHANNEL *channel)
+static PCA9685_PWM_CHANNEL LD27MG_m2c(LD27MG_MOTORS motor)
 {
     //Input     : String with motor name
     //Output    : Channel the motor name corresponds to
@@ -203,13 +194,12 @@ static NMT_result LD27MG_m2c(LD27MG_MOTORS motor, PCA9685_PWM_CHANNEL *channel)
     /*!
      *  @brief     Convert motor string to motor channel
      *  @param[in] motor
-     *  @param[out] channel
-     *  @return    NMT_result
+     *  @return    channel
      */
     NMT_log_write(DEBUG, "> motor=%s", LD27MG_m2s[motor]);
 
     /* Initialize Variables */
-    NMT_result result = OK;
+    PCA9685_PWM_CHANNEL channel;
     int motor_size = sizeof(LD27MG_M2C_MAP)/sizeof(LD27MG_M2C_MAP[0]);
 
     /* Search for the name in struct */
@@ -217,19 +207,17 @@ static NMT_result LD27MG_m2c(LD27MG_MOTORS motor, PCA9685_PWM_CHANNEL *channel)
     {
         if (motor == LD27MG_M2C_MAP[i].motor)
         {
-            *channel = LD27MG_M2C_MAP[i].channel;
-            result = OK;
-            NMT_log_write(DEBUG, "< channel=%s result=%s",
-                          PCA9685_PWM_CHANNEL_e2s[*channel], result_e2s[result]);
-            return result;
+            /* Channel Found */
+            channel = LD27MG_M2C_MAP[i].channel;
+            break;
         }
     }
 
-    /*Exit the function */
-    result = NOK;
-    NMT_log_write(DEBUG, "< result=%s",result_e2s[result]);
-    return result;
+    /* Exit the Function */
+    NMT_log_write(DEBUG, "< channel=%s", PCA9685_PWM_CHANNEL_e2s[channel]);
+    return channel;
 }
+
 static double LD27MG_get_duty_cycle(double angle, double freq)
 {
     /*!

@@ -38,14 +38,22 @@ class TestRunner(object):
 
     def _run_tests(self):
         for test in self.tests_to_run:
-            print("Running ..........python %s%s"%(TST_PATH, test))
+            print_status(test)
             os.system("python %s%s"%(TST_PATH, test))
+
+def print_status(test):
+    print("""
+           ******************************************
+           *                                        *
+           *     RUNNING: %s              
+           *                                        *
+           ******************************************"""%(test))
 
 def run_gtests():
     file_list = os.listdir(BLD_PATH)
     
     for test in file_list:
-            print("Running ..........%s"%test)
+            print_status(test)
             os.system("%s/%s"%(BLD_PATH, test))
 
 if __name__ == '__main__':
