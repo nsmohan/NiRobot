@@ -18,6 +18,7 @@
     extern "C" 
     {
 #endif
+
     //------------------Structs & Enums----------------//
 
     /** enum NMT_result
@@ -27,7 +28,7 @@
     //--------------Global Definitions----------------//
     /** enum result_e2s
      *  OK/NOK enum_to_string */
-    const char *result_e2s[] = {"OK","NOK"};                     //Convert NMT_result to string
+    const char* const result_e2s[] = {"OK","NOK"};                        //Convert NMT_result to string
 
     //------------------Prototypes----------------------//
     extern void       NMT_stdlib_split(char *string,             //In  - String to Split

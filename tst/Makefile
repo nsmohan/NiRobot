@@ -20,16 +20,21 @@ GTST_LIBS = -lgtest_main \
             -lpthread
 
 # ----List of Test Binairies ---- #
-TSTS            = $(TBLD_DIR)/unittest_PCA9685
+TSTS            = $(TBLD_DIR)/unittest_PCA9685 \
+                  $(TBLD_DIR)/unittest_LD27MG
 
-unittest_PCA9685_LIBS = $(GTST_LIBS) \
-                        -lwiringPi \
+unittest_PCA9685_LIBS = -lwiringPi \
                         -lcrypt \
                         -lm \
                         -lrt \
                         -lNMT_log \
                         -lNMT_stdlib \
                         -lPCA9685
+
+unittest_LD27MG_LIBS =  -lNMT_log \
+                        -lNMT_stdlib \
+                        -lPCA9685 \
+                        -lLD27MG
 
 all: $(ACTIONS) \
      $(TSTS)
@@ -46,5 +51,8 @@ $(OBJ_DIR)/%.o: $(STUB_DIR)/%.cc
 $(OBJ_DIR)/%.o: $(TST_DIR)/%.cc
 	g++ $(CFLAGS_T) -I $(INC_DIR) -I $(STUB_DIR) -c $^ -o $@ 
 
-$(TBLD_DIR)/%: $(OBJ_DIR)/wiringPi_stub.o $(OBJ_DIR)/unittest_PCA9685.o
-	g++  $(LDFLAGS_T) $(RPATH) -I $(INC_DIR) -o $@ $^ $($(*)_LIBS)
+$(TBLD_DIR)/unittest_PCA9685: $(OBJ_DIR)/wiringPi_stub.o $(OBJ_DIR)/unittest_PCA9685.o
+	g++  $(LDFLAGS_T) $(RPATH) -I $(INC_DIR) -o $@ $^ $(GTST_LIBS) $(unittest_PCA9685_LIBS)
+
+$(TBLD_DIR)/unittest_LD27MG: $(OBJ_DIR)/PCA9685_stub.o $(OBJ_DIR)/unittest_LD27MG.o
+	g++  $(LDFLAGS_T) $(RPATH) -I $(INC_DIR) -o $@ $^ $(GTST_LIBS) $(unittest_LD27MG_LIBS)
