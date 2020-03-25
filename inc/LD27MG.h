@@ -52,6 +52,5 @@
 
 #ifdef __cplusplus
     }
-#else
-
+#endif
 #endif
