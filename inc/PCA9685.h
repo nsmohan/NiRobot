@@ -19,10 +19,19 @@
 #ifdef __cplusplus
     extern "C" 
     {
+
 #endif
     /** @def PCA9685_HW_NAME
      * Name of PCA9685 Driver */
     #define PCA9685_HW_NAME "PCA9685_PWM_DRIVER"
+
+    /**@def PCA9685_I2C_ADDRESS
+     * PCA9685 I2C Address */
+    #define PCA9685_I2C_ADDRESS 0x40
+
+    /**@def PCA9685_I2C_ADDRESS
+     * PCA9685 I2C Address */
+    #define PCA9685_I2C_ADDRESS 0x40
 
     /** @enum PCA9685_PWM_CHANNEL
      * Enumatation of PWM Channels */
@@ -45,22 +54,22 @@
 
     /** @var PCA9685_PWM_CHANNEL_e2s
      * Convert Enum to string var */
-    const char* PCA9685_PWM_CHANNEL_e2s[] = {"CHANNEL_0",
-                                             "CHANNEL_1",
-                                             "CHANNEL_2",
-                                             "CHANNEL_3",
-                                             "CHANNEL_4",
-                                             "CHANNEL_5",
-                                             "CHANNEL_6",
-                                             "CHANNEL_7",
-                                             "CHANNEL_8",
-                                             "CHANNEL_9",
-                                             "CHANNEL_10",
-                                             "CHANNEL_11",
-                                             "CHANNEL_12",
-                                             "CHANNEL_13",
-                                             "CHANNEL_14",
-                                             "CHANNEL_15"};
+    const char* const PCA9685_PWM_CHANNEL_e2s[] = {"CHANNEL_0",
+                                                   "CHANNEL_1",
+                                                   "CHANNEL_2",
+                                                   "CHANNEL_3",
+                                                   "CHANNEL_4",
+                                                   "CHANNEL_5",
+                                                   "CHANNEL_6",
+                                                   "CHANNEL_7",
+                                                   "CHANNEL_8",
+                                                   "CHANNEL_9",
+                                                   "CHANNEL_10",
+                                                   "CHANNEL_11",
+                                                   "CHANNEL_12",
+                                                   "CHANNEL_13",
+                                                   "CHANNEL_14",
+                                                   "CHANNEL_15"};
     /** @typedef PCA9685_settings
      *  PCA9685 Settings Sturucture */
     typedef struct PCA9685_settings

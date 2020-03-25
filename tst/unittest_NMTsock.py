@@ -32,7 +32,7 @@ from Obj.libNMT_sock import sock_mode
 
 #---------------- Start of Program ------------------#
 
-class MTDR_Test(unittest.TestCase):
+class NMT_sock_Test(unittest.TestCase):
 
     def setUp(self):
         NMT_log_test.NMT_log_test(__file__)
