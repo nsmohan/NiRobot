@@ -20,11 +20,11 @@ extern const double DEFAULT_SPEED = 50.00;
 
 /** @enum directions
  *  Possible directions the Robot can move */
-typedef enum direction {FOWARD, REVERSE, STOP} direction;
+typedef enum direction {FORWARD, REVERSE, STOP} direction;
 
 /** @var dir_to_str
  *  Facility to convert direction enum to string */
-const std::string dir_to_str[] = {"FOWARD", "REVERSE", "STOP"};
+const std::string dir_to_str[] = {"FORWARD", "REVERSE", "STOP"};
 
 /** @class L9110 
  *  Driver Object */

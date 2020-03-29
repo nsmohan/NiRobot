@@ -174,7 +174,7 @@ TEST_F(L9110_Test_Fixture, VerifyMoveMotor)
     L9110 l9110_obj(hw_config);
     
     EXPECT_CALL(wpimock, digitalWrite(hw_config.hw_interface[0].pin_no, 50.00)).Times(1);
-    l9110_obj.L9110_move_motor(FOWARD);
+    l9110_obj.L9110_move_motor(FORWARD);
 
     /* Scenario 2 - Not in Sim Mode */
     hw_config.hw_sim_mode = true;
@@ -183,7 +183,7 @@ TEST_F(L9110_Test_Fixture, VerifyMoveMotor)
     L9110 l9110_obj1(hw_config);
     
     EXPECT_CALL(wpimock, digitalWrite(_, _)).Times(0);
-    l9110_obj1.L9110_move_motor(FOWARD);
+    l9110_obj1.L9110_move_motor(FORWARD);
 }
 
 TEST_F(L9110_Test_Fixture, VerifyMoveMotorRev)
@@ -216,6 +216,27 @@ TEST_F(L9110_Test_Fixture, VerifyMoveMotorsSTOP)
     
     EXPECT_CALL(wpimock, digitalWrite(_, 0.00)).Times(2);
     l9110_obj.L9110_move_motor(STOP);
+}
+
+TEST_F(L9110_Test_Fixture, VerifyMoveMotorsManualSpeed)
+{
+   /*!
+    *  @test Verify L9110_move_motor
+    *  Call move motor with manual speed and verify its passed to HW
+    */
+
+    /* Scenario 1 - Not in Sim Mode */
+    EXPECT_CALL(wpimock, pinMode(_, _)).Times(2);
+    EXPECT_CALL(wpimock, digitalWrite(_, _)).Times(2);
+    L9110 l9110_obj(hw_config);
+    
+    double spd = 10.00;
+
+    EXPECT_CALL(wpimock, digitalWrite(hw_config.hw_interface[0].pin_no, spd)).Times(1);
+    l9110_obj.L9110_move_motor(FORWARD, spd);
+
+    EXPECT_CALL(wpimock, digitalWrite(hw_config.hw_interface[1].pin_no, spd)).Times(1);
+    l9110_obj.L9110_move_motor(REVERSE, spd);
 }
 
 int main(int argc, char **argv) {

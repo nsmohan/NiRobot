@@ -99,7 +99,7 @@ void L9110::L9110_move_motor(direction dir, double speed)
     {
         switch (dir)
         {
-            case FOWARD:
+            case FORWARD:
                 digitalWrite(this->forward, speed);
                 break;
             case REVERSE:
