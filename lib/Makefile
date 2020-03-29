@@ -14,6 +14,7 @@ OBJS        = NMT_stdlib.so \
               LD27MG.so \
               HCxSR04.so \
               NMT_sock.so \
+              L9110.so \
               RMDR.so
 
 #---------------------------------------#
@@ -66,6 +67,14 @@ HCxSR04_LIBS        = -lNMT_log \
 NMT_sock_LIBS       = -lNMT_stdlib \
                       -lNMT_log \
                       -lboost_python
+
+L9110_LIBS         =  -lNMT_stdlib \
+                      -lNMT_log \
+                      -lRSXA \
+                      -lwiringPi \
+                      -lcrypt \
+                      -lm \
+                      -lrt
 
 RMDR_LIBS           = -lNMT_stdlib \
                       -lNMT_log \

@@ -13,7 +13,7 @@
           },
           { "hw_name"     : "HCxSR04_Front",
             "hw_sim_mode" : true,
-            "hw_interface": [{ "pin_name": "echoPin",
+            "hw_interface": [{"pin_name": "echoPin",
                               "pin_no"  : 0
                             },
                             {
@@ -52,6 +52,28 @@
                             {
                              "pin_name" : "trigPin",
                              "pin_no"   : 4
+                            }]
+          },
+          { "hw_name"     : "LEFT_DRV_MTR",
+            "hw_sim_mode" : true,
+            "hw_interface": [{
+                             "pin_name": "forward",
+                             "pin_no"  : 5
+                            },
+                            {
+                             "pin_name" : "reverse",
+                             "pin_no"   : 6
+                            }]
+          },
+          { "hw_name"     : "RIGHT_DRV_MTR",
+            "hw_sim_mode" : true,
+            "hw_interface": [{
+                             "pin_name": "forward",
+                             "pin_no"  : 12
+                            },
+                            {
+                             "pin_name" : "reverse",
+                             "pin_no"   : 13
                             }]
           }]
 }
