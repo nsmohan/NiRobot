@@ -51,7 +51,6 @@ class PCA9685_Test_Fixture : public ::testing::Test
 
        PCA9685_Test_Fixture()
        {
-           this->sim_mode = false;
            this->hw_settings = {0};
        }
 };
@@ -65,32 +64,49 @@ TEST_F(PCA9685_Test_Fixture, TestPCA9685InitGw)
     *  verify correct response. 
     *  @step Set sim_mode = false and verify hardware actions
     *   are performed. 
+    */
+
+   /* Set Frequency to 10Hz */
+   hw_settings.freq = 30; 
+
+   /* Expected pre_scale for 10Hz */
+   int pre_scale = 202;
+
+   /* Not in Sim Mode */
+   hw_settings.sim_mode = false;
+
+   /* Verify Correct values are passed in to HW action functions */
+   EXPECT_CALL(wpimock, wiringPiI2CWriteReg8(1, 
+               AnyOf(MODE1, MODE2, PRE_SCALE), 
+               AnyOf(MODE1_INIT, MODE2_INIT, pre_scale)))
+       .Times(3);
+   EXPECT_CALL(wpimock, wiringPiI2CSetup(_)).Times(1)
+           .WillRepeatedly(Return(1));
+   ASSERT_EQ(OK, PCA9685_init(hw_settings));
+}
+
+TEST_F(PCA9685_Test_Fixture, TestPCA9685InitGwInSim)
+{
+   /*!
+    *  @test Call the PCA9685_init Function and
+    *  verify correct response. 
     *  @step Set sim_mode = true and verify not hardware actions are taken
     */
 
    /* Set Frequency to 10Hz */
    hw_settings.freq = 30; 
 
-   /* Set fd to 0 */
-   hw_settings.fd = 0;
-
    /* Expected pre_scale for 10Hz */
    int pre_scale = 202;
 
    /* Not in Sim Mode */
-   this->sim_mode = false;
-
-   /* Verify Correct values are passed in to HW action functions */
-   EXPECT_CALL(wpimock, wiringPiI2CWriteReg8(0, 
-               AnyOf(MODE1, MODE2, PRE_SCALE), 
-               AnyOf(MODE1_INIT, MODE2_INIT, pre_scale)))
-       .Times(3);
-   ASSERT_EQ(OK, PCA9685_init(&hw_settings, sim_mode));
+   hw_settings.sim_mode = true;
 
    /* In Sim Mode */
-   sim_mode = true;
+   hw_settings.sim_mode = true;
    EXPECT_CALL(wpimock, wiringPiI2CWriteReg8(_, _, _)).Times(0);
-   ASSERT_EQ(OK, PCA9685_init(&hw_settings, sim_mode));
+   EXPECT_CALL(wpimock, wiringPiI2CSetup(_)).Times(0);
+   ASSERT_EQ(OK, PCA9685_init(hw_settings));
 
 }
 
@@ -104,12 +120,8 @@ TEST_F(PCA9685_Test_Fixture, TestSetFreqMaxMin)
     *  @step Set sim_mode = true and verify not hardware actions are taken
     */
 
-   /* Set fd to 0 */
-   hw_settings.fd = 0;
-
-
    /* Not in Sim Mode */
-   sim_mode = false;
+   hw_settings.sim_mode = false;
 
    /* Verify Correct values are passed in to HW action functions */
 
@@ -119,22 +131,24 @@ TEST_F(PCA9685_Test_Fixture, TestSetFreqMaxMin)
    /* Expected pre_scale for 10Hz */
    int pre_scale = 202;
 
-   EXPECT_CALL(wpimock, wiringPiI2CWriteReg8(0, 
+   EXPECT_CALL(wpimock, wiringPiI2CWriteReg8(1, 
                AnyOf(MODE1, MODE2, PRE_SCALE), 
                AnyOf(MODE1_INIT, MODE2_INIT, pre_scale)))
        .Times(3);
-   ASSERT_EQ(OK, PCA9685_init(&hw_settings, sim_mode));
+   EXPECT_CALL(wpimock, wiringPiI2CSetup(_))
+           .WillRepeatedly(Return(1));
+   ASSERT_EQ(OK, PCA9685_init(hw_settings));
 
    /* Set Frequency to 10Hz */
    hw_settings.freq = 1510; /* We Expect Max to be 1510 */
 
    pre_scale = 3;
 
-   EXPECT_CALL(wpimock, wiringPiI2CWriteReg8(0, 
+   EXPECT_CALL(wpimock, wiringPiI2CWriteReg8(1, 
                AnyOf(MODE1, MODE2, PRE_SCALE), 
                AnyOf(MODE1_INIT, MODE2_INIT, pre_scale)))
        .Times(3);
-   ASSERT_EQ(OK, PCA9685_init(&hw_settings, sim_mode));
+   ASSERT_EQ(OK, PCA9685_init(hw_settings));
 }
 
 TEST_F(PCA9685_Test_Fixture, TestPCA9685InitBw)
@@ -144,23 +158,17 @@ TEST_F(PCA9685_Test_Fixture, TestPCA9685InitBw)
     *  verify correct response. (Result = NOK)
     *  @step Set sim_mode = false and verify hardware actions
     *   are performed. 
-    *  @step Set sim_mode = true and verify not hardware actions are taken
     */
 
-   /* Set fd to 0 */
-   hw_settings.fd = -1;
-
    /* Not in Sim Mode */
-   sim_mode = false;
+   hw_settings.sim_mode = false;
 
    /* Verify Correct values are passed in to HW action functions */
    EXPECT_CALL(wpimock, wiringPiI2CWriteReg8(_ ,_ , _)).Times(0);
-   ASSERT_EQ(NOK, PCA9685_init(&hw_settings, sim_mode));
-
-   /* In Sim Mode */
-   sim_mode = true;
-   EXPECT_CALL(wpimock, wiringPiI2CWriteReg8(_, _, _)).Times(0);
-   ASSERT_EQ(NOK, PCA9685_init(&hw_settings, sim_mode));
+   EXPECT_CALL(wpimock, wiringPiI2CSetup(_))
+           .Times(1)
+           .WillRepeatedly(Return(-1));
+   ASSERT_EQ(NOK, PCA9685_init(hw_settings));
 }
 
 TEST_F(PCA9685_Test_Fixture, TestchgFreqGW)
@@ -178,27 +186,33 @@ TEST_F(PCA9685_Test_Fixture, TestchgFreqGW)
     int pre_scale = 151;
 
     /* Set Variable values */
-    hw_settings.fd = 0;
-    hw_settings.freq = 40;
+    float freq = 40;
     
+    /* Initialize PCA9685 Driver */
+   hw_settings.freq = 50;
+   hw_settings.sim_mode = false;
+   EXPECT_CALL(wpimock, wiringPiI2CSetup(_))
+           .WillRepeatedly(Return(1));
+   EXPECT_CALL(wpimock, wiringPiI2CWriteReg8(_, _,_)).Times(AtLeast(1));
+   ASSERT_EQ(OK, PCA9685_init(hw_settings));
 
     /* Set Simulation Mode to false and set Expectations */
-    sim_mode = false;
-    EXPECT_CALL(wpimock, wiringPiI2CReadReg8(hw_settings.fd, MODE1))
+    EXPECT_CALL(wpimock, wiringPiI2CReadReg8(1, MODE1))
             .Times(1)
             .WillOnce(Return(orig_value));
-    EXPECT_CALL(wpimock, wiringPiI2CWriteReg8(hw_settings.fd, _, 
+    EXPECT_CALL(wpimock, wiringPiI2CWriteReg8(1, _, 
             AnyOf(orig_value, slp_value, pre_scale)))
             .Times(3);
-    ASSERT_EQ(OK, PCA9685_chgFreq(&hw_settings, sim_mode));
+    ASSERT_EQ(OK, PCA9685_chgFreq(freq));
 
-    /* Set Simulation Mode to false and set Expectations */
-    sim_mode = true;
+    /* Set Simulation Mode to true and set Expectations */
+    hw_settings.sim_mode = true;
     EXPECT_CALL(wpimock, wiringPiI2CReadReg8(_, _))
            .Times(0);
     EXPECT_CALL(wpimock, wiringPiI2CWriteReg8(_, _, _))
             .Times(0);
-    ASSERT_EQ(OK, PCA9685_chgFreq(&hw_settings, sim_mode));
+    ASSERT_EQ(OK, PCA9685_init(hw_settings));
+    ASSERT_EQ(OK, PCA9685_chgFreq(freq));
 }
 
 TEST_F(PCA9685_Test_Fixture, TestchgFreqBW)
@@ -212,25 +226,22 @@ TEST_F(PCA9685_Test_Fixture, TestchgFreqBW)
     */
 
     /* Set Variable values */
-    hw_settings.fd = -1;
-    hw_settings.freq = 40;
+    float freq = 40;
     
+   /* Set Init Failure */
+   hw_settings.freq = 50;
+   hw_settings.sim_mode = false;
+   EXPECT_CALL(wpimock, wiringPiI2CSetup(_))
+           .Times(1)
+           .WillOnce(Return(-1));
+    ASSERT_EQ(NOK, PCA9685_init(hw_settings));
 
     /* Set Simulation Mode to false and set Expectations */
-    sim_mode = false;
     EXPECT_CALL(wpimock, wiringPiI2CReadReg8(_, _))
            .Times(0);
     EXPECT_CALL(wpimock, wiringPiI2CWriteReg8(_, _, _))
             .Times(0);
-    ASSERT_EQ(NOK, PCA9685_chgFreq(&hw_settings, sim_mode));
-
-    /* Set Simulation Mode to false and set Expectations */
-    sim_mode = true;
-    EXPECT_CALL(wpimock, wiringPiI2CReadReg8(_, _))
-           .Times(0);
-    EXPECT_CALL(wpimock, wiringPiI2CWriteReg8(_, _, _))
-            .Times(0);
-    ASSERT_EQ(NOK, PCA9685_chgFreq(&hw_settings, sim_mode));
+    ASSERT_EQ(NOK, PCA9685_chgFreq(freq));
 }
 
 TEST_F(PCA9685_Test_Fixture, TestsetPWMGW)
@@ -244,9 +255,8 @@ TEST_F(PCA9685_Test_Fixture, TestsetPWMGW)
     */
 
     /* Set Variable values */
-    hw_settings.fd = 0;
-    hw_settings.duty_cycle = 50;
-    hw_settings.delay_time = 100;
+    double duty_cycle = 50;
+    double delay_time = 100;
     channel = CHANNEL_0;
     int ch1 = channel * 4 + 0x06;
     int ch2 = ch1 + 2;
@@ -255,18 +265,25 @@ TEST_F(PCA9685_Test_Fixture, TestsetPWMGW)
     
 
     /* Set Simulation Mode to false and set Expectations */
-    sim_mode = false;
-    EXPECT_CALL(wpimock, wiringPiI2CWriteReg16(hw_settings.fd, 
+    hw_settings.sim_mode = false;
+    EXPECT_CALL(wpimock, wiringPiI2CWriteReg16(1, 
                 AnyOf(ch1, ch2),  AnyOf(tics_to_on, tics_to_off)))
             .Times(2);
-    ASSERT_EQ(OK, PCA9685_setPWM(&hw_settings, 
-                                     channel, sim_mode));
+   EXPECT_CALL(wpimock, wiringPiI2CSetup(_))
+           .Times(1)
+           .WillOnce(Return(1));
+    EXPECT_CALL(wpimock, wiringPiI2CWriteReg8(_, _, _))
+            .Times(AtLeast(1));
+    ASSERT_EQ(OK, PCA9685_init(hw_settings));
+    ASSERT_EQ(OK, PCA9685_setPWM(duty_cycle, delay_time, 
+                                     channel));
 
     /* Set Simulation Mode to false and set Expectations */
-    sim_mode = true;
-    EXPECT_CALL(wpimock, wiringPiI2CWriteReg16(hw_settings.fd, _, _))
+    hw_settings.sim_mode = true;
+    EXPECT_CALL(wpimock, wiringPiI2CWriteReg16(_, _, _))
             .Times(0);
-    ASSERT_EQ(OK, PCA9685_setPWM(&hw_settings, channel, sim_mode));
+    ASSERT_EQ(OK, PCA9685_init(hw_settings));
+    ASSERT_EQ(OK, PCA9685_setPWM(duty_cycle, delay_time, channel));
 }
 
 TEST_F(PCA9685_Test_Fixture, TestsetPWMBW)
@@ -276,25 +293,20 @@ TEST_F(PCA9685_Test_Fixture, TestsetPWMBW)
     *  verify result = NOK if no hardware data pointer is passed
     *  @step Set sim_mode = false and verify hardware actions
     *   are performed. 
-    *  @step Set sim_mode = true and verify not hardware actions are taken
     */
 
-    /* Set Variable values */
-    hw_settings.fd = -1;
-    
-
+    double duty_cycle = 10;
+    double delay_time = 0;
     /* Set Simulation Mode to false and set Expectations */
-    sim_mode = false;
-    EXPECT_CALL(wpimock, wiringPiI2CWriteReg16(hw_settings.fd, _, _))
+    hw_settings.sim_mode = false;
+    EXPECT_CALL(wpimock, wiringPiI2CWriteReg16(_, _, _))
             .Times(0);
-    ASSERT_EQ(NOK, PCA9685_setPWM(&hw_settings, 
-                                     channel, sim_mode));
-
-    /* Set Simulation Mode to false and set Expectations */
-    sim_mode = true;
-    EXPECT_CALL(wpimock, wiringPiI2CWriteReg16(hw_settings.fd, _, _))
-            .Times(0);
-    ASSERT_EQ(NOK, PCA9685_setPWM(&hw_settings, channel, sim_mode));
+   EXPECT_CALL(wpimock, wiringPiI2CSetup(_))
+           .Times(1)
+           .WillOnce(Return(-1));
+    ASSERT_EQ(NOK, PCA9685_init(hw_settings));
+    ASSERT_EQ(NOK, PCA9685_setPWM(duty_cycle, delay_time,
+                                     channel));
 }
 
 TEST_F(PCA9685_Test_Fixture, TestsetPWM_MaxMin)
@@ -308,8 +320,8 @@ TEST_F(PCA9685_Test_Fixture, TestsetPWM_MaxMin)
     */
 
     /* Set Variable values */
-    hw_settings.fd = 0;
-    hw_settings.delay_time = 100;
+    double delay_time = 100;
+    double duty_cycle;
     channel = CHANNEL_5;
     int ch1 = channel * 4 + 0x06;
     int ch2 = ch1 + 2;
@@ -319,15 +331,22 @@ TEST_F(PCA9685_Test_Fixture, TestsetPWM_MaxMin)
     int duty_cycles_cases[] = {-100, 200};
     
 
+   EXPECT_CALL(wpimock, wiringPiI2CSetup(_))
+           .Times(1)
+           .WillOnce(Return(1));
+    EXPECT_CALL(wpimock, wiringPiI2CWriteReg8(_, _, _))
+            .Times(AtLeast(1));
+    ASSERT_EQ(OK, PCA9685_init(hw_settings));
+
     /* Set Expectations and call the function */
     for (int i = 0; i < 2; i++)
     {
-        hw_settings.duty_cycle = duty_cycles_cases[i];
-        EXPECT_CALL(wpimock, wiringPiI2CWriteReg16(hw_settings.fd, 
+        duty_cycle = duty_cycles_cases[i];
+        EXPECT_CALL(wpimock, wiringPiI2CWriteReg16(1, 
                     AnyOf(ch1, ch2),  AnyOf(tics_to_on, tics_to_off)))
                 .Times(2);
-        ASSERT_EQ(OK, PCA9685_setPWM(&hw_settings, 
-                                         channel, sim_mode));
+        ASSERT_EQ(OK, PCA9685_setPWM(duty_cycle, delay_time,
+                                         channel));
     }
 
 }
@@ -343,7 +362,6 @@ TEST_F(PCA9685_Test_Fixture, TestPCA9685GetPWMGW)
     */
 
     /* Set Variable values */
-    hw_settings.fd = 0;
     channel = CHANNEL_5;
     int ch1 = channel * 4 + 0x06;
     int ch2 = ch1 + 2;
@@ -351,29 +369,37 @@ TEST_F(PCA9685_Test_Fixture, TestPCA9685GetPWMGW)
     int tics_to_off = 8191;
     double exp_duty;
     double precison = 0.0001;
+    double duty_cycle;
 
     
 
+    /* Intialize PCA9685 */
+   EXPECT_CALL(wpimock, wiringPiI2CSetup(_))
+           .Times(1)
+           .WillOnce(Return(1));
+    EXPECT_CALL(wpimock, wiringPiI2CWriteReg8(_, _, _))
+            .Times(AtLeast(1));
+
     /* Set Expectations and call the function */
-    sim_mode = false;
+    hw_settings.sim_mode = false;
     exp_duty = 99.9878;
-    EXPECT_CALL(wpimock, wiringPiI2CReadReg16(hw_settings.fd, 
+    EXPECT_CALL(wpimock, wiringPiI2CReadReg16(1, 
                 AnyOf(ch1, ch2)))
             .Times(2)
             .WillOnce(Return(tics_to_on))
             .WillOnce(Return(tics_to_off));
-    ASSERT_EQ(OK, PCA9685_getPWM(&hw_settings, 
-                                     channel, sim_mode));
-    EXPECT_NEAR(exp_duty, hw_settings.duty_cycle, precison);
+    ASSERT_EQ(OK, PCA9685_init(hw_settings));
+    ASSERT_EQ(OK, PCA9685_getPWM(&duty_cycle, channel));
+    EXPECT_NEAR(exp_duty, duty_cycle, precison);
 
     /* Test the function is not called in sim_mode */
-    sim_mode = true;
+    hw_settings.sim_mode = true;
     exp_duty = 12.1948;
     EXPECT_CALL(wpimock, wiringPiI2CReadReg16(_, _))
             .Times(0);
-    ASSERT_EQ(OK, PCA9685_getPWM(&hw_settings, 
-                                     channel, sim_mode));
-    EXPECT_NEAR(exp_duty, hw_settings.duty_cycle, precison);
+    ASSERT_EQ(OK, PCA9685_init(hw_settings));
+    ASSERT_EQ(OK, PCA9685_getPWM(&duty_cycle, channel));
+    EXPECT_NEAR(exp_duty, duty_cycle, precison);
 }
 
 TEST_F(PCA9685_Test_Fixture, TestgetPWMBW)
@@ -386,22 +412,18 @@ TEST_F(PCA9685_Test_Fixture, TestgetPWMBW)
     *  @step Set sim_mode = true and verify not hardware actions are taken
     */
 
-    /* Set Variable values */
-    hw_settings.fd = -1;
     
+    double duty_cycle = 0;
+   EXPECT_CALL(wpimock, wiringPiI2CSetup(_))
+           .Times(1)
+           .WillOnce(Return(-1));
+    hw_settings.sim_mode = false;
+    ASSERT_EQ(NOK, PCA9685_init(hw_settings));
 
-    /* Set Simulation Mode to false and set Expectations */
-    sim_mode = false;
-    EXPECT_CALL(wpimock, wiringPiI2CReadReg16(hw_settings.fd, _))
+    /* Set Expectations and call getPWM */
+    EXPECT_CALL(wpimock, wiringPiI2CReadReg16(_, _))
             .Times(0);
-    ASSERT_EQ(NOK, PCA9685_getPWM(&hw_settings, 
-                                     channel, sim_mode));
-
-    /* Set Simulation Mode to false and set Expectations */
-    sim_mode = true;
-    EXPECT_CALL(wpimock, wiringPiI2CReadReg16(hw_settings.fd, _))
-            .Times(0);
-    ASSERT_EQ(NOK, PCA9685_getPWM(&hw_settings, channel, sim_mode));
+    ASSERT_EQ(NOK, PCA9685_getPWM(&duty_cycle, channel));
 }
 
 TEST_F(PCA9685_Test_Fixture, TestPCA9685GetStatusGW)
@@ -415,29 +437,35 @@ TEST_F(PCA9685_Test_Fixture, TestPCA9685GetStatusGW)
     */
 
     /* Set Variable values */
-    hw_settings.fd = 0;
-    hw_settings.freq = 30.00;
     int pre_scale = 202;
 
+   EXPECT_CALL(wpimock, wiringPiI2CSetup(_))
+           .Times(1)
+           .WillOnce(Return(1));
+    EXPECT_CALL(wpimock, wiringPiI2CWriteReg8(_, _, _))
+            .Times(AtLeast(1));
+    hw_settings.sim_mode = false;
+    hw_settings.freq = 30.00;
+    ASSERT_EQ(OK, PCA9685_init(hw_settings));
+
     /* T1 Expect system to be initialized */
-    sim_mode = false;
     bool initialized = false;
-    EXPECT_CALL(wpimock, wiringPiI2CReadReg8(hw_settings.fd, 
+    EXPECT_CALL(wpimock, wiringPiI2CReadReg8(1, 
              AnyOf(MODE1, MODE2, PRE_SCALE)))
             .Times(3)
             .WillOnce(Return(MODE1_INIT))
             .WillOnce(Return(MODE2_INIT))
             .WillOnce(Return(pre_scale));
-    ASSERT_EQ(OK, PCA9685_get_init_status(&hw_settings,
-                                              &initialized, 
-                                              sim_mode));
+    ASSERT_EQ(OK, PCA9685_get_init_status(&initialized));
     ASSERT_EQ(true, initialized);
 
 
     /* Test the function is not called in sim_mode */
-    sim_mode = true;
+    hw_settings.sim_mode = true;
     EXPECT_CALL(wpimock, wiringPiI2CReadReg8(_, _))
             .Times(0);
+    ASSERT_EQ(OK, PCA9685_init(hw_settings));
+    ASSERT_EQ(OK, PCA9685_get_init_status(&initialized));
 }
 
 TEST_F(PCA9685_Test_Fixture, TestPCA9685GetStatusFalseGW)
@@ -453,48 +481,49 @@ TEST_F(PCA9685_Test_Fixture, TestPCA9685GetStatusFalseGW)
 
     /* Set Variable values */
     bool initialized;
-    hw_settings.fd = 0;
-    hw_settings.freq = 30.00;
     int pre_scale = 202;
     int gvalue = 100;
 
+   EXPECT_CALL(wpimock, wiringPiI2CSetup(_))
+           .Times(1)
+           .WillOnce(Return(1));
+    EXPECT_CALL(wpimock, wiringPiI2CWriteReg8(_, _, _))
+            .Times(AtLeast(1));
+    hw_settings.sim_mode = false;
+    hw_settings.freq = 30.00;
+    ASSERT_EQ(OK, PCA9685_init(hw_settings));
+
     /* MODE1_INIT does not match */
     initialized = false;
-    EXPECT_CALL(wpimock, wiringPiI2CReadReg8(hw_settings.fd, 
+    EXPECT_CALL(wpimock, wiringPiI2CReadReg8(_, 
              AnyOf(MODE1, MODE2, PRE_SCALE)))
             .Times(3)
             .WillOnce(Return(gvalue))
             .WillOnce(Return(MODE2_INIT))
             .WillOnce(Return(pre_scale));
-    ASSERT_EQ(OK, PCA9685_get_init_status(&hw_settings,
-                                              &initialized, 
-                                              sim_mode));
+    ASSERT_EQ(OK, PCA9685_get_init_status(&initialized));
     ASSERT_EQ(false, initialized);
 
     /* MODE2_INIT does not match */
     initialized = false;
-    EXPECT_CALL(wpimock, wiringPiI2CReadReg8(hw_settings.fd, 
+    EXPECT_CALL(wpimock, wiringPiI2CReadReg8(_, 
              AnyOf(MODE1, MODE2, PRE_SCALE)))
             .Times(3)
             .WillOnce(Return(MODE1_INIT))
             .WillOnce(Return(gvalue))
             .WillOnce(Return(pre_scale));
-    ASSERT_EQ(OK, PCA9685_get_init_status(&hw_settings,
-                                              &initialized, 
-                                              sim_mode));
+    ASSERT_EQ(OK, PCA9685_get_init_status(&initialized));
     ASSERT_EQ(false, initialized);
 
     /* Frequency does not match */
     initialized = false;
-    EXPECT_CALL(wpimock, wiringPiI2CReadReg8(hw_settings.fd, 
+    EXPECT_CALL(wpimock, wiringPiI2CReadReg8(_, 
              AnyOf(MODE1, MODE2, PRE_SCALE)))
             .Times(3)
             .WillOnce(Return(MODE1_INIT))
             .WillOnce(Return(MODE2_INIT))
             .WillOnce(Return(gvalue));
-    ASSERT_EQ(OK, PCA9685_get_init_status(&hw_settings,
-                                              &initialized, 
-                                              sim_mode));
+    ASSERT_EQ(OK, PCA9685_get_init_status(&initialized));
     ASSERT_EQ(false, initialized);
 }
 
@@ -512,17 +541,19 @@ TEST_F(PCA9685_Test_Fixture, TestPCA9685GetStatusBW)
 
     /* Set Variable values */
     bool initialized;
-    hw_settings.fd = -1; /* Invalid file pointer */
 
-    /* MODE1_INIT does not match */
+   EXPECT_CALL(wpimock, wiringPiI2CSetup(_))
+           .Times(1)
+           .WillOnce(Return(-1));
+    hw_settings.sim_mode = false;
+    hw_settings.freq = 30.00;
+    ASSERT_EQ(NOK, PCA9685_init(hw_settings));
+
     initialized = false;
     EXPECT_CALL(wpimock, wiringPiI2CReadReg8(_, _))
        .Times(0); 
-    ASSERT_EQ(NOK, PCA9685_get_init_status(&hw_settings,
-                                              &initialized, 
-                                              sim_mode));
+    ASSERT_EQ(NOK, PCA9685_get_init_status(&initialized));
     ASSERT_EQ(false, initialized);
-    /* Set Variable values */
 }
 
 int main(int argc, char **argv) {

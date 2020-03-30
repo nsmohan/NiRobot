@@ -6,11 +6,6 @@
             "hw_sim_mode" : true,
             "hw_interface": []
           },
-          {
-            "hw_name"     : "LD27MG_MOTORS",
-            "hw_sim_mode" : true,
-            "hw_interface": []
-          },
           { "hw_name"     : "HCxSR04_Front",
             "hw_sim_mode" : true,
             "hw_interface": [{"pin_name": "echoPin",

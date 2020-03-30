@@ -25,14 +25,6 @@
      * Name of PCA9685 Driver */
     #define PCA9685_HW_NAME "PCA9685_PWM_DRIVER"
 
-    /**@def PCA9685_I2C_ADDRESS
-     * PCA9685 I2C Address */
-    #define PCA9685_I2C_ADDRESS 0x40
-
-    /**@def PCA9685_I2C_ADDRESS
-     * PCA9685 I2C Address */
-    #define PCA9685_I2C_ADDRESS 0x40
-
     /** @enum PCA9685_PWM_CHANNEL
      * Enumatation of PWM Channels */
     typedef enum {CHANNEL_0,
@@ -74,42 +66,30 @@
      *  PCA9685 Settings Sturucture */
     typedef struct PCA9685_settings
     {
-        /** @var fd
-         * WiringPi File Data pointer */
-        int    fd;
-
         /**@var freq
          * PCA9685 PWM frequency */
         float  freq;
 
-        /**@var duty_cycle
-         * PCA9685 duty cycle */
-        double duty_cycle;
-
-        /**@var delay_time
-         * Amount of delay needed in (ms) prior to starting PWM */
-        double delay_time;
+        /**var sim_mode
+         * Simulation Mode for PCA9685 Driver */
+        bool sim_mode;
 
     }PCA9685_settings;
 
     //------------------Prototypes----------------------//
-    extern NMT_result PCA9685_init(PCA9685_settings *settings,
-                                   bool sim_mode);
+    extern NMT_result PCA9685_init(PCA9685_settings settings);
 
-    extern NMT_result PCA9685_chgFreq(PCA9685_settings *settings,
-                                      bool sim_mode);
+    extern NMT_result PCA9685_chgFreq(float freq);
 
-    extern NMT_result PCA9685_setPWM(PCA9685_settings *settings,
-                                     PCA9685_PWM_CHANNEL channel,
-                                     bool sim_mode);
+    extern NMT_result PCA9685_setPWM(double duty_cycle, double delay_time,
+                                     PCA9685_PWM_CHANNEL channel);
 
-    extern NMT_result PCA9685_getPWM(PCA9685_settings *settings,
-                                     PCA9685_PWM_CHANNEL channel,
-                                     bool sim_mode);
+    extern NMT_result PCA9685_getPWM(double *duty_cycle,
+                                     PCA9685_PWM_CHANNEL channel);
 
-    extern NMT_result PCA9685_get_init_status(PCA9685_settings *settings,
-                                              bool *initialized,
-                                              bool sim_mode);
+    extern NMT_result PCA9685_get_init_status(bool *initialized);
+
+    extern float PCA9685_get_curret_freq();
 
 #ifdef __cplusplus
 }

@@ -82,16 +82,12 @@ static double              LD27MG_get_angle(double duty_cycle, double freq);
 /*--------------------------------------------------/
 /                   Start of Program                /
 /--------------------------------------------------*/
-NMT_result LD27MG_get_current_position(LD27MG_MOTORS motor, double *angle, 
-                                     PCA9685_settings *settings,
-                                     bool sim_mode)
+NMT_result LD27MG_get_current_position(LD27MG_MOTORS motor, double *angle)
 {
     /*!
      *  @brief     Get the current duty cycle of PWM Channel
      *             and calcualte the angle
      *  @param[in] motor
-     *  @param[in] settings
-     *  @param[in] sim_mode
      *  @param[out] angle
      *  @return    NMT_result
      */
@@ -101,33 +97,30 @@ NMT_result LD27MG_get_current_position(LD27MG_MOTORS motor, double *angle,
     /* Initialize varibles */
     NMT_result result = OK;
     PCA9685_PWM_CHANNEL channel;
+    double duty_cycle;
 
     /* Get corresponding channel to motor string */
     channel = LD27MG_m2c(motor);
 
     /* Get duty cycle */
-    result = PCA9685_getPWM(settings, channel, sim_mode);
+    result = PCA9685_getPWM(&duty_cycle, channel);
 
     if (result == OK)
     {
-        *angle = LD27MG_get_angle(settings->duty_cycle, settings->freq);
+        *angle = LD27MG_get_angle(duty_cycle, PCA9685_get_curret_freq());
     }
 
     NMT_log_write(DEBUG, "< angle=%.2f result=%s", *angle, result_e2s[result]);
     return result;
 }
 
-NMT_result LD27MG_move_motor(LD27MG_MOTORS motor, double angle,
-                           PCA9685_settings *settings,
-                           bool sim_mode)
+NMT_result LD27MG_move_motor(LD27MG_MOTORS motor, double angle)
 {
     /*!
      *  @brief     Get the duty cycle needed to move to motor to the
      *             provided angle and send to PCA9685.c
      *  @param[in] motor
      *  @param[in] angle
-     *  @param[in] settings
-     *  @param[in] sim_mode
      *  @return    NMT_result
      */
 
@@ -136,47 +129,58 @@ NMT_result LD27MG_move_motor(LD27MG_MOTORS motor, double angle,
     /* Initialize varibles */
     NMT_result result = OK;
     PCA9685_PWM_CHANNEL channel;
+    double duty_cycle;
+    double delay_time;
 
     /* Get corresponding channel to motor string */
     channel = LD27MG_m2c(motor);
 
     /* Set PWM for the corresponding channel */
-    settings->duty_cycle = LD27MG_get_duty_cycle(angle, settings->freq);
+    duty_cycle = LD27MG_get_duty_cycle(angle, PCA9685_get_curret_freq());
     
-    settings->delay_time = 0;
-    result = PCA9685_setPWM(settings, channel, sim_mode);
+    delay_time = 0;
+    result = PCA9685_setPWM(duty_cycle, delay_time, channel);
 
     NMT_log_write(DEBUG, "< result=%s",result_e2s[result]);
     return result;
 }
 
 
-NMT_result LD27MG_init(PCA9685_settings *settings, bool sim_mode) 
+NMT_result LD27MG_init() 
 {
     /*!
      *  @brief     Initialize the PCA9685 Driver and move the 
      *             motors to the home ppsition
-     *  @param[in] settings
-     *  @param[in] sim_mode
      *  @return    NMT_result
      */
 
     /* Initialize Variables */
     NMT_result result = OK;
+    bool initialized = false;
 
-    NMT_log_write(DEBUG, "> fd=%d", settings->fd);
+    NMT_log_write(DEBUG, "> ");
 
-    settings->delay_time = 0;
-    settings->duty_cycle = LD27MG_get_duty_cycle(HOME_ANGLE, settings->freq);
-
-    /* Move the LD27MG Motors to home position */
-    for (int i = 0; i < MAX_NR_OF_MOTORS; i++)
+    /* Proceed only if the PCA965 Driver has been initialized */
+    result = PCA9685_get_init_status(&initialized);
+    if ((result == OK) && (!initialized))
     {
-        if (result == OK)
+        NMT_log_write(ERROR, "PCA9685 Driver not initialized!");
+        result = NOK;
+    }
+
+    if (result == OK)
+    {
+        double delay_time = 0;
+        double duty_cycle = LD27MG_get_duty_cycle(HOME_ANGLE, PCA9685_get_curret_freq());
+
+        /* Move the LD27MG Motors to home position */
+        for (int i = 0; i < MAX_NR_OF_MOTORS; i++)
         {
-            result = PCA9685_setPWM(settings,
-                                    LD27MG_M2C_MAP[i].channel,
-                                    sim_mode);
+            if (result == OK)
+            {
+                result = PCA9685_setPWM(duty_cycle, delay_time,
+                                        LD27MG_M2C_MAP[i].channel);
+            }
         }
     }
 

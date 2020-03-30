@@ -40,15 +40,11 @@
          *  Convert LD27MG_MOTORS to string */
         const char* const LD27MG_m2s[] = {"CAM_HRZN_MTR", "CAM_VERT_MTR"};
 
-        NMT_result LD27MG_move_motor(LD27MG_MOTORS motor, double angle,
-                                   PCA9685_settings *settings,
-                                   bool sim_mode);
+        NMT_result LD27MG_move_motor(LD27MG_MOTORS motor, double angle);
 
-        NMT_result LD27MG_get_current_position(LD27MG_MOTORS motor, double *angle,
-                                             PCA9685_settings *settings,
-                                             bool sim_mode);
+        NMT_result LD27MG_get_current_position(LD27MG_MOTORS motor, double *angle);
 
-        NMT_result LD27MG_init(PCA9685_settings *settings, bool sim_mode);
+        NMT_result LD27MG_init();
 
 #ifdef __cplusplus
     }

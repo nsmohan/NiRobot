@@ -13,8 +13,9 @@
 #include "PCA9685_stub.h"
 
 /* Mock Interface Definitions */
-CMOCK_MOCK_FUNCTION2(PCA9685Mocker, PCA9685_init, NMT_result(PCA9685_settings*, bool));
-CMOCK_MOCK_FUNCTION2(PCA9685Mocker, PCA9685_chgFreq, NMT_result(PCA9685_settings*, bool));
-CMOCK_MOCK_FUNCTION3(PCA9685Mocker, PCA9685_setPWM, NMT_result(PCA9685_settings*, PCA9685_PWM_CHANNEL, bool));
-CMOCK_MOCK_FUNCTION3(PCA9685Mocker, PCA9685_getPWM, NMT_result(PCA9685_settings*, PCA9685_PWM_CHANNEL, bool));
-CMOCK_MOCK_FUNCTION3(PCA9685Mocker, PCA9685_get_init_status, NMT_result(PCA9685_settings*, bool, bool));
+CMOCK_MOCK_FUNCTION1(PCA9685Mocker, PCA9685_init, NMT_result(PCA9685_settings));
+CMOCK_MOCK_FUNCTION1(PCA9685Mocker, PCA9685_chgFreq, NMT_result(float));
+CMOCK_MOCK_FUNCTION3(PCA9685Mocker, PCA9685_setPWM, NMT_result(double, double, PCA9685_PWM_CHANNEL));
+CMOCK_MOCK_FUNCTION2(PCA9685Mocker, PCA9685_getPWM, NMT_result(double *, PCA9685_PWM_CHANNEL));
+CMOCK_MOCK_FUNCTION1(PCA9685Mocker, PCA9685_get_init_status, NMT_result(bool*));
+CMOCK_MOCK_FUNCTION0(PCA9685Mocker, PCA9685_get_curret_freq, float());

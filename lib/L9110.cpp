@@ -12,7 +12,7 @@
 /--------------------------------------------------*/
 #include <iostream>
 #include <chrono>
-#include <string.h>
+#include <cstring>
 #include <stdexcept>
 #include <wiringPi.h>
 
@@ -72,6 +72,7 @@ L9110::L9110(RSXA_hw hw_config)
     /* Initialize Hardware Pins */
     if (!(this->sim_mode))
     {
+        wiringPiSetup();
         pinMode(this->forward, OUTPUT);
         pinMode(this->reverse, OUTPUT);
         digitalWrite(this->forward, LOW);

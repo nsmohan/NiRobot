@@ -66,12 +66,14 @@ TEST_F(L9110_Test_Fixture, VerifyConstructorGW)
     */
 
     /* Scenario 1 - Not in Sim Mode */
+    EXPECT_CALL(wpimock, wiringPiSetup()).Times(1);
     EXPECT_CALL(wpimock, pinMode(AnyOf(1,2), OUTPUT)).Times(2);
     EXPECT_CALL(wpimock, digitalWrite(AnyOf(1,2), 0.00)).Times(AtLeast(2));
     L9110 l9110_obj(hw_config);
 
     /* Scenario 2 - In Sim Mode */
     hw_config.hw_sim_mode = true;
+    EXPECT_CALL(wpimock, wiringPiSetup()).Times(0);
     EXPECT_CALL(wpimock, pinMode(_, _)).Times(0);
     EXPECT_CALL(wpimock, digitalWrite(_, _)).Times(0);
     L9110 l9110_obj1(hw_config);
@@ -88,6 +90,7 @@ TEST_F(L9110_Test_Fixture, VerifyConstructorBW)
 
     /* Scenario 1 - Not in Sim Mode */
     strcpy(hw_config.hw_interface[0].pin_name, "Test1");
+    EXPECT_CALL(wpimock, wiringPiSetup()).Times(0);
     EXPECT_CALL(wpimock, pinMode(_, _)).Times(0);
     EXPECT_CALL(wpimock, digitalWrite(_, _)).Times(0);
 
@@ -104,6 +107,7 @@ TEST_F(L9110_Test_Fixture, VerifyConstructorBW)
 
     /* Scenario 2 - In Sim Mode */
     hw_config.hw_sim_mode = true;
+    EXPECT_CALL(wpimock, wiringPiSetup()).Times(0);
     EXPECT_CALL(wpimock, pinMode(_, _)).Times(0);
     EXPECT_CALL(wpimock, digitalWrite(_, _)).Times(0);
 
@@ -129,6 +133,7 @@ TEST_F(L9110_Test_Fixture, VerifyConstructor2BW)
 
     /* Scenario 1 - Not in Sim Mode */
     strcpy(hw_config.hw_interface[1].pin_name, "Test2");
+    EXPECT_CALL(wpimock, wiringPiSetup()).Times(0);
     EXPECT_CALL(wpimock, pinMode(_, _)).Times(0);
     EXPECT_CALL(wpimock, digitalWrite(_, _)).Times(0);
 
@@ -145,6 +150,7 @@ TEST_F(L9110_Test_Fixture, VerifyConstructor2BW)
 
     /* Scenario 2 - In Sim Mode */
     hw_config.hw_sim_mode = true;
+    EXPECT_CALL(wpimock, wiringPiSetup()).Times(0);
     EXPECT_CALL(wpimock, pinMode(_, _)).Times(0);
     EXPECT_CALL(wpimock, digitalWrite(_, _)).Times(0);
 
@@ -169,6 +175,7 @@ TEST_F(L9110_Test_Fixture, VerifyMoveMotor)
     */
 
     /* Scenario 1 - Not in Sim Mode */
+    EXPECT_CALL(wpimock, wiringPiSetup()).Times(1);
     EXPECT_CALL(wpimock, pinMode(_, _)).Times(2);
     EXPECT_CALL(wpimock, digitalWrite(_, _)).Times(2);
     L9110 l9110_obj(hw_config);
@@ -178,10 +185,8 @@ TEST_F(L9110_Test_Fixture, VerifyMoveMotor)
 
     /* Scenario 2 - Not in Sim Mode */
     hw_config.hw_sim_mode = true;
-    EXPECT_CALL(wpimock, pinMode(_, _)).Times(0);
-    EXPECT_CALL(wpimock, digitalWrite(_, _)).Times(0);
     L9110 l9110_obj1(hw_config);
-    
+
     EXPECT_CALL(wpimock, digitalWrite(_, _)).Times(0);
     l9110_obj1.L9110_move_motor(FORWARD);
 }
@@ -194,6 +199,7 @@ TEST_F(L9110_Test_Fixture, VerifyMoveMotorRev)
     */
 
     /* Scenario 1 - Not in Sim Mode */
+    EXPECT_CALL(wpimock, wiringPiSetup()).Times(1);
     EXPECT_CALL(wpimock, pinMode(_, _)).Times(2);
     EXPECT_CALL(wpimock, digitalWrite(_, _)).Times(2);
     L9110 l9110_obj(hw_config);
@@ -210,6 +216,7 @@ TEST_F(L9110_Test_Fixture, VerifyMoveMotorsSTOP)
     */
 
     /* Scenario 1 - Not in Sim Mode */
+    EXPECT_CALL(wpimock, wiringPiSetup()).Times(1);
     EXPECT_CALL(wpimock, pinMode(_, _)).Times(2);
     EXPECT_CALL(wpimock, digitalWrite(_, _)).Times(2);
     L9110 l9110_obj(hw_config);
@@ -226,6 +233,7 @@ TEST_F(L9110_Test_Fixture, VerifyMoveMotorsManualSpeed)
     */
 
     /* Scenario 1 - Not in Sim Mode */
+    EXPECT_CALL(wpimock, wiringPiSetup()).Times(1);
     EXPECT_CALL(wpimock, pinMode(_, _)).Times(2);
     EXPECT_CALL(wpimock, digitalWrite(_, _)).Times(2);
     L9110 l9110_obj(hw_config);
