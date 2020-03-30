@@ -556,6 +556,21 @@ TEST_F(PCA9685_Test_Fixture, TestPCA9685GetStatusBW)
     ASSERT_EQ(false, initialized);
 }
 
+TEST_F(PCA9685_Test_Fixture, TestGetCurrentFreq)
+
+{
+   /*!
+    *  @test Test the GetFreq Function
+    */
+
+    /* Set the Frequency via Init */
+    hw_settings.sim_mode = true;
+    hw_settings.freq = 50.00;
+    PCA9685_init(hw_settings);
+
+    /* Verify the freq */
+    ASSERT_EQ(hw_settings.freq, PCA9685_get_curret_freq());
+}
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
     MyEnvironment* env = new MyEnvironment(); 
