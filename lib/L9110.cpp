@@ -64,7 +64,7 @@ L9110::L9110(RSXA_hw hw_config)
         }
         else
         {
-            NMT_log_write(ERROR, (char *)"Forward or Reverse pinNo not found!");
+            NMT_log_write(ERROR, (char *)"Forward or Reverse pinNo not found for %s", this->hw_name.c_str());
             throw std::runtime_error("Invalid PinName Found!");
         }
     }
@@ -72,11 +72,18 @@ L9110::L9110(RSXA_hw hw_config)
     /* Initialize Hardware Pins */
     if (!(this->sim_mode))
     {
+        /* Initialize Wiring Pi */
         wiringPiSetup();
+
+        /* Set Pin Modes */
         pinMode(this->forward, OUTPUT);
         pinMode(this->reverse, OUTPUT);
+
+        /* Set Outputs to low so motors dont move */
         digitalWrite(this->forward, LOW);
         digitalWrite(this->reverse, LOW);
+
+        /* Allow everything to settle */
         delay(SETTLE_TIME);
     }
 

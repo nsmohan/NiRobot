@@ -256,6 +256,25 @@ TEST_F(LD27MG_Test_Fixture, InitBW2)
     ASSERT_EQ(result, LD27MG_init());
 }
 
+TEST_F(LD27MG_Test_Fixture, InitBW3)
+{
+   /*!
+    *  @test Verify overall result is NOK if
+    *  PCA9685_get_init_status is NOK
+    */
+
+    /* Set Expected Result */
+    result = NOK;
+
+    EXPECT_CALL(PCA9685mock, PCA9685_setPWM(_, _, _))
+        .Times(0);
+    EXPECT_CALL(PCA9685mock, PCA9685_get_init_status(_))
+        .WillOnce(DoAll(SetArgPointee<0>(true), Return(NOK)));
+    EXPECT_CALL(PCA9685mock, PCA9685_get_curret_freq())
+        .Times(0);
+    ASSERT_EQ(result, LD27MG_init());
+}
+
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
     MyEnvironment* env = new MyEnvironment(); 

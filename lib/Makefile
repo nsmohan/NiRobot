@@ -14,8 +14,7 @@ OBJS        = NMT_stdlib.so \
               LD27MG.so \
               HCxSR04.so \
               NMT_sock.so \
-              L9110.so \
-              RMDR.so
+              L9110.so
 
 #---------------------------------------#
 #                                       #
@@ -28,7 +27,6 @@ NMT_log_LIBS        = -lNMT_stdlib \
                       -lc
 
 RSXA_LIBS           = -lNMT_stdlib \
-                      -lNMT_log \
                       -ljson-c \
                       -lc
 

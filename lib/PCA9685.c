@@ -347,8 +347,13 @@ NMT_result PCA9685_get_init_status(bool *initialized)
             *initialized = true;
         }
     }
+    else if ((result == OK) && (SIM_MODE))
+    {
+        /* We always return True in SIM_MODE */
+        *initialized = true;
+    }
 
-    NMT_log_write(DEBUG, "< initialized=%s result=%s", btoa(initialized), result_e2s[result]);
+    NMT_log_write(DEBUG, "< initialized=%s result=%s", btoa(*initialized), result_e2s[result]);
     return result;
 }
 

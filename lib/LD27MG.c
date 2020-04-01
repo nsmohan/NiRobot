@@ -164,7 +164,7 @@ NMT_result LD27MG_init()
     result = PCA9685_get_init_status(&initialized);
     if ((result == OK) && (!initialized))
     {
-        NMT_log_write(ERROR, "PCA9685 Driver not initialized!");
+        NMT_log_write(ERROR, "PCA9685 Driver not initialized=%s!", btoa(initialized));
         result = NOK;
     }
 
