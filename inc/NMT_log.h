@@ -83,7 +83,7 @@
 
 /** @def NMT_log_init
  *  Macro definition. See NMT_log_init_m */
-#define NMT_log_init(...)  NMT_log_init_m(__FILE__, __VA_ARGS__)
+#define NMT_log_init(...)  NMT_log_init_m((char *)__FILE__, __VA_ARGS__)
 
 /** @def NMT_log_write
  *  Macro definition. See NMT_log_write_m */
