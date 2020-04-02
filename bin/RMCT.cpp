@@ -329,6 +329,7 @@ static NMT_result rmct_get_robot_settings(RSXA &hw_settings, RMCT_hw_settings &r
             {
                 memcpy(&(rmct_hw_settings.rmct_task_config), &(hw_settings.procs[i]), sizeof(hw_settings.procs[i]));
                 mc++;
+                break;
             }
             
         }
