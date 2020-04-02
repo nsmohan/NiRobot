@@ -3,8 +3,8 @@
  *  @brief     Header file for RSXA.c
  *  @details   External Interfaces for RSXA
  *  @author    Nitin Mohan
- *  @date      Feb 6, 2019
- *  @copyright 2020 - NM Technologies
+ *  @date      Feb 6, MAX_CHAR_LEN_119
+ *  @copyright MAX_CHAR_LEN_1MAX_CHAR_LEN_1 - NM Technologies
  */
 
 #ifndef _RSXA_
@@ -22,6 +22,8 @@
 /*--------------------------------------------------/
 /                   Constants                       /
 /--------------------------------------------------*/
+#define MAX_CHAR_LEN_1 20
+#define MAX_CHAR_LEN_2 100
 
 /*------------------Prototypes----------------------*/
 #ifdef __cplusplus
@@ -35,7 +37,7 @@
     {
         /** @var pin_name
          * Name of GPIO Pin */
-        char pin_name[20];
+        char pin_name[MAX_CHAR_LEN_1];
 
         /** @var pin_no
          *  Hardware Pin No */
@@ -49,7 +51,7 @@
     {
         /** @var hw_name
          *  @brief Hardware Name */
-        char hw_name[20];
+        char hw_name[MAX_CHAR_LEN_1];
 
         /** @var hw_sim_mode
          *  @brief True if in Simulation else False Name */
@@ -65,17 +67,51 @@
 
     }RSXA_hw;
 
+    /** @struct RSXA_procs
+     *  Process Settings */
+    typedef struct RSXA_procs
+    {
+        /** @var proc_name
+         *  Process Name */
+        char proc_name[MAX_CHAR_LEN_1];
+
+        /** @var server_ip
+         *  IP Address that server subsribes to */
+        char server_ip[MAX_CHAR_LEN_1];
+
+        /** @var server_p
+         *  Server Port Number */
+        int server_p;
+
+        /** @var client_ip
+         *  IP Address that client subsribes to */
+        char client_ip[MAX_CHAR_LEN_1];
+
+        /** @var client_p
+         *  Client Port Number */
+        int client_p;
+
+    }RSXA_procs;
+
     /** @struct RSXA
      * Root struct with all Robot Settings */
     typedef struct RSXA
     {
         /** @var log_dir
          *  Default Log Directory */
-        char log_dir[100];
+        char log_dir[MAX_CHAR_LEN_2];
+
+        /** @var procs
+         *  List of all proceses */
+        RSXA_procs *procs;
 
         /** @var hw
          *  Contains all hardware settnigs */
         RSXA_hw *hw;
+
+        /** @var array_len_procs
+         *  No of proc structs */
+        int array_len_procs;
 
         /** @var array_len_hw
          *  No of hw structs */

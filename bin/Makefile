@@ -20,10 +20,6 @@ regdump_LIBS = -lNMT_stdlib \
                -lm \
                -lrt
 
-camctrl_LIBS  = -lNMT_log \
-                -lRSXA \
-                -lCAM_MOTOR_CTRL
-
 RMCT_LIBS     = -lNMT_stdlib \
                 -lNMT_log \
                 -lRSXA \

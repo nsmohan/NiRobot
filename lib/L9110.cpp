@@ -92,7 +92,7 @@ L9110::L9110(RSXA_hw hw_config)
                                  this->hw_name.c_str(), btoa(this->sim_mode), this->forward, this->reverse);
 } 
 
-void L9110::L9110_move_motor(direction dir, double speed)
+void L9110::L9110_move_motor(L9110_DIRECTIONS direction, double speed)
 {
     /*!
      *  @brief     Move the motor at the desired speed
@@ -101,11 +101,11 @@ void L9110::L9110_move_motor(direction dir, double speed)
      *  @return    void
      */
 
-    NMT_log_write(DEBUG, (char *)" > dir=%s speed=%.2f", dir_to_str[dir].c_str(), speed);
+    NMT_log_write(DEBUG, (char *)" > dir=%s speed=%.2f", L9110_DIR_TO_STR[direction].c_str(), speed);
 
     if (!(this->sim_mode))
     {
-        switch (dir)
+        switch (direction)
         {
             case FORWARD:
                 digitalWrite(this->forward, speed);

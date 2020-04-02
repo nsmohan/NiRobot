@@ -44,16 +44,6 @@ LD27MG_LIBS         = -lNMT_stdlib \
                       -lPCA9685 \
                       -lRSXA
 
-CAM_MOTOR_CTRL_LIBS = -lNMT_stdlib \
-                      -lNMT_log \
-                      -lwiringPi \
-                      -lLD27MG \
-                      -lPCA9685 \
-                      -lcrypt \
-                      -lm \
-                      -lrt \
-                      -lRSXA
-
 HCxSR04_LIBS        = -lNMT_log \
                       -lNMT_stdlib \
                       -lRSXA \
@@ -69,15 +59,6 @@ NMT_sock_LIBS       = -lNMT_stdlib \
 L9110_LIBS         =  -lNMT_stdlib \
                       -lNMT_log \
                       -lRSXA \
-                      -lwiringPi \
-                      -lcrypt \
-                      -lm \
-                      -lrt
-
-RMDR_LIBS           = -lNMT_stdlib \
-                      -lNMT_log \
-                      -lPCA9685 \
-                      -lLD27MG \
                       -lwiringPi \
                       -lcrypt \
                       -lm \
