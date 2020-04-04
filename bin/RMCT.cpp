@@ -13,6 +13,8 @@
 #include <iostream>
 #include <stdexcept>
 #include <cstring>
+#include <string>
+#include <algorithm>
 #include <jsoncpp/json/json.h>
 
 /*--------------------------------------------------/
@@ -37,6 +39,10 @@
 /** @var NO_OF_HW
  *  Quantity of Hardware RMCT directly controls*/
 const unsigned int NO_OF_HW = 3;
+
+/** @var SOCK_TIMEOUT
+ *  Quantity of Hardware RMCT directly controls*/
+const unsigned int SOCK_TIMEOUT = 600;
 
 /** @var PWM_FREQ
  *  PWM Frequency for PCA9685 Driver */
@@ -121,11 +127,21 @@ class RobotMotorController
                              RSXA_hw left_motor_hw_config, 
                              RSXA_hw right_motor_hw_config);
 
+
         /* Prototypes */
+        NMT_result camera_control_dir_to_enum(std::string dir_str, CAMERA_MOTOR_DIRECTIONS &dir_enum);
+        LD27MG_MOTORS camera_motor_str2enum(std::string motor);
         NMT_result move_camera_motor(CAMERA_MOTOR_DIRECTIONS direction, 
                                             LD27MG_MOTORS camera_motor = CAM_HRZN_MTR, 
                                             double angle_to_move = 0.00, 
                                             double default_angle = camera_motor_sensitivity);
+        /** @var left_drv_motor
+         *  Left Drive Motor Object */
+        L9110 left_drv_motor;
+
+        /** @var right_drv_motor
+         *  Right Drive Motor Object */
+        L9110 right_drv_motor;
 
    private:
         /** @var motor_sensitivity 
@@ -136,16 +152,26 @@ class RobotMotorController
          *  Default Speed the Drive Motors move */
         static const int default_drive_motor_speed = 50.00;
 
-   protected:
-        /** @var left_drv_motor
-         *  Left Drive Motor Object */
-        L9110 left_drv_motor;
-
-        /** @var right_drv_motor
-         *  Right Drive Motor Object */
-        L9110 right_drv_motor;
 };
 
+LD27MG_MOTORS RobotMotorController::camera_motor_str2enum(std::string motor)
+{
+    int no_of_motors = sizeof(CAMERA_MOTOR_STR_TO_ENUM)/sizeof(CAMERA_MOTOR_STR_TO_ENUM[0]);
+    LD27MG_MOTORS motor_enum;
+
+    for (int i = 0; i < no_of_motors; i++)
+    {
+        if (motor == CAMERA_MOTOR_STR_TO_ENUM[i].RMCT_camera_motor)
+        {
+            motor_enum = CAMERA_MOTOR_STR_TO_ENUM[i].ld27mg_camera_motor;
+            break;
+        }
+    }
+
+    return motor_enum;
+    
+
+}
 RobotMotorController::RobotMotorController(RSXA_hw pca9685_hw_config, 
                                            RSXA_hw left_motor_hw_config, 
                                            RSXA_hw right_motor_hw_config) : 
@@ -197,7 +223,7 @@ NMT_result RobotMotorController::move_camera_motor(CAMERA_MOTOR_DIRECTIONS direc
     double     angle;
 
     /** Determine which motor needs to be moved */
-    if (result == OK)
+    if (direction != CUSTOM)
     {
         switch (direction)
         {
@@ -245,8 +271,34 @@ NMT_result RobotMotorController::move_camera_motor(CAMERA_MOTOR_DIRECTIONS direc
     return result; 
 }
 
+NMT_result RobotMotorController::camera_control_dir_to_enum(string dir_str, CAMERA_MOTOR_DIRECTIONS &dir_enum)
+{
+    //Input     : Direction String
+    //Output    : Direction ENUM
+    //Function  : Convert direction string to enum
+
+    NMT_result result = OK;
+
+    NMT_log_write(DEBUG, (char *)"> dir_str=%s", dir_str.c_str());
+
+    /* Convert String to Enum */
+    auto itr = find(DIRECTION_TO_STR, DIRECTION_TO_STR + MAX_DIRECTIONS, dir_str);
+    dir_enum = static_cast<CAMERA_MOTOR_DIRECTIONS>(distance(DIRECTION_TO_STR, itr));
+
+    if (dir_enum == MAX_DIRECTIONS)
+    {
+        NMT_log_write(ERROR, (char *)"Invalid Direction provided");
+        result = NOK;
+    }
+
+    /* Exit the function */
+    NMT_log_write(DEBUG, (char *)"< result=%s", result_e2s[result]);
+    return result;
+}
+
 
 static NMT_result rmct_get_robot_settings(RSXA &hw_settings, RMCT_hw_settings &rmct_hw_settings);
+
 int main()
 {
     /*!
@@ -255,6 +307,9 @@ int main()
      */
 
     /** Initialize Varibles */
+    char *rx_message;
+    Json::Value  mc;
+    Json::Reader reader;
     RMCT_hw_settings rmct_hw_settings = {0};
     RSXA hw_settings = {0};
     NMT_result result = OK;
@@ -264,6 +319,7 @@ int main()
     /* 1. Get Robot Settings */
     result = RSXA_init(&hw_settings);
 
+    /* Validate and Extract Settings Needed */
     if (result == OK)
         result = rmct_get_robot_settings(hw_settings, rmct_hw_settings);
 
@@ -280,23 +336,65 @@ int main()
 
         /** Free RSXA Memory (Everything is initialized) */
         if (result == OK) {RSXA_free_mem(&hw_settings);}
+
+        /* Initialize Sockets */
+        RSXA_procs sock_config = rmct_hw_settings.rmct_task_config;
+        NMT_sock_multicast client_sock(sock_config.server_p, sock_config.server_ip, SOCK_CLIENT, SOCK_TIMEOUT);
+        NMT_sock_multicast server_sock(sock_config.client_p, sock_config.client_ip, SOCK_SERVER);
+
+        /* Listen on the socket */
+        result = client_sock.NMT_read_socket(&rx_message); 
+
+        if (result == OK)
+        {
+            CAMERA_MOTOR_DIRECTIONS dir_enum;
+
+            /* Parse the message as JSON Object */
+            reader.parse(rx_message, mc);
+
+            if (mc["motor"].asString() == "CAMERA")
+            {
+                result = rmct_obj.camera_control_dir_to_enum(mc["direction"].asString(), dir_enum);
+                if (result == OK) {result = rmct_obj.move_camera_motor(dir_enum);}
+            }
+            else if ((mc["motor"] == "CAM_HRZN_MTR") || (mc["motor"] == "CAM_VERT_MTR"))
+            {
+                LD27MG_MOTORS camera_motor = rmct_obj.camera_motor_str2enum(mc["motor"].asString());
+                result = rmct_obj.move_camera_motor(CUSTOM, camera_motor, mc["angle"].asDouble());
+            }
+            else if (mc["motor"] == LEFT_DRV_MTR)
+            {
+                L9110_DIRECTIONS direction;
+                result = rmct_obj.left_drv_motor.L9110_dir_str2enum(mc["direction"].asString(), direction);
+
+                if ((result == OK) && (mc["speed"].asInt() > -1))
+                {
+                    rmct_obj.left_drv_motor.L9110_move_motor(direction, mc["speed"].asInt());
+                }
+                else if (result == OK)
+                {
+                    rmct_obj.left_drv_motor.L9110_move_motor(direction);
+                }
+            }
+            else if (mc["motor"] == RIGHT_DRV_MTR)
+            {
+                L9110_DIRECTIONS direction;
+                result = rmct_obj.right_drv_motor.L9110_dir_str2enum(mc["direction"].asString(), direction);
+
+                if ((result == OK) && (mc["speed"].asInt() > -1))
+                {
+                    rmct_obj.right_drv_motor.L9110_move_motor(direction, mc["speed"].asInt());
+                }
+                else if (result == OK)
+                {
+                    rmct_obj.right_drv_motor.L9110_move_motor(direction);
+                }
+            }
+                
+        }
     }
 
-    char *message;
-    RSXA_procs sock_config = rmct_hw_settings.rmct_task_config;
-    NMT_sock_multicast client_sock(sock_config.server_p, sock_config.server_ip, SOCK_CLIENT, 600);
-
-    Json::Value root;
-    Json::Reader reader;
-
-    result = client_sock.NMT_read_socket(&message); 
-
-    if (result == OK)
-    {
-        reader.parse(message, root);
-        cout << "Motor=" << root["motor"].asString() << endl;
-    }
-
+    /* Exit the program */
     if (result == OK) {NMT_log_finish();}
     return result;
 }

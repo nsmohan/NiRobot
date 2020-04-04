@@ -28,7 +28,7 @@ const unsigned int MAX_BUFFER_SIZE = 10240;
 
 using namespace std;
 NMT_sock_multicast::NMT_sock_multicast(unsigned int port, string multicast_ip,
-                                       sock_mode socket_mode, unsigned int sec = 60) : sec(sec)
+                                       sock_mode socket_mode, unsigned int sec) : sec(sec)
 {
     /*!
      *  @brief     Constructor for NMT_sock_multicast

@@ -138,7 +138,8 @@ def valid_tx_message(motor, direction="", angle=-1, speed=-1):
     """
 
     if (motor == "CAMERA"):
-        assert direction in CAM_DIRECTIONS, "Direction should be provided if motor == camera"
+        pass
+        #assert direction in CAM_DIRECTIONS, "Direction should be provided if motor == camera"
     elif (motor in CAMERA_MOTORS):
         assert angle >= 0, "Angle should be provided when motor == (CAM_HRZN_MTR or CAM_VERT_MTR)"
     elif (motor in DRIVE_MOTORS):

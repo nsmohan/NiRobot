@@ -44,6 +44,7 @@ class L9110
 
         /* Prototypes */
         void L9110_move_motor(L9110_DIRECTIONS direction, double speed=DEFAULT_SPEED);
+        NMT_result L9110_dir_str2enum(std::string dir_str, L9110_DIRECTIONS &dir_enum);
 
     private:
 
