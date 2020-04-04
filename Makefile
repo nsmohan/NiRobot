@@ -11,6 +11,7 @@ export LIB_DIR     = $(PROJ_DIR)/lib
 export LIBPY_DIR   = $(PROJ_DIR)/lib_py
 export BLD_DIR     = $(PROJ_DIR)/bld
 export TST_DIR     = $(PROJ_DIR)/tst
+export TOOLS_DIR   = $(PROJ_DIR)/tools
 export CFLAGS      = -g -Wall -Wextra -I $(INC_DIR) -I $(PY_DIR) \
                      -Wno-missing-field-initializers 
 export SFLAGS      = -fPIC -shared
@@ -25,6 +26,7 @@ bld_all:
 	$(MAKE) -C $(LIB_DIR)
 	$(MAKE) -C $(BIN_DIR)
 	$(MAKE) -C $(TST_DIR)
+	$(MAKE) -C $(TOOLS_DIR)
 
 mkdirs: 
 	if [ ! -d "Obj" ]; then mkdir $(OBJ_DIR); fi

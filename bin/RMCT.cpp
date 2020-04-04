@@ -13,6 +13,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <cstring>
+#include <jsoncpp/json/json.h>
 
 /*--------------------------------------------------/
 /                   Local Imports                   /
@@ -21,6 +22,7 @@
 #include "NMT_log.h"
 #include "LD27MG.h"
 #include "L9110.hpp"
+#include "NMT_sock.hpp"
 
 /*--------------------------------------------------/
 /                    Macros                         /
@@ -40,13 +42,13 @@ const unsigned int NO_OF_HW = 3;
  *  PWM Frequency for PCA9685 Driver */
 const float PWM_FREQ = 50.00;
 
-/**@var LEFT_MOTOR
+/**@var LEFT_DRV_MTR
  * Name of the Left Drive Motor */
-const std::string LEFT_MOTOR = "LEFT_DRV_MTR";
+const std::string LEFT_DRV_MTR = "LEFT_DRV_MTR";
 
-/**@var RIGHT_MOTOR
+/**@var RIGHT_DRV_MTR
  * Name of the Right Drive Motor */
-const std::string RIGHT_MOTOR = "RIGHT_DRV_MTR";
+const std::string RIGHT_DRV_MTR = "RIGHT_DRV_MTR";
 
 /** @struct CAMERA_MOTOR_STR_TO_ENUM
  *  Convert RMCT Motor names to driver name */
@@ -62,8 +64,8 @@ const struct
 
 }CAMERA_MOTOR_STR_TO_ENUM[] =
 {
-    {"Camera_Horizontal_Motor", CAM_HRZN_MTR},
-    {"Camera_Vertical_Motor", CAM_VERT_MTR}
+    {"CAM_HRZN_MTR", CAM_HRZN_MTR},
+    {"CAM_VERT_MTR", CAM_VERT_MTR}
 };
 
 using namespace std;
@@ -253,7 +255,7 @@ int main()
      */
 
     /** Initialize Varibles */
-    RMCT_hw_settings RMCT_hw_settings = {0};
+    RMCT_hw_settings rmct_hw_settings = {0};
     RSXA hw_settings = {0};
     NMT_result result = OK;
 
@@ -263,7 +265,7 @@ int main()
     result = RSXA_init(&hw_settings);
 
     if (result == OK)
-        result = rmct_get_robot_settings(hw_settings, RMCT_hw_settings);
+        result = rmct_get_robot_settings(hw_settings, rmct_hw_settings);
 
     if (result == OK)
     {
@@ -272,12 +274,27 @@ int main()
         NMT_log_init((char *)hw_settings.log_dir, true);
 
         /* Initialize Robot Motor Controller */
-        RobotMotorController rmct_obj(RMCT_hw_settings.pca9685_hw_config,
-                                      RMCT_hw_settings.left_motor_hw_config,
-                                      RMCT_hw_settings.right_motor_hw_config);
+        RobotMotorController rmct_obj(rmct_hw_settings.pca9685_hw_config,
+                                      rmct_hw_settings.left_motor_hw_config,
+                                      rmct_hw_settings.right_motor_hw_config);
 
         /** Free RSXA Memory (Everything is initialized) */
         if (result == OK) {RSXA_free_mem(&hw_settings);}
+    }
+
+    char *message;
+    RSXA_procs sock_config = rmct_hw_settings.rmct_task_config;
+    NMT_sock_multicast client_sock(sock_config.server_p, sock_config.server_ip, SOCK_CLIENT, 600);
+
+    Json::Value root;
+    Json::Reader reader;
+
+    result = client_sock.NMT_read_socket(&message); 
+
+    if (result == OK)
+    {
+        reader.parse(message, root);
+        cout << "Motor=" << root["motor"].asString() << endl;
     }
 
     if (result == OK) {NMT_log_finish();}
@@ -309,12 +326,12 @@ static NMT_result rmct_get_robot_settings(RSXA &hw_settings, RMCT_hw_settings &r
                 memcpy(&(rmct_hw_settings.pca9685_hw_config), &(hw_settings.hw[i]), sizeof(hw_settings.hw[i]));
                 mc++;
             }
-            else if (strcmp(hw_settings.hw[i].hw_name, LEFT_MOTOR.c_str()) == 0)
+            else if (strcmp(hw_settings.hw[i].hw_name, LEFT_DRV_MTR.c_str()) == 0)
             {
                 memcpy(&(rmct_hw_settings.left_motor_hw_config), &(hw_settings.hw[i]), sizeof(hw_settings.hw[i]));
                 mc++;
             }
-            else if (strcmp(hw_settings.hw[i].hw_name, RIGHT_MOTOR.c_str()) == 0)
+            else if (strcmp(hw_settings.hw[i].hw_name, RIGHT_DRV_MTR.c_str()) == 0)
             {
                 memcpy(&(rmct_hw_settings.right_motor_hw_config), &(hw_settings.hw[i]), sizeof(hw_settings.hw[i]));
                 mc++;

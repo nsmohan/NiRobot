@@ -16,6 +16,8 @@ OBJS        = NMT_stdlib.so \
               NMT_sock.so \
               L9110.so
 
+PY_OBJS =    NMT_sock.so
+
 #---------------------------------------#
 #                                       #
 #            Dependancies               #
@@ -54,7 +56,8 @@ HCxSR04_LIBS        = -lNMT_log \
 
 NMT_sock_LIBS       = -lNMT_stdlib \
                       -lNMT_log \
-                      -lboost_python
+
+NMT_sock_py_LIBS    = -lNMT_sock
 
 L9110_LIBS         =  -lNMT_stdlib \
                       -lNMT_log \
@@ -66,6 +69,7 @@ L9110_LIBS         =  -lNMT_stdlib \
 
 # -------Update output file name ---------#
 TARGET_OBJS := $(foreach OBJ,$(OBJS),$(OBJ_DIR)/lib$(OBJ))
+TARGET_OBJS += $(foreach OBJ,$(PY_OBJS),$(OBJ_DIR)/$(OBJ))
 
 all: $(TARGET_OBJS)
 .PHONY: all
@@ -77,6 +81,10 @@ $(OBJ_DIR)/lib%.so: $(LIB_DIR)/%.c $(INC_DIR)/%.h
 # -----Build C++ Files ---------#
 $(OBJ_DIR)/lib%.so: $(LIB_DIR)/%.cpp $(INC_DIR)/%.hpp
 	g++ $(CFLAGS) $(SFLAGS) $(RPATH) -o  $@ $< $($(*)_LIBS)
+
+# -----Build C++ Files ---------#
+$(OBJ_DIR)/%.so: $(LIB_DIR)/%_py.cpp $(INC_DIR)/%.hpp
+	g++ $(CFLAGS) $(SFLAGS) $(RPATH) -o  $@ $<  $($(*)_py_LIBS) -lboost_python
 
 
 clean:

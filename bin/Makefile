@@ -25,7 +25,9 @@ RMCT_LIBS     = -lNMT_stdlib \
                 -lRSXA \
                 -lPCA9685 \
                 -lLD27MG \
-                -lL9110
+                -lL9110 \
+                -lNMT_sock \
+                -ljsoncpp
 
 # -------Update output file name ---------#
 TARGET_BLDS := $(foreach BLD,$(BLDS),$(BLD_DIR)/$(BLD))

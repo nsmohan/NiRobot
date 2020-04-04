@@ -10,10 +10,6 @@
 Obj
 bld
 tst/lib_py
+tools/lib_py
 html
 latex
-gui/photonetwork_gui/.vs
-gui/photonetwork_gui/packages
-gui/photonetwork_gui/photonetwork_gui.sln
-gui/photonetwork_gui/photonetwork_gui/bin
-gui/photonetwork_gui/photonetwork_gui/obj
