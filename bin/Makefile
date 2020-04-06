@@ -23,11 +23,11 @@ regdump_LIBS = -lNMT_stdlib \
 RMCT_LIBS     = -lNMT_stdlib \
                 -lNMT_log \
                 -lRSXA \
-                -lPCA9685 \
-                -lLD27MG \
-                -lL9110 \
                 -lNMT_sock \
-                -ljsoncpp
+                -ljsoncpp \
+                -lRMCT_lib \
+                -lLD27MG \
+                -lL9110
 
 # -------Update output file name ---------#
 TARGET_BLDS := $(foreach BLD,$(BLDS),$(BLD_DIR)/$(BLD))

@@ -92,30 +92,7 @@ L9110::L9110(RSXA_hw hw_config)
                                  this->hw_name.c_str(), btoa(this->sim_mode), this->forward, this->reverse);
 } 
 
-NMT_result L9110::L9110_dir_str2enum(std::string dir_str, L9110_DIRECTIONS &dir_enum)
-{
-
-    NMT_result result = OK;
-    if (dir_str == "FORWARD") 
-    {
-        dir_enum = FORWARD;
-    }
-    else if (dir_str == "REVERSE") 
-    {
-        dir_enum = REVERSE;
-    }
-    else if (dir_str == "STOP") 
-    {
-        dir_enum = STOP;
-    }
-    else
-    {
-        result = NOK;
-    }
-
-    return result;
-}
-void L9110::L9110_move_motor(L9110_DIRECTIONS direction, double speed)
+void L9110::L9110_move_motor(L9110_DIRECTIONS direction, int speed)
 {
     /*!
      *  @brief     Move the motor at the desired speed
@@ -124,7 +101,10 @@ void L9110::L9110_move_motor(L9110_DIRECTIONS direction, double speed)
      *  @return    void
      */
 
-    NMT_log_write(DEBUG, (char *)" > dir=%s speed=%.2f", L9110_DIR_TO_STR[direction].c_str(), speed);
+    NMT_log_write(DEBUG, (char *)" > dir=%s speed=%d", L9110_DIR_TO_STR[direction].c_str(), speed);
+
+    /* Cap Max Speed to 100 and Min to 0 */
+    speed = (speed > 100 ? 100 : (speed < 0 ? 0 : speed));
 
     if (!(this->sim_mode))
     {

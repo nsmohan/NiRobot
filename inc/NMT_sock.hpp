@@ -7,8 +7,8 @@
  *  @copyright 2020 - NM Technologies
  */
 
-#ifndef DEF_CAM_MOTOR_CTRL
-#define DEF_CAM_MOTOR_CTRL
+#ifndef DEF_NMT_sock
+#define DEF_NMT_sock
 /*--------------------------------------------------/
 /                   System Imports                  /
 /--------------------------------------------------*/

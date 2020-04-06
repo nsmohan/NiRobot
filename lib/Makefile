@@ -14,7 +14,8 @@ OBJS        = NMT_stdlib.so \
               LD27MG.so \
               HCxSR04.so \
               NMT_sock.so \
-              L9110.so
+              L9110.so \
+              RMCT_lib.so
 
 PY_OBJS =    NMT_sock.so
 
@@ -66,6 +67,13 @@ L9110_LIBS         =  -lNMT_stdlib \
                       -lcrypt \
                       -lm \
                       -lrt
+
+RMCT_lib_LIBS      = -lNMT_stdlib \
+                     -lNMT_log \
+                     -lRSXA \
+                     -lL9110 \
+                     -lPCA9685 \
+                     -lLD27MG
 
 # -------Update output file name ---------#
 TARGET_OBJS := $(foreach OBJ,$(OBJS),$(OBJ_DIR)/lib$(OBJ))

@@ -22,6 +22,7 @@ import json
 #                   Local Imports                   #
 #---------------------------------------------------#
 from lib_py import getip
+from lib_py.NMT_stdlib_py import NMT_result
 
 #---------------------------------------------------#
 #                   Constants                       #
@@ -108,7 +109,7 @@ class MotorConnnect(object):
         "  @return         Message recieved from the server
         """
 
-        return self.sock_multi.recv(MAX_BUFF_SIZE)
+        return json.loads(self.multi_sock_rx.recv(MAX_BUFF_SIZE))
 
 def construct_tx_message(motor, direction="", angle=-1, speed=-1):
     """ 
@@ -160,5 +161,8 @@ if __name__ == '__main__':
 
     mc = MotorConnnect()
     mc.tx_message(tx_message)
+
+    print("NiBOT Response=%s"%(NMT_result.get_result(mc.rx_message()["result"])))
+
     
 
