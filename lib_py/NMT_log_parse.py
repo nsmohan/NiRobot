@@ -69,6 +69,3 @@ class NMT_Log_Parse(object):
 
         # -- Exit the Function -- #
         return rmct_log_op
-
-nm = NMT_Log_Parse("RMCT.log")
-print nm.log_data
