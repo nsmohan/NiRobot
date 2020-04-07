@@ -20,10 +20,8 @@ NMT_stdlib = CDLL("Obj/libNMT_stdlib.so")
 #NMT_result ENUM
 class NMT_result():
     __slots__ = ('OK', 'NOK')
-
-    def __init__(self):
-        self.OK = 0
-        self.NOK = 1
+    OK = 0
+    NOK = 1
 
     @staticmethod
     def get_result(status):

@@ -101,7 +101,7 @@ void L9110::L9110_move_motor(L9110_DIRECTIONS direction, int speed)
      *  @return    void
      */
 
-    NMT_log_write(DEBUG, (char *)" > dir=%s speed=%d", L9110_DIR_TO_STR[direction].c_str(), speed);
+    NMT_log_write(DEBUG, (char *)"> dir=%s speed=%d", L9110_DIR_TO_STR[direction].c_str(), speed);
 
     /* Cap Max Speed to 100 and Min to 0 */
     speed = (speed > 100 ? 100 : (speed < 0 ? 0 : speed));

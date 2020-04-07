@@ -261,7 +261,7 @@ NMT_result PCA9685_setPWM(double duty_cycle, double delay_time,
     }
 
     /* Exit function */
-    NMT_log_write(DEBUG, " < %s", result_e2s[result]);
+    NMT_log_write(DEBUG, "< %s", result_e2s[result]);
     return result;
 }
 
