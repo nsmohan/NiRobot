@@ -285,6 +285,7 @@ void RSXA_free_mem(RSXA *RSXA_Object)
      *  @return     void
      */
 
+    /* Free RSXA_hw */
     for (int i = 0; i < RSXA_Object->array_len_hw; i++)
     {
         if (RSXA_Object->hw[i].array_len_hw_int > 0)
@@ -292,4 +293,7 @@ void RSXA_free_mem(RSXA *RSXA_Object)
     }
 
     free(RSXA_Object->hw);
+
+    /* Free RSXA_Procs */
+    free(RSXA_Object->procs);
 }

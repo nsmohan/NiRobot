@@ -26,10 +26,6 @@
  *  Quantity of Hardware RMCT directly controls*/
 const unsigned int NO_OF_HW = 3;
 
-/** @var SOCK_TIMEOUT
- *  Quantity of Hardware RMCT directly controls*/
-const unsigned int SOCK_TIMEOUT = 600;
-
 /** @var PWM_FREQ
  *  PWM Frequency for PCA9685 Driver */
 const float PWM_FREQ = 50.00;

@@ -35,6 +35,9 @@
 #define MY_NAME "RMCT"
 
 
+/** @var SOCK_TIMEOUT
+ *  Quantity of Hardware RMCT directly controls*/
+const unsigned int SOCK_TIMEOUT = 600;
 
 /*--------------------------------------------------/
 /                Structs/Classes/Enums              /
@@ -87,10 +90,10 @@ int main(int argc, char *argv[])
 
     /** Initialize Varibles */
     int opt;
-    bool verbosity                    = false;
     RMCT_hw_settings rmct_hw_settings = {0};
     RSXA hw_settings                  = {0};
     NMT_result result                 = OK;
+    bool verbosity                    = false;
 
     cout << "Starting Robot Motor Controller ......" << endl;
 
@@ -107,9 +110,11 @@ int main(int argc, char *argv[])
                 cout << "Help Menu" << endl;
                 rmct_control_print_usage(0);
                 break;
+            case '?':
+                cout << "ERROR, Unrecognized Command!" << endl;
+                rmct_control_print_usage(1);
         }
     }
-
 
     /* 2. Get Robot Settings */
     result = RSXA_init(&hw_settings);
@@ -139,12 +144,13 @@ int main(int argc, char *argv[])
         NMT_sock_multicast server_sock(sock_config.client_p, sock_config.client_ip, SOCK_SERVER);
 
         /* 5. Start the Program */
-        cout << "RMCT Exected .............. " << endl;
+        cout << "RMCT Executed .............. " << endl;
         rmct_main_loop(server_sock, client_sock, rmct_obj);
     }
 
     /* Exit the program */
-    if (result == OK) {NMT_log_finish();}
+    cout << "Exiting RMCT ........" << endl;
+    NMT_log_finish();
     return result;
 }
 
@@ -183,16 +189,15 @@ static void rmct_main_loop(NMT_sock_multicast server_sock, NMT_sock_multicast cl
             {
                 /* Process Request */
                 m_result = rmct_obj.process_motor_action(mc["motor"].asString(), mc["direction"].asString(),
-                                                       mc["angle"].asDouble(), mc["speed"].asInt());
+                                                         mc["angle"].asDouble(), mc["speed"].asInt());
                 /* Send Acknowledgement */
                 ack["result"] = m_result;
                 result = server_sock.NMT_write_socket((char *)(ack.toStyledString()).c_str());
             }
-
             free(rx_message);
         }
     }
-
+    return;
 }
 static bool rmct_validate_robot_action(Json::Value mc)
 {
@@ -280,5 +285,6 @@ static void rmct_control_print_usage(int es)
      */
 
     cout << "-v verbosity || -h/help menu" << endl;
+    cout << "I am here\n";
     exit(es);
 }

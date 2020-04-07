@@ -30,11 +30,6 @@ typedef enum {FORWARD, REVERSE, STOP} L9110_DIRECTIONS;
  *  Facility to convert direction enum to string */
 const std::string L9110_DIR_TO_STR[] = {"FORWARD", "REVERSE", "STOP"};
 
-std::map<std::string, L9110_DIRECTIONS> l9110_directions = {{"FORWARD", FORWARD},
-                                                            {"REVERSE", REVERSE},
-                                                            {"STOP", STOP}};
-
-
 /** @class L9110 
  *  Driver Object */
 class L9110

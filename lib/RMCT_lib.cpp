@@ -38,6 +38,10 @@ std::map<std::string, CAMERA_MOTOR_DIRECTIONS> camera_directions = {{"UP", UP},
 std::map<std::string, LD27MG_MOTORS> ld27mg_motors = {{"CAM_HRZN_MTR", CAM_HRZN_MTR},
                                                       {"CAM_VERT_MTR", CAM_VERT_MTR}};
 
+std::map<std::string, L9110_DIRECTIONS> l9110_directions = {{"FORWARD", FORWARD},
+                                                            {"REVERSE", REVERSE},
+                                                            {"STOP", STOP}};
+
 
 /*--------------------------------------------------/
 /             Library Implementation                /
