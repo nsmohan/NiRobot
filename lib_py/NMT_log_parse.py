@@ -45,27 +45,27 @@ class NMT_Log_Parse(object):
         """
 
         # -- Init Varibles -- # 
-        rmct_log_op = []
-        rmct_file = os.path.join(self.log_dir, self.log_name)
+        log_op = []
+        log_file = os.path.join(self.log_dir, self.log_name)
 
         # ---Read the Log File --#
-        f = open(rmct_file, "r")
-        rmct_log_data = f.read()
+        f = open(log_file, "r")
+        log_data = f.read()
         f.close()
 
         # -- Parse the Log File -- #
-        for line in rmct_log_data.splitlines():
+        for line in log_data.splitlines():
             items = line.split("->")
             item = items[4].split(":")
-            rmct_log = {}
+            log_line = {}
 
-            rmct_log["date"] = datetime.strptime(items[0], "%Y-%m-%d %H:%M:%S") 
-            rmct_log["log_level"] = items[1]
-            rmct_log["proc"] = items[2]
-            rmct_log["method"] = items[3]
-            rmct_log["line"] = item[0]
-            rmct_log["message"] = item[1].strip()
-            rmct_log_op.append(rmct_log)
+            log_line["date"] = datetime.strptime(items[0], "%Y-%m-%d %H:%M:%S") 
+            log_line["log_level"] = items[1]
+            log_line["proc"] = items[2]
+            log_line["method"] = items[3]
+            log_line["line"] = item[0]
+            log_line["message"] = item[1].strip()
+            log_op.append(log_line)
 
         # -- Exit the Function -- #
-        return rmct_log_op
+        return log_op
