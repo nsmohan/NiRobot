@@ -166,16 +166,16 @@ static void rmct_main_loop(NMT_sock_multicast server_sock, NMT_sock_multicast cl
      */
 
     /* Initialize Varibles */
-    NMT_result m_result = OK;
     NMT_result result = OK;
     Json::Value  mc;
     Json::Value  ack;
     Json::Reader reader;
     char *rx_message;
+    bool terminate_proc = false;
     ack["type"] = "ack";
 
     /* Main Program Loop */
-    while ((result == OK) && (m_result == OK))
+    while ((result == OK) && (!terminate_proc))
     {
         /* Listen on the socket */
         result = client_sock.NMT_read_socket(&rx_message); 
@@ -187,14 +187,30 @@ static void rmct_main_loop(NMT_sock_multicast server_sock, NMT_sock_multicast cl
 
             if (rmct_validate_robot_action(mc))
             {
-                /* Process Request */
-                m_result = rmct_obj.process_motor_action(mc["motor"].asString(), mc["direction"].asString(),
-                                                         mc["angle"].asDouble(), mc["speed"].asInt());
-                /* Send Acknowledgement */
-                ack["result"] = m_result;
-                result = server_sock.NMT_write_socket((char *)(ack.toStyledString()).c_str());
+                if (mc["type"].asString() == "hw_action")
+                {
+                    /* Process Request */
+                    result = rmct_obj.process_motor_action(mc["motor"].asString(), mc["direction"].asString(),
+                                                           mc["angle"].asDouble(), mc["speed"].asInt());
+                    /* Free rx_message */
+                    free(rx_message);
+                }
+                else if (mc["type"].asString() == "proc_action")
+                {
+                    /* Process proc_action */
+                    if (mc["action"].asString() == "exit") {terminate_proc = true;}
+                    result = OK;
+                }
             }
-            free(rx_message);
+            else
+            {
+                result = NOK;
+                NMT_log_write(ERROR, (char *)"Invalid Message Recieved");
+            }
+
+            /* Send Acknowledgement */
+            ack["result"] = result;
+            result = server_sock.NMT_write_socket((char *)(ack.toStyledString()).c_str());
         }
     }
     return;
@@ -207,12 +223,25 @@ static bool rmct_validate_robot_action(Json::Value mc)
      *  @return     True/False
      */
 
-    NMT_log_write (DEBUG, (char *)" >");
-    NMT_log_write (DEBUG, (char *)" <");
+    NMT_log_write(DEBUG, (char *)">");
+    bool valid = false;
 
+    if (mc["type"].isString())
+    {
+        if (mc["type"].asString() == "hw_action")
+        {
+            valid = mc["motor"].isString() && mc["direction"].isString() && 
+                    mc["angle"].isNumeric() && mc["speed"].isNumeric();
+        }
+        else if (mc["type"].asString() == "proc_action")
+        {
+            valid = mc["action"].isString();
+        }
+    }
+        
     /* Check and Exit the Function */
-    return mc["motor"].isString() && mc["direction"].isString() && 
-           mc["angle"].isNumeric() && mc["speed"].isNumeric();
+    NMT_log_write (DEBUG, (char *)"< valid=%s", btoa(valid));
+    return valid;
 }
 
 static NMT_result rmct_get_robot_settings(RSXA &hw_settings, RMCT_hw_settings &rmct_hw_settings)
@@ -272,6 +301,7 @@ static NMT_result rmct_get_robot_settings(RSXA &hw_settings, RMCT_hw_settings &r
         }
     }
 
+    /* Exit the function */
     cout << "Validaton result=" << result_e2s[result] << ".........." << endl;
     return result;
 }

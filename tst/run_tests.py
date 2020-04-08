@@ -19,7 +19,7 @@ import fnmatch
 TST_PATH = "%s/"%(os.path.dirname(os.path.realpath(__file__)))
 BLD_PATH = os.path.join(TST_PATH, "bld")
 
-PATTERNS = ["unittest_*.py"]
+PATTERNS = ["unittest_*.py", "functest_*.py"]
 
 #---------------Start of Program ------------------#
 class TestRunner(object):
@@ -32,9 +32,9 @@ class TestRunner(object):
         file_list = os.listdir(TST_PATH)
         
         for arg in args:
-            tests_to_run.append(fnmatch.filter(file_list, 
-                                               arg))
-        return tests_to_run[0]
+            tests_to_run += fnmatch.filter(file_list, arg)
+
+        return tests_to_run
 
     def _run_tests(self):
         for test in self.tests_to_run:

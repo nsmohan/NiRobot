@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 
 """
-"  @file      move_motors.py
-"  @brief     Script to move robot motors
-"  @details   Control the robot Camera and Drive motors via command
-              line interface
+"  @file      rmct_sock_lib.py
+"  @brief     Library to facilitate communication with RMCT proc
+"  @details   Provides interfaces to communicate with RMCT
 "  @author    Nitin Mohan
-"  @date      April 2, 2020
+"  @date      April 7, 2020
 "  @copyright 2020 - NM Technologies
 """
 
@@ -15,7 +14,6 @@
 #---------------------------------------------------#
 import socket
 import struct
-import argparse
 import json
 
 #---------------------------------------------------#
@@ -34,14 +32,8 @@ RSXA_FILE = "/etc/NiBot/RSXA.json"
 RMCT = "RMCT"
 MAX_BUFF_SIZE = 10240
 
-CAM_DIRECTIONS = ["UP", "DOWN", "LEFT", "RIGHT"]
-DRV_DIRECTIONS = ["FORWARD", "REVERSE", "STOP"]
-CAMERA_MOTORS  = ["CAMERA", "CAM_HRZN_MTR", "CAM_VERT_MTR"]
-DRIVE_MOTORS   = ["LEFT_DRV_MTR", "RIGHT_DRV_MTR"]
-DIRECTIONS     = CAM_DIRECTIONS + DRV_DIRECTIONS
-MOTORS         = CAMERA_MOTORS + DRIVE_MOTORS
-
-class MotorConnnect(object):
+# -- Library Implementation -- #
+class RMCTSockConnect(object):
 
     def __init__(self):
         self.ip = str(getip.get_local_ip())
@@ -111,58 +103,21 @@ class MotorConnnect(object):
 
         return json.loads(self.multi_sock_rx.recv(MAX_BUFF_SIZE))
 
-def construct_tx_message(motor, direction="", angle=-1, speed=-1):
-    """ 
-    "  @brief              Validate the arguements provided
-    "  param[in] motor     Name of motor to be moved
-    "  param[in] direction Direction to move in
-    "  param[in] angle     Manually override motor angle
-    "  param[in] speed     Set the speed of the motor
-    """
+    @staticmethod
+    def construct_tx_message(motor, direction="", angle=-1, speed=-1):
+        """ 
+        "  @brief              Validate the arguements provided
+        "  param[in] motor     Name of motor to be moved
+        "  param[in] direction Direction to move in
+        "  param[in] angle     Manually override motor angle
+        "  param[in] speed     Set the speed of the motor
+        """
 
-    tx_message = {}
-    tx_message["motor"] = motor
-    tx_message["direction"] = direction
-    tx_message["angle"] = angle
-    tx_message["speed"] = speed
+        tx_message = {}
+        tx_message["type"] = "hw_action"
+        tx_message["motor"] = motor
+        tx_message["direction"] = direction
+        tx_message["angle"] = angle
+        tx_message["speed"] = speed
 
-    return json.dumps(tx_message)
-
-
-def valid_tx_message(motor, direction="", angle=-1, speed=-1):
-    """ 
-    "  @brief              Validate the arguements provided
-    "  param[in] motor     Name of motor to be moved
-    "  param[in] direction Direction to move in
-    "  param[in] angle     Manually override motor angle
-    "  param[in] speed     Set the speed of the motor
-    """
-
-    if (motor == "CAMERA"):
-        pass
-        #assert direction in CAM_DIRECTIONS, "Direction should be provided if motor == camera"
-    elif (motor in CAMERA_MOTORS):
-        assert angle >= 0, "Angle should be provided when motor == (CAM_HRZN_MTR or CAM_VERT_MTR)"
-    elif (motor in DRIVE_MOTORS):
-        assert direction in DRV_DIRECTIONS, "Drive direction should be provided when motor == {} expected = {}".format(direction, DRV_DIRECTIONS)
-
-if __name__ == '__main__':
-
-    # -- Parse arguments -- #
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-m', '--motor', required=True, choices=MOTORS, help = "NiBot Motor to be moved")
-    parser.add_argument('-d', '--direction', required=False, default="", choices=DIRECTIONS, help ="Directon the motor needs to be moved")
-    parser.add_argument('-a', '--angle', required=False, type=int, default= -1, help ="Manually set the camera motor angle")
-    parser.add_argument('-s', '--speed', required=False, type=int, default= -1, help ="Manually set drive motor speed")
-    args = parser.parse_args()
-
-    valid_tx_message(args.motor, args.direction, args.angle, args.speed)
-    tx_message = construct_tx_message(args.motor, args.direction, args.angle, args.speed)
-
-    mc = MotorConnnect()
-    mc.tx_message(tx_message)
-
-    print("NiBOT Response=%s"%(NMT_result.get_result(mc.rx_message()["result"])))
-
-    
-
+        return json.dumps(tx_message)
