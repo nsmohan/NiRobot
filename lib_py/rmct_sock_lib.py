@@ -25,8 +25,7 @@ from lib_py.NMT_stdlib_py import NMT_result
 #---------------------------------------------------#
 #                   Constants                       #
 #---------------------------------------------------#
-""" @var RSXA_FILE
-    Path to RSXA.json file """
+""" @var RSXA_FILE Path to RSXA.json file """
 RSXA_FILE = "/etc/NiBot/RSXA.json"
 
 RMCT = "RMCT"

@@ -107,7 +107,6 @@ TEST_F(PCA9685_Test_Fixture, TestPCA9685InitGwInSim)
    EXPECT_CALL(wpimock, wiringPiI2CWriteReg8(_, _, _)).Times(0);
    EXPECT_CALL(wpimock, wiringPiI2CSetup(_)).Times(0);
    ASSERT_EQ(OK, PCA9685_init(hw_settings));
-
 }
 
 TEST_F(PCA9685_Test_Fixture, TestSetFreqMaxMin)
@@ -348,7 +347,6 @@ TEST_F(PCA9685_Test_Fixture, TestsetPWM_MaxMin)
         ASSERT_EQ(OK, PCA9685_setPWM(duty_cycle, delay_time,
                                          channel));
     }
-
 }
 
 TEST_F(PCA9685_Test_Fixture, TestPCA9685GetPWMGW)

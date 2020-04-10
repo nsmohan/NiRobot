@@ -35,7 +35,6 @@ const std::string L9110_DIR_TO_STR[] = {"FORWARD", "REVERSE", "STOP"};
 class L9110
 {
     public:
-
         /* @var hw_name
          * Name of the Motor */
         std::string hw_name;

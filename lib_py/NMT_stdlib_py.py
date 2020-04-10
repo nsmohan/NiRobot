@@ -25,10 +25,10 @@ class NMT_result():
 
     @staticmethod
     def get_result(status):
-            if status == 0:
-                return "OK"
-            elif status == 1:
-                return "NOK"
+        if status:
+            return "OK"
+        else:
+            return "NOK"
 
 class stdout_redirect(object):
 

@@ -46,4 +46,3 @@ class RSXA(Structure):
                 ('hw'     , POINTER(RSXA_hw)),
                 ('array_len_procs', c_int),
                 ('array_len_hw', c_int)]
-

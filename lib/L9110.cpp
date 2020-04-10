@@ -59,7 +59,6 @@ L9110::L9110(RSXA_hw hw_config)
 
         else if (strcmp(hw_config.hw_interface[i].pin_name, "reverse") == 0)
         {
-
             this->reverse = hw_config.hw_interface[i].pin_no;
         }
         else

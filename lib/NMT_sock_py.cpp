@@ -33,7 +33,6 @@ boost::python::tuple NMT_read_socket_py(NMT_sock_multicast &nmt_sock_multicast)
     {
         return boost::python::make_tuple(result, "");
     }
-        
 }
 
 BOOST_PYTHON_MODULE(NMT_sock)

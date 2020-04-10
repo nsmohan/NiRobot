@@ -77,7 +77,6 @@ TEST_F(L9110_Test_Fixture, VerifyConstructorGW)
     EXPECT_CALL(wpimock, pinMode(_, _)).Times(0);
     EXPECT_CALL(wpimock, digitalWrite(_, _)).Times(0);
     L9110 l9110_obj1(hw_config);
-
 }
 
 TEST_F(L9110_Test_Fixture, VerifyConstructorBW)

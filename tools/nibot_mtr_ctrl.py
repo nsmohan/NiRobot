@@ -74,6 +74,3 @@ if __name__ == '__main__':
     rmct.tx_message(tx_message)
 
     print("NiBOT Response=%s"%(NMT_result.get_result(rmct.rx_message()["result"])))
-
-    
-

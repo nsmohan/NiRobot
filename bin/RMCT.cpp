@@ -61,7 +61,6 @@ typedef struct RMDR_hw_settings
     /** @var rmct_hw_settings
      *  RMCT Task Settings */
     RSXA_procs rmct_task_config;
-
 } RMCT_hw_settings;
 
 /*--------------------------------------------------/

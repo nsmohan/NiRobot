@@ -96,6 +96,5 @@ class RobotMotorController
     /** @var right_drv_motor
      *  Right Drive Motor Object */
     L9110 right_drv_motor;
-
 };
 #endif
