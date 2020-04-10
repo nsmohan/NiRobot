@@ -3,8 +3,8 @@
  *  @brief     Header file for RSXA.c
  *  @details   External Interfaces for RSXA
  *  @author    Nitin Mohan
- *  @date      Feb 6, MAX_CHAR_LEN_119
- *  @copyright MAX_CHAR_LEN_1MAX_CHAR_LEN_1 - NM Technologies
+ *  @date      Feb 6, 2010
+ *  @copyright NM Technologies
  */
 
 #ifndef _RSXA_
