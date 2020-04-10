@@ -35,31 +35,9 @@
      * Logging Levels Enumeration */
     typedef enum {DEBUG, WARNING, ERROR} log_level;
 
-    /** @struct NMT_log_settings
-     *  Struct which holds log settings */
-    struct NMT_log_settings 
-    {
-        /** @var log_level
-         *  level for logging */
-        log_level log_level;
-
-        /** @var log_dir
-         *  logging Directory */
-        char      *log_dir;
-
-        /** @var file_name
-         *  Name of the log file */
-        char      *file_name;
-    };
-
-
-    /** @struct log_settings
-     *  log_settings global decleration */
-    struct NMT_log_settings log_settings;
-
     /** @var log_level_e2s
      *  Convert Enum to string for log_level */
-    const char* log_level_e2s[] = {"DEBUG", "WARNING", "ERROR"};
+    const char* const log_level_e2s[] = {"DEBUG", "WARNING", "ERROR"};
 
     //------------------Prototypes----------------------//
     extern void NMT_log_finish(void);

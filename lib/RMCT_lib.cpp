@@ -38,6 +38,8 @@ std::map<std::string, CAMERA_MOTOR_DIRECTIONS> camera_directions = {{"UP", UP},
 std::map<std::string, LD27MG_MOTORS> ld27mg_motors = {{"CAM_HRZN_MTR", CAM_HRZN_MTR},
                                                       {"CAM_VERT_MTR", CAM_VERT_MTR}};
 
+/** @map l9110_directions
+ *  L9110 STR to ENUM Mapping */
 std::map<std::string, L9110_DIRECTIONS> l9110_directions = {{"FORWARD", FORWARD},
                                                             {"REVERSE", REVERSE},
                                                             {"STOP", STOP}};
@@ -47,6 +49,35 @@ std::map<std::string, L9110_DIRECTIONS> l9110_directions = {{"FORWARD", FORWARD}
 /             Library Implementation                /
 /--------------------------------------------------*/
 using namespace std;
+RobotMotorController::RobotMotorController(RSXA_hw pca9685_hw_config, 
+                                           RSXA_hw left_motor_hw_config, 
+                                           RSXA_hw right_motor_hw_config) : 
+                                           left_drv_motor(left_motor_hw_config) 
+                                           ,right_drv_motor(right_motor_hw_config)
+{
+    /*!
+     *  @brief     Constructor Implementation for RobotMotorController
+     *  @param[in] pca9685_hw_config
+     *  @param[in] left_motor_hw_config
+     *  @param[in] right_motor_hw_config
+     *  @return    void 
+     */
+
+    /* Initialize Variables */
+    NMT_result result = OK;
+    
+    /* Initialize the PCA9685 Driver */
+    PCA9685_settings pwm_settings = {PWM_FREQ, pca9685_hw_config.hw_sim_mode};
+    result = PCA9685_init(pwm_settings);
+
+    /* Initialize the Camera Motors */
+    if (result == OK)
+        result = LD27MG_init();
+
+    if (result !=OK)
+        throw std::runtime_error("ERROR, Robot Motor Hardware Initiization Failed!");
+}
+
 NMT_result RobotMotorController::process_motor_action(std::string motor, std::string direction, double angle, int speed)
 {
     /*!
@@ -93,35 +124,6 @@ NMT_result RobotMotorController::process_motor_action(std::string motor, std::st
     /* Exit the function */
     NMT_log_write(DEBUG, (char *)"< result=%s", result_e2s[result]);
     return result;
-}
-
-RobotMotorController::RobotMotorController(RSXA_hw pca9685_hw_config, 
-                                           RSXA_hw left_motor_hw_config, 
-                                           RSXA_hw right_motor_hw_config) : 
-                                           left_drv_motor(left_motor_hw_config) 
-                                           ,right_drv_motor(right_motor_hw_config)
-{
-    /*!
-     *  @brief     Constructor Implementation for RobotMotorController
-     *  @param[in] pca9685_hw_config
-     *  @param[in] left_motor_hw_config
-     *  @param[in] right_motor_hw_config
-     *  @return    void 
-     */
-
-    /* Initialize Variables */
-    NMT_result result = OK;
-    
-    /* Initialize the PCA9685 Driver */
-    PCA9685_settings pwm_settings = {PWM_FREQ, pca9685_hw_config.hw_sim_mode};
-    result = PCA9685_init(pwm_settings);
-
-    /* Initialize the Camera Motors */
-    if (result == OK)
-        result = LD27MG_init();
-
-    if (result !=OK)
-        throw std::runtime_error("ERROR, Robot Motor Hardware Initiization Failed!");
 }
 
 NMT_result RobotMotorController::move_camera_motor(CAMERA_MOTOR_DIRECTIONS direction, 
