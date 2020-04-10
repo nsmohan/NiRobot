@@ -49,7 +49,6 @@ class L9110
         void L9110_move_motor(L9110_DIRECTIONS direction, int speed=DEFAULT_SPEED);
 
     private:
-
         /** @var sim_mode
          *  Simulation Mode of the Hardware */
         bool sim_mode;
