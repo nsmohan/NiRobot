@@ -27,7 +27,7 @@ class NMT_sock_multicast
     public:
         /* Constructor */
         NMT_sock_multicast(unsigned int port, std::string multicast_ip,
-                           sock_mode socket_mode, unsigned int sec = 60);
+                           sock_mode socket_mode, unsigned int socket_timeout = 60);
 
         /* Function to send message over the socket */
         NMT_result NMT_write_socket(char *message);
@@ -55,9 +55,9 @@ class NMT_sock_multicast
          *  Socket object */
         int sock; 
 
-        /** @var sec
+        /** @var socket_timeout
          *  Time out for Client */
-        unsigned int sec;
+        unsigned int socket_timeout;
 
         /** @var mode
          *  Mode of socket */

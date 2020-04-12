@@ -10,17 +10,22 @@
 #ifndef _L9110_
 #define _L9110_
 
+/*--------------------------------------------------/
+/                   System Imports                  /
+/--------------------------------------------------*/
 #include <map>
+
 /*--------------------------------------------------/
 /                   Local Imports                   /
 /--------------------------------------------------*/
 #include "RSXA.h"
 
-
 /*--------------------------------------------------/
 /                   Constants                       /
 /--------------------------------------------------*/
-extern const double DEFAULT_SPEED = 50;
+/** @var DEFAULT_SPEED
+ *  Default motor speed the robot moves at */
+const double DEFAULT_SPEED = 50;
 
 /** @enum directions
  *  Possible directions the Robot can move */

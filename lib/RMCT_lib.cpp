@@ -24,26 +24,21 @@
 /*--------------------------------------------------/
 /                   Globals                         /
 /--------------------------------------------------*/
+/** @var PWM_FREQ
+ *  PWM Frequency for PCA9685 Driver */
+const float PWM_FREQ = 50.00;
 
 /** @map camera_directions
  *  CAMERA_MOTOR_DIRECTIONS STR to ENUM Mapping */
-std::map<std::string, CAMERA_MOTOR_DIRECTIONS> camera_directions = {{"UP", UP},
-                                                                    {"DOWN", DOWN}, 
-                                                                    {"LEFT", LEFT},
-                                                                    {"RIGHT", RIGHT},
-                                                                    {"CUSTOM", CUSTOM}};
+std::map<std::string, CAMERA_MOTOR_DIRECTIONS> camera_directions;
 
 /** @map camera_directions
  *  LD27MG_MOTORS STR to ENUM Mapping */
-std::map<std::string, LD27MG_MOTORS> ld27mg_motors = {{"CAM_HRZN_MTR", CAM_HRZN_MTR},
-                                                      {"CAM_VERT_MTR", CAM_VERT_MTR}};
+std::map<std::string, LD27MG_MOTORS> ld27mg_motors;
 
 /** @map l9110_directions
  *  L9110 STR to ENUM Mapping */
-std::map<std::string, L9110_DIRECTIONS> l9110_directions = {{"FORWARD", FORWARD},
-                                                            {"REVERSE", REVERSE},
-                                                            {"STOP", STOP}};
-
+std::map<std::string, L9110_DIRECTIONS> l9110_directions;
 
 /*--------------------------------------------------/
 /             Library Implementation                /
@@ -51,9 +46,7 @@ std::map<std::string, L9110_DIRECTIONS> l9110_directions = {{"FORWARD", FORWARD}
 using namespace std;
 RobotMotorController::RobotMotorController(RSXA_hw pca9685_hw_config, 
                                            RSXA_hw left_motor_hw_config, 
-                                           RSXA_hw right_motor_hw_config) : 
-                                           left_drv_motor(left_motor_hw_config) 
-                                           ,right_drv_motor(right_motor_hw_config)
+                                           RSXA_hw right_motor_hw_config)
 {
     /*!
      *  @brief     Constructor Implementation for RobotMotorController
@@ -65,6 +58,28 @@ RobotMotorController::RobotMotorController(RSXA_hw pca9685_hw_config,
 
     /* Initialize Variables */
     NMT_result result = OK;
+
+    /* Fill Camera Directions */
+    camera_directions["UP"] = UP;
+    camera_directions["DOWN"] = DOWN;
+    camera_directions["LEFT"] = LEFT;
+    camera_directions["RIGHT"] = RIGHT;
+    camera_directions["CUSTOM"] = CUSTOM;
+    camera_directions["UP"] = UP;
+    camera_directions["UP"] = UP;
+
+    /* Fill Camera Motors */
+    ld27mg_motors["CAM_HRZN_MTR"] = CAM_HRZN_MTR;
+    ld27mg_motors["CAM_VERT_MTR"] = CAM_VERT_MTR;
+
+    /* Fill Driving Directions */
+    l9110_directions["FORWARD"] = FORWARD;
+    l9110_directions["REVERSE"] = REVERSE;
+    l9110_directions["STOP"] = STOP;
+
+    /* Initialize L9110 Drive Motors */
+    left_drv_motor = Create_drv_motor(left_motor_hw_config);
+    right_drv_motor = Create_drv_motor(right_motor_hw_config);
     
     /* Initialize the PCA9685 Driver */
     PCA9685_settings pwm_settings = {PWM_FREQ, pca9685_hw_config.hw_sim_mode};
@@ -109,11 +124,11 @@ NMT_result RobotMotorController::process_motor_action(std::string motor, std::st
     {
         if (motor == LEFT_DRV_MTR)
         {
-            left_drv_motor.L9110_move_motor(l9110_directions[direction], speed);
+            left_drv_motor->L9110_move_motor(l9110_directions[direction], speed);
         }
         else if (motor == RIGHT_DRV_MTR)
         {
-            right_drv_motor.L9110_move_motor(l9110_directions[direction], speed);
+            right_drv_motor->L9110_move_motor(l9110_directions[direction], speed);
         }
     }
     else

@@ -40,7 +40,7 @@
 #define LD27MG_OFFSET 0.5
 
 /** @def LD27MG_SLOPE
- * Slope. Rate of change in time for angle */
+ * Slope. Rate of change in time for angle (deg/ms) */
 #define LD27MG_SLOPE  135
 
 /*--------------------------------------------------/

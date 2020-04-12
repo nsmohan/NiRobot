@@ -26,7 +26,6 @@ RMCT_LIBS     = -lNMT_stdlib \
                 -lNMT_sock \
                 -ljsoncpp \
                 -lRMCT_lib \
-                -lLD27MG \
                 -lL9110
 
 # -------Update output file name ---------#

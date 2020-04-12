@@ -21,7 +21,7 @@ class LD27MGMocker : public CMockMocker<LD27MGMocker>
 {
 public:
     MOCK_METHOD2(LD27MG_move_motor, NMT_result(LD27MG_MOTORS, double));
-    MOCK_METHOD2(LD27MG_get_current_position, NMT_result(LD27MG_MOTORS, double));
+    MOCK_METHOD2(LD27MG_get_current_position, NMT_result(LD27MG_MOTORS, double*));
     MOCK_METHOD0(LD27MG_init, NMT_result(void));
 };
 

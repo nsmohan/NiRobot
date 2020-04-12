@@ -3,7 +3,7 @@
  *  @brief     Header file for RSXA.c
  *  @details   External Interfaces for RSXA
  *  @author    Nitin Mohan
- *  @date      Feb 6, 2010
+ *  @date      Feb 6, 2020
  *  @copyright NM Technologies
  */
 
@@ -22,8 +22,8 @@
 /*--------------------------------------------------/
 /                   Constants                       /
 /--------------------------------------------------*/
-#define MAX_CHAR_LEN_1 20
-#define MAX_CHAR_LEN_2 100
+#define MAX_CHAR_LEN_SHORT 20
+#define MAX_CHAR_LEN_LONG 100
 
 /*------------------Prototypes----------------------*/
 #ifdef __cplusplus
@@ -37,7 +37,7 @@
     {
         /** @var pin_name
          * Name of GPIO Pin */
-        char pin_name[MAX_CHAR_LEN_1];
+        char pin_name[MAX_CHAR_LEN_SHORT];
 
         /** @var pin_no
          *  Hardware Pin No */
@@ -51,7 +51,7 @@
     {
         /** @var hw_name
          *  @brief Hardware Name */
-        char hw_name[MAX_CHAR_LEN_1];
+        char hw_name[MAX_CHAR_LEN_SHORT];
 
         /** @var hw_sim_mode
          *  @brief True if in Simulation else False Name */
@@ -73,11 +73,11 @@
     {
         /** @var proc_name
          *  Process Name */
-        char proc_name[MAX_CHAR_LEN_1];
+        char proc_name[MAX_CHAR_LEN_SHORT];
 
         /** @var server_ip
          *  IP Address that server subsribes to */
-        char server_ip[MAX_CHAR_LEN_1];
+        char server_ip[MAX_CHAR_LEN_SHORT];
 
         /** @var server_p
          *  Server Port Number */
@@ -85,7 +85,7 @@
 
         /** @var client_ip
          *  IP Address that client subsribes to */
-        char client_ip[MAX_CHAR_LEN_1];
+        char client_ip[MAX_CHAR_LEN_SHORT];
 
         /** @var client_p
          *  Client Port Number */
@@ -99,7 +99,7 @@
     {
         /** @var log_dir
          *  Default Log Directory */
-        char log_dir[MAX_CHAR_LEN_2];
+        char log_dir[MAX_CHAR_LEN_LONG];
 
         /** @var procs
          *  List of all proceses */

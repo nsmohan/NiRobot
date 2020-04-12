@@ -23,8 +23,6 @@
 #include "RSXA.h"
 #include "NMT_log.h"
 #include "NMT_sock.hpp"
-#include "LD27MG.h"
-#include "L9110.hpp"
 #include "RMCT_lib.hpp"
 
 /*--------------------------------------------------/
@@ -38,6 +36,10 @@
 /** @var SOCK_TIMEOUT
  *  Quantity of Hardware RMCT directly controls*/
 const unsigned int SOCK_TIMEOUT = 600;
+
+/** @var NO_OF_HW
+ *  Quantity of Hardware RMCT directly controls*/
+const unsigned int NO_OF_HW = 3;
 
 /*--------------------------------------------------/
 /                Structs/Classes/Enums              /
@@ -66,20 +68,15 @@ typedef struct RMDR_hw_settings
 /*--------------------------------------------------/
 /                  Prototypes                       /
 /--------------------------------------------------*/
-static NMT_result rmct_get_robot_settings(RSXA &hw_settings,
-                                          RMCT_hw_settings &rmct_hw_settings);
-
 static bool rmct_validate_robot_action(Json::Value mc);
 static void rmct_control_print_usage(int es);
-static void rmct_main_loop(NMT_sock_multicast server_sock, NMT_sock_multicast client_sock,
-                           RobotMotorController rmct_obj);
+static NMT_result rmct_get_robot_settings(RSXA &hw_settings, RMCT_hw_settings &rmct_hw_settings);
+static void rmct_main_loop(NMT_sock_multicast server_sock, NMT_sock_multicast client_sock, RobotMotorController rmct_obj);
 
 /*--------------------------------------------------/
 /           Entry Point for RMCT Process            /
 /--------------------------------------------------*/
-
 using namespace std;
-
 int main(int argc, char *argv[])
 {
     /*!
@@ -160,7 +157,7 @@ static void rmct_main_loop(NMT_sock_multicast server_sock, NMT_sock_multicast cl
      *  @brief     Main Loop for RMCT
      *  param[in]  server_sock
      *  param[in]  client_sock
-     *  param[in[  rmct_obj
+     *  param[in]  rmct_obj
      *  @return    NMT_result
      */
 
@@ -314,6 +311,5 @@ static void rmct_control_print_usage(int es)
      */
 
     cout << "-v verbosity || -h/help menu" << endl;
-    cout << "I am here\n";
     exit(es);
 }

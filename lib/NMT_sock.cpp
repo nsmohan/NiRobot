@@ -28,7 +28,7 @@ const unsigned int MAX_BUFFER_SIZE = 10240;
 
 using namespace std;
 NMT_sock_multicast::NMT_sock_multicast(unsigned int port, string multicast_ip,
-                                       sock_mode socket_mode, unsigned int sec) : sec(sec)
+                                       sock_mode socket_mode, unsigned int socket_timeout) : socket_timeout(socket_timeout)
 {
     /*!
      *  @brief     Constructor for NMT_sock_multicast
@@ -113,7 +113,7 @@ NMT_result NMT_sock_multicast::NMT_init_multicast_client()
     if (result == OK)
     {
         /* Set socket timeout */
-        tv.tv_sec = this->sec;
+        tv.tv_sec = this->socket_timeout;
         tv.tv_usec = 0;
         if (setsockopt(this->sock, SOL_SOCKET, SO_RCVTIMEO,&tv, sizeof(tv)) < 0)
         {

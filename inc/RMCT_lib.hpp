@@ -22,14 +22,6 @@
 /*--------------------------------------------------/
 /                   Global Varibles                 /
 /--------------------------------------------------*/
-/** @var NO_OF_HW
- *  Quantity of Hardware RMCT directly controls*/
-const unsigned int NO_OF_HW = 3;
-
-/** @var PWM_FREQ
- *  PWM Frequency for PCA9685 Driver */
-const float PWM_FREQ = 50.00;
-
 /**@var LEFT_DRV_MTR
  * Name of the Left Drive Motor */
 const std::string LEFT_DRV_MTR = "LEFT_DRV_MTR";
@@ -88,13 +80,18 @@ class RobotMotorController
                                             double angle_to_move = 0.00, 
                                             double default_angle = camera_motor_sensitivity);
 
+        virtual L9110* Create_drv_motor(RSXA_hw hw_settings)
+        {
+            return new L9110(hw_settings);
+        }
+
     protected:
     /** @var left_drv_motor
      *  Left Drive Motor Object */
-    L9110 left_drv_motor;
+    L9110 *left_drv_motor;
 
     /** @var right_drv_motor
      *  Right Drive Motor Object */
-    L9110 right_drv_motor;
+    L9110 *right_drv_motor;
 };
 #endif
