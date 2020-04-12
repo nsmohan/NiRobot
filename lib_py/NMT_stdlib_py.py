@@ -23,6 +23,14 @@ class NMT_result():
     OK = 0
     NOK = 1
 
+    @staticmethod
+    def get_result(status):
+        if status:
+            result = "NOK"
+        else:
+            result = "OK"
+        return result
+
 class stdout_redirect(object):
 
     #Description - Utility to redirect the stdout to a varible

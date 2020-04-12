@@ -8,7 +8,7 @@
 #                                       #
 #---------------------------------------#
 BLDS = regdump \
-       camctrl
+       RMCT
 #---------------------------------------#
 #                                       #
 #              Sources/Libs             #
@@ -20,9 +20,13 @@ regdump_LIBS = -lNMT_stdlib \
                -lm \
                -lrt
 
-camctrl_LIBS  = -lNMT_log \
+RMCT_LIBS     = -lNMT_stdlib \
+                -lNMT_log \
                 -lRSXA \
-                -lCAM_MOTOR_CTRL
+                -lNMT_sock \
+                -ljsoncpp \
+                -lRMCT_lib \
+                -lL9110
 
 # -------Update output file name ---------#
 TARGET_BLDS := $(foreach BLD,$(BLDS),$(BLD_DIR)/$(BLD))

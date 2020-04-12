@@ -10,8 +10,6 @@ __copyright__          = "Copy Right 2019. NM Technologies"
 #                   System Imports                  #
 #---------------------------------------------------#
 from ctypes import *
-import socket
-import struct
 import unittest
 
 #---------------------------------------------------#
@@ -20,19 +18,20 @@ import unittest
 LOG_DIR     = "/var/log/NiRobot"
 MULTICAST_PORT = 5500
 MULTICAST_IP   = "224.3.29.71"
+TIMEOUT       = 1
 FNAME = __file__.split(".")[0].split("/")[-1]
 
 #---------------------------------------------------#
 #                   Local Imports                   #
 #---------------------------------------------------#
 import NMT_log_test
-from Obj import libNMT_sock as NMT_sock
-from Obj.libNMT_sock import NMT_result
-from Obj.libNMT_sock import sock_mode
+from Obj import NMT_sock
+from Obj.NMT_sock import NMT_result
+from Obj.NMT_sock import sock_mode
 
 #---------------- Start of Program ------------------#
 
-class MTDR_Test(unittest.TestCase):
+class NMT_sock_Test(unittest.TestCase):
 
     def setUp(self):
         NMT_log_test.NMT_log_test(__file__)
@@ -51,15 +50,15 @@ class MTDR_Test(unittest.TestCase):
         message_tx = "This is a test message"
 
         # - Create instnace of the server object and check the result is ok
-        server_object = NMT_sock.NMT_sock_multicast(MULTICAST_PORT, MULTICAST_IP, sock_mode.SOCK_SERVER)
+        server_object = NMT_sock.NMT_sock_multicast(MULTICAST_PORT, MULTICAST_IP, sock_mode.SOCK_SERVER, 1)
         self.assertEqual(server_object.NMT_get_result(), NMT_result.OK)
 
         # - Create instance of the first client object
-        client_object = NMT_sock.NMT_sock_multicast(MULTICAST_PORT, MULTICAST_IP, sock_mode.SOCK_CLIENT)
+        client_object = NMT_sock.NMT_sock_multicast(MULTICAST_PORT, MULTICAST_IP, sock_mode.SOCK_CLIENT, 1)
         self.assertEqual(client_object.NMT_get_result(), NMT_result.OK)
 
         # Create instance of the second client object
-        client_object2 = NMT_sock.NMT_sock_multicast(MULTICAST_PORT, MULTICAST_IP, sock_mode.SOCK_CLIENT)
+        client_object2 = NMT_sock.NMT_sock_multicast(MULTICAST_PORT, MULTICAST_IP, sock_mode.SOCK_CLIENT, 1)
         self.assertEqual(client_object2.NMT_get_result(), NMT_result.OK)
 
         # Write Message to socket and check the result
@@ -89,7 +88,7 @@ class MTDR_Test(unittest.TestCase):
          #
 
         # - Create instance of socket client
-        client_object = NMT_sock.NMT_sock_multicast(MULTICAST_PORT, MULTICAST_IP, sock_mode.SOCK_CLIENT)
+        client_object = NMT_sock.NMT_sock_multicast(MULTICAST_PORT, MULTICAST_IP, sock_mode.SOCK_CLIENT, 1)
         self.assertEqual(client_object.NMT_get_result(), NMT_result.OK)
 
         #Read message on socket
@@ -113,11 +112,11 @@ class MTDR_Test(unittest.TestCase):
         wrong_port = MULTICAST_PORT + 1
 
         # - Create instnace of the server object and check the result is ok
-        server_object = NMT_sock.NMT_sock_multicast(MULTICAST_PORT, MULTICAST_IP, sock_mode.SOCK_SERVER)
+        server_object = NMT_sock.NMT_sock_multicast(MULTICAST_PORT, MULTICAST_IP, sock_mode.SOCK_SERVER, 1)
         self.assertEqual(server_object.NMT_get_result(), NMT_result.OK)
 
         # - Create instance of the first client object
-        client_object = NMT_sock.NMT_sock_multicast(wrong_port, MULTICAST_IP, sock_mode.SOCK_CLIENT)
+        client_object = NMT_sock.NMT_sock_multicast(wrong_port, MULTICAST_IP, sock_mode.SOCK_CLIENT, 1)
         self.assertEqual(client_object.NMT_get_result(), NMT_result.OK)
 
         # Write Message to socket and check the result

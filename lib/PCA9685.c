@@ -65,46 +65,75 @@
  * Max number of tics per cycle */
 #define MAX_TICS    4096
 
-//------------------Prototypes----------------------//
-static NMT_result PCA9685_setFreq(PCA9685_settings *settings, bool sim_mode);
+/**@def PCA9685_I2C_ADDRESS
+ * PCA9685 I2C Address */
+#define PCA9685_I2C_ADDRESS 0x40
 
-NMT_result PCA9685_init(PCA9685_settings *settings, bool sim_mode)
+/*--------------------------------------------------/
+/                   Global Varibles                 /
+/--------------------------------------------------*/
+/** @var FD
+ *  File Descripter for WiringPiI2C */
+static int FD = -1;
+
+/** @var SIM_MODE
+ *  Simulation Mode for PCA9685 PWM Driver */
+static bool SIM_MODE = false;
+
+/** @var CURRENT_FREQ
+ *  The current PWM Frequency. (This is only set by setFreq */
+static float CURRENT_FREQ = 0.00;
+
+//------------------Prototypes----------------------//
+static NMT_result PCA9685_setFreq(float freq);
+
+NMT_result PCA9685_init(PCA9685_settings settings)
 {
     /*!
      *  @brief     Initialize the PWM Controller based in settings
      *  @param[in] settings
-     *  @param[in] sim_mode
      *  @return    NMT_result
      */
 
     /* Initialize Variables */
     NMT_result result   = OK;
 
-    NMT_log_write(DEBUG, "> freq: %f duty_cycle: %f delay_time: %f",settings->freq, settings->duty_cycle,
-                                                                    settings->delay_time);
-    /* Set prescale freq */
-    result = PCA9685_setFreq(settings, sim_mode);
+    NMT_log_write(DEBUG, "> freq: %f" ,settings.freq);
 
-    if ((result == OK) && (!sim_mode))
+    /* 1: Set the Simulation Mode for the Driver */
+    SIM_MODE = settings.sim_mode;
+
+    /* 2. Initialize I2C Communication */
+    if (!SIM_MODE) {FD = wiringPiI2CSetup(PCA9685_I2C_ADDRESS);}
+    else {FD = 1;}
+
+    /* 3. Check if I2C Init was Successful */
+    if (FD < 0)
+        result = NOK;
+
+    /* 4. Set the Required Frequency */
+    result = PCA9685_setFreq(settings.freq);
+
+    /* 5. Set the PCA9685 PWM Driver Registers */
+    if ((result == OK) && (!SIM_MODE))
     {
         /*Setup Mode1 & Mode2 Registers
           *Mode-1: Enable Auto-Increment and wake-up the device
           *Mode-2: Outputs configured as totem pole-structure */
-        wiringPiI2CWriteReg8(settings->fd, MODE1, MODE1_INIT);
-        wiringPiI2CWriteReg8(settings->fd, MODE2, MODE2_INIT);
+        wiringPiI2CWriteReg8(FD, MODE1, MODE1_INIT);
+        wiringPiI2CWriteReg8(FD, MODE2, MODE2_INIT);
     }
 
     /* Exit the functin */
-    NMT_log_write(DEBUG, "< result=%s fd: %d",result_e2s[result], settings->fd);
+    NMT_log_write(DEBUG, "< result=%s fd: %d",result_e2s[result], FD);
     return result;
 }
 
-NMT_result PCA9685_chgFreq(PCA9685_settings *settings, bool sim_mode)
+NMT_result PCA9685_chgFreq(float freq)
 {
     /*!
      *  @brief     Change the PWM Frequency
-     *  @param[in] settings
-     *  @param[in] sim_mode
+     *  @param[in] freq
      *  @return    NMT_result
      */
 
@@ -113,23 +142,29 @@ NMT_result PCA9685_chgFreq(PCA9685_settings *settings, bool sim_mode)
     int orig_reg_value;
     int sleep_reg_value;
 
-    if ((result == OK) && (!sim_mode))
+    NMT_log_write(DEBUG, "> freq: %f", freq);
+
+    /* Check if we have a valid slave address */
+    if (FD < 0)
+        return result = NOK;
+
+    if ((result == OK) && (!SIM_MODE))
     {
         /* Read current register value and set bit to put chip into sleep mode */
-        orig_reg_value  = wiringPiI2CReadReg8(settings->fd, MODE1);
+        orig_reg_value  = wiringPiI2CReadReg8(FD, MODE1);
         sleep_reg_value = orig_reg_value | WAKE_UP;
 
         /* Write new value to the register */
-        wiringPiI2CWriteReg8(settings->fd, MODE1, sleep_reg_value);
+        wiringPiI2CWriteReg8(FD, MODE1, sleep_reg_value);
 
         /* Set prescale freq */
-        PCA9685_setFreq(settings, sim_mode);
+        PCA9685_setFreq(freq);
 
         /* Let the Oscillator settle 1ms */
         delay(1);
 
         /* Wake-up device */
-        wiringPiI2CWriteReg8(settings->fd, MODE1, orig_reg_value);
+        wiringPiI2CWriteReg8(FD, MODE1, orig_reg_value);
     }
 
     /* Exit Function */
@@ -137,35 +172,35 @@ NMT_result PCA9685_chgFreq(PCA9685_settings *settings, bool sim_mode)
     return result;
 }
 
-static NMT_result PCA9685_setFreq(PCA9685_settings *settings, bool sim_mode)
+static NMT_result PCA9685_setFreq(float freq)
 {
     /*!
      *  @brief     Set the frequency based on input
-     *  @param[in] settings
-     *  @param[in] sim_mode
+     *  @param[in] freq
      *  @return    NMT_result
      */
 
     /* Initialize Variables */
     NMT_result result = OK;
 
-    NMT_log_write(DEBUG, "> freq: %f duty_cycle: %f delay_time: %f fd: %d",settings->freq, settings->duty_cycle,
-                                                                           settings->delay_time, settings->fd);
+    NMT_log_write(DEBUG, "> freq: %f", freq);
+
     /* Check if we have a valid slave address */
-    if (settings->fd < 0)
+    if (FD < 0)
         return result = NOK;
 
     /* Cap max freq to 1500 and min to 30 */
-    settings->freq = (settings->freq > 1500 ? 1500 : (settings->freq < 30 ? 30 : settings->freq));
+    freq = (freq > 1500 ? 1500 : (freq < 30 ? 30 : freq));
+    CURRENT_FREQ = freq;
 
     /* Calculate prescale value. 
      *PRE_SCALE = (OSC_CLOCK/(4096 * freq)) - 1 */
-    int pre_scale = (int)(OSC_CLOCK / (MAX_TICS * settings->freq) - 1);
+    int pre_scale = (int)(OSC_CLOCK / (MAX_TICS * freq) - 1);
     
-    if(!sim_mode)
+    if(!SIM_MODE)
     {
         //Write prescale value to register
-        wiringPiI2CWriteReg8(settings->fd, PRE_SCALE, pre_scale);
+        wiringPiI2CWriteReg8(FD, PRE_SCALE, pre_scale);
     }
 
     NMT_log_write(DEBUG, "< %s pre_scale: %d",result_e2s[result], pre_scale);
@@ -174,38 +209,40 @@ static NMT_result PCA9685_setFreq(PCA9685_settings *settings, bool sim_mode)
     return result;
 }
 
-NMT_result PCA9685_setPWM(PCA9685_settings *settings, 
-                          PCA9685_PWM_CHANNEL channel,
-                          bool sim_mode)
+NMT_result PCA9685_setPWM(double duty_cycle, double delay_time, 
+                          PCA9685_PWM_CHANNEL channel)
 {
     /*!
      *  @brief     Set PWM duty_cycle on desired channel
-     *  @param[in] settings
+     *  @param[in] duty_cycle
+     *  @param[in] delay_time
      *  @param[in] channel
-     *  @param[in] sim_mode
      *  @return    NMT_result
      */
 
     /*Initialize Variables */
     NMT_result result = OK;
 
+    if (FD < 0)
+        return result = NOK;
+
     NMT_log_write(DEBUG, "> freq: %f duty_cycle: %f delay_time: %f fd: %d channel: %d",
-                  settings->freq, settings->duty_cycle, settings->delay_time, settings->fd, 
+                  CURRENT_FREQ, duty_cycle, delay_time, FD, 
                   channel);
 
     if (result == OK)
     {
-        NMT_log_write(DEBUG, "hw_name=%s sim_mode=%s", PCA9685_HW_NAME, btoa(sim_mode));
+        NMT_log_write(DEBUG, "hw_name=%s SIM_MODE=%s", PCA9685_HW_NAME, btoa(SIM_MODE));
 
         /* Cap max delay to 100 and min to 0 */
-        settings->duty_cycle = (settings->duty_cycle > 100 ? 100 : 
-                (settings->duty_cycle < 0 ? 0 : settings->duty_cycle));
-        settings->delay_time = (settings->delay_time > 100 ? 100 : 
-                (settings->delay_time < 0 ? 0 : settings->delay_time));
+        duty_cycle = (duty_cycle > 100 ? 100 : 
+                (duty_cycle < 0 ? 0 : duty_cycle));
+        delay_time = (delay_time > 100 ? 100 : 
+                (delay_time < 0 ? 0 : delay_time));
 
         /* Calculate number of tics for time on & off */
-        int tics_to_on       = (((settings->delay_time/100)*MAX_TICS) + 0.5) - 1;
-        int tics_on_duration = (((settings->duty_cycle/100)*MAX_TICS) + 0.5);
+        int tics_to_on       = (((delay_time/100)*MAX_TICS) + 0.5) - 1;
+        int tics_on_duration = (((duty_cycle/100)*MAX_TICS) + 0.5);
         int tics_to_off      = tics_to_on + tics_on_duration; 
 
         /* Calculate the register address */
@@ -215,46 +252,47 @@ NMT_result PCA9685_setPWM(PCA9685_settings *settings,
         NMT_log_write(DEBUG, "tics_to_on:%d tics_on_duration:%d tics_to_off:%d channel_reg_on:%X channel_reg_off:%X", 
                               tics_to_on, tics_on_duration, tics_to_off, 
                               channel_reg_on, channel_reg_off);
-        if (!sim_mode)
+        if (!SIM_MODE)
         {
             /* Write to the registers */
-            wiringPiI2CWriteReg16(settings->fd, channel_reg_on,  tics_to_on);
-            wiringPiI2CWriteReg16(settings->fd, channel_reg_off, tics_to_off);
+            wiringPiI2CWriteReg16(FD, channel_reg_on,  tics_to_on);
+            wiringPiI2CWriteReg16(FD, channel_reg_off, tics_to_off);
         }
     }
 
     /* Exit function */
-    NMT_log_write(DEBUG, " < %s", result_e2s[result]);
+    NMT_log_write(DEBUG, "< %s", result_e2s[result]);
     return result;
 }
 
-NMT_result PCA9685_getPWM(PCA9685_settings *settings,
-                          PCA9685_PWM_CHANNEL channel,
-                          bool sim_mode)
+NMT_result PCA9685_getPWM(double *duty_cycle,
+                          PCA9685_PWM_CHANNEL channel)
 {
     /*!
-     *  @brief     Get PWM on provided channel
-     *  @param[in] settings
-     *  @param[in] channel
-     *  @param[in] sim_mode
-     *  @return    NMT_result
+     *  @brief      Get PWM on provided channel
+     *  @param[in]  channel
+     *  @param[out] duty_cycle
+     *  @return     NMT_result
      */
 
     /* Initialize Variables */
     NMT_result result = OK;
     int tics_on_duration;
 
+    if (FD < 0)
+        return result = NOK;
+
     NMT_log_write(DEBUG, "> channel=%s", PCA9685_PWM_CHANNEL_e2s[channel]);
 
-    if (!sim_mode)
+    if (!SIM_MODE)
     {
         //Calculate the register address
         int channel_reg_on  = (channel * 4) + LED0_ON_L;
         int channel_reg_off = channel_reg_on + 2;
         
         //Write to the registers
-        int tics_to_on  = wiringPiI2CReadReg16(settings->fd, channel_reg_on);
-        int tics_to_off = wiringPiI2CReadReg16(settings->fd, channel_reg_off);
+        int tics_to_on  = wiringPiI2CReadReg16(FD, channel_reg_on);
+        int tics_to_off = wiringPiI2CReadReg16(FD, channel_reg_off);
         tics_on_duration = tics_to_off - tics_to_on;
     }
     else
@@ -263,22 +301,19 @@ NMT_result PCA9685_getPWM(PCA9685_settings *settings,
     }
 
     /* Calculate the duty cycle */
-    settings->duty_cycle = ((tics_on_duration - 0.5)/MAX_TICS) * 100;
+    *duty_cycle = ((tics_on_duration - 0.5)/MAX_TICS) * 100;
 
     //Exit the function
-    NMT_log_write(DEBUG, "< duty_cycle=%f result=%s", settings->duty_cycle, result_e2s[result]);
+    NMT_log_write(DEBUG, "< duty_cycle=%f result=%s", *duty_cycle, result_e2s[result]);
     return result;
 
 }
 
-NMT_result PCA9685_get_init_status(PCA9685_settings *settings,
-                                   bool *initialized,
-                                   bool sim_mode)
+NMT_result PCA9685_get_init_status(bool *initialized)
 {
     /*!
      *  @brief     Read Config Registers and determine state
      *  @param[in] settings
-     *  @param[in] sim_mode
      *  @param[out] initialized
      *  @return    NMT_result
      */
@@ -290,26 +325,46 @@ NMT_result PCA9685_get_init_status(PCA9685_settings *settings,
     int mode_2_reg    = 0;
     int pre_scale     = 0;
 
-    NMT_log_write(DEBUG, "> fd=%d", settings->fd);
+    if (FD < 0)
+        return result = NOK;
 
-    if ((result == OK) && (!sim_mode))
+    NMT_log_write(DEBUG, "> fd=%d", FD);
+
+    if ((result == OK) && (!SIM_MODE))
     {
         /* Get Register Values */
-        mode_1_reg  = wiringPiI2CReadReg8(settings->fd, MODE1);
-        mode_2_reg  = wiringPiI2CReadReg8(settings->fd, MODE2);
-        pre_scale   = wiringPiI2CReadReg8(settings->fd, PRE_SCALE);
+        mode_1_reg  = wiringPiI2CReadReg8(FD, MODE1);
+        mode_2_reg  = wiringPiI2CReadReg8(FD, MODE2);
+        pre_scale   = wiringPiI2CReadReg8(FD, PRE_SCALE);
 
         /* Calcualte the Frequency */
         freq = (OSC_CLOCK/(MAX_TICS * (pre_scale + 1)));
 
         /* Check if PCA9685 Driver is Initialized and set the status flag */
         NMT_log_write(DEBUG, "freq=%.2f mode1=0x%x mode2=0x%02x", freq, mode_1_reg, mode_2_reg);
-        if ((MODE1_INIT == mode_1_reg) && (MODE2_INIT == mode_2_reg) && (settings->freq == freq))
+        if ((MODE1_INIT == mode_1_reg) && (MODE2_INIT == mode_2_reg) && (CURRENT_FREQ == freq))
         {
             *initialized = true;
         }
     }
+    else if ((result == OK) && (SIM_MODE))
+    {
+        /* We always return True in SIM_MODE */
+        *initialized = true;
+    }
 
-    NMT_log_write(DEBUG, "< initialized=%s result=%s", btoa(initialized), result_e2s[result]);
+    NMT_log_write(DEBUG, "< initialized=%s result=%s", btoa(*initialized), result_e2s[result]);
     return result;
+}
+
+float PCA9685_get_curret_freq()
+{
+    /*!
+     *  @brief     Return the current Set Frequency of PWM Driver
+     *  @return    freq
+     */
+
+    NMT_log_write(DEBUG, "> ");
+    NMT_log_write(DEBUG, "< freq=%.2f", CURRENT_FREQ);
+    return CURRENT_FREQ;
 }
