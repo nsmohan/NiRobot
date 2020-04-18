@@ -19,7 +19,6 @@
 /--------------------------------------------------*/
 #include "NMT_log.h"
 #include "LD27MG.h"
-#include "RSXA.h"
 
 //---------------------Macros----------------------//
 
@@ -43,12 +42,15 @@
  * Slope. Rate of change in time for angle (deg/ms) */
 #define LD27MG_SLOPE  135
 
+/** @def MAX_NR_OF_MOTORS 
+ *  no. of LD27MG connected */
+#define MAX_NR_OF_MOTORS 2
 /*--------------------------------------------------/
 /                   Structures                      /
 /--------------------------------------------------*/
 /** @struct LD27MG_M2C_MAP
  *  List of Motors mapped to corresponding channel */
-const struct
+struct LD27MG_motor2channel_mapping
 {
 
     /** @var channel
@@ -58,30 +60,91 @@ const struct
     /** @var motor
      *  motor name */
     LD27MG_MOTORS motor;
-
-} LD27MG_M2C_MAP[] = 
-{
-    {CHANNEL_15, CAM_HRZN_MTR},
-    {CHANNEL_14, CAM_VERT_MTR}
 };
-
 
 /*--------------------------------------------------/
 /                   Constants                       /
 /--------------------------------------------------*/
-/** MAX_NR_OF_MOTORS no. of LD27MG connected */
-const int MAX_NR_OF_MOTORS = 2;
 
+/** @struct LD27MG_M2C_MAP
+ *  Motor to PCA9685 Channel Mapping */
+struct LD27MG_motor2channel_mapping LD27MG_M2C_MAP[MAX_NR_OF_MOTORS];
+
+/** @var SIM_MODE
+ *  Simulatio Mode for LD27MG*/
+bool SIM_MODE;
 /*--------------------------------------------------/
 /                   Prototypes                      /
 /--------------------------------------------------*/
 static PCA9685_PWM_CHANNEL LD27MG_m2c(LD27MG_MOTORS motor);
 static double              LD27MG_get_duty_cycle(double angle, double freq);
 static double              LD27MG_get_angle(double duty_cycle, double freq);
+static NMT_result          LD27MG_mtr_str2enum(char *mtr_str, LD27MG_MOTORS *mtr_enum);
 
 /*--------------------------------------------------/
 /                   Start of Program                /
 /--------------------------------------------------*/
+NMT_result LD27MG_init(RSXA_hw hw_config) 
+{
+    /*!
+     *  @brief     Initialize the PCA9685 Driver and move the 
+     *             motors to the home ppsition
+     *  @return    NMT_result
+     */
+
+    /* Initialize Variables */
+    NMT_result result = OK;
+    bool initialized = false;
+    LD27MG_MOTORS camera_motor;
+
+    NMT_log_write(DEBUG, "> ");
+
+    /* Proceed only if the PCA965 Driver has been initialized */
+    result = PCA9685_get_init_status(&initialized);
+    if ((result == OK) && (!initialized))
+    {
+        NMT_log_write(ERROR, "PCA9685 Driver not initialized=%s!", btoa(initialized));
+        result = NOK;
+    }
+
+    /* Get the Simulatio mode */
+    SIM_MODE = hw_config.hw_sim_mode;
+
+    /* Apply Motor Settings */
+    for (int i = 0; ((result == OK) && (i < MAX_NR_OF_MOTORS)); i++)
+    {
+        /* Convert Motor String to ENUM */
+        result = LD27MG_mtr_str2enum(hw_config.hw_interface[i].pin_name, &camera_motor);
+
+        /* Fill Struct */
+        if (result == OK)
+        {
+            LD27MG_M2C_MAP[i].channel = (PCA9685_PWM_CHANNEL)hw_config.hw_interface[i].pin_no;
+            LD27MG_M2C_MAP[i].motor = camera_motor;
+        }
+    }
+
+    /* Initialize the motors */
+    if (result == OK)
+    {
+        double delay_time = 0;
+        double duty_cycle = LD27MG_get_duty_cycle(HOME_ANGLE, PCA9685_get_curret_freq());
+
+        /* Move the LD27MG Motors to home position */
+        for (int i = 0; i < MAX_NR_OF_MOTORS; i++)
+        {
+            if ((result == OK) && (!SIM_MODE))
+            {
+                result = PCA9685_setPWM(duty_cycle, delay_time,
+                                        LD27MG_M2C_MAP[i].channel);
+            }
+        }
+    }
+
+    NMT_log_write(DEBUG, "< result=%s", result_e2s[result]);
+    return result;
+}
+
 NMT_result LD27MG_get_current_position(LD27MG_MOTORS motor, double *angle)
 {
     /*!
@@ -139,55 +202,15 @@ NMT_result LD27MG_move_motor(LD27MG_MOTORS motor, double angle)
     duty_cycle = LD27MG_get_duty_cycle(angle, PCA9685_get_curret_freq());
     
     delay_time = 0;
-    result = PCA9685_setPWM(duty_cycle, delay_time, channel);
+
+    if (!SIM_MODE)
+    {
+        result = PCA9685_setPWM(duty_cycle, delay_time, channel);
+    }
 
     NMT_log_write(DEBUG, "< result=%s",result_e2s[result]);
     return result;
 }
-
-
-NMT_result LD27MG_init() 
-{
-    /*!
-     *  @brief     Initialize the PCA9685 Driver and move the 
-     *             motors to the home ppsition
-     *  @return    NMT_result
-     */
-
-    /* Initialize Variables */
-    NMT_result result = OK;
-    bool initialized = false;
-
-    NMT_log_write(DEBUG, "> ");
-
-    /* Proceed only if the PCA965 Driver has been initialized */
-    result = PCA9685_get_init_status(&initialized);
-    if ((result == OK) && (!initialized))
-    {
-        NMT_log_write(ERROR, "PCA9685 Driver not initialized=%s!", btoa(initialized));
-        result = NOK;
-    }
-
-    if (result == OK)
-    {
-        double delay_time = 0;
-        double duty_cycle = LD27MG_get_duty_cycle(HOME_ANGLE, PCA9685_get_curret_freq());
-
-        /* Move the LD27MG Motors to home position */
-        for (int i = 0; i < MAX_NR_OF_MOTORS; i++)
-        {
-            if (result == OK)
-            {
-                result = PCA9685_setPWM(duty_cycle, delay_time,
-                                        LD27MG_M2C_MAP[i].channel);
-            }
-        }
-    }
-
-    NMT_log_write(DEBUG, "< result=%s", result_e2s[result]);
-    return result;
-}
-
 
 static PCA9685_PWM_CHANNEL LD27MG_m2c(LD27MG_MOTORS motor)
 {
@@ -278,4 +301,37 @@ static double LD27MG_get_angle(double duty_cycle, double freq)
     NMT_log_write(DEBUG, "< on_time: %.2fms off_time: %.2fms angle: %.2f",on_time, off_time, angle);
 
     return angle;
+}
+
+static NMT_result LD27MG_mtr_str2enum(char *mtr_str, LD27MG_MOTORS *mtr_enum)
+{
+    /*!
+     *  @brief     Convert Motor String to LD27MG_MOTORS ENUM
+     *  @param[in] mtr_str
+     *  @param[in] mtr_enum
+     *  @return    NMT_result
+     */
+    NMT_log_write(DEBUG, "> mtr_str=%s",mtr_str);
+
+    /* Initialize Varibles */
+    NMT_result result = OK;
+
+    /* Convert Algorithm */
+    if (strcmp(mtr_str, "CAM_HRZN_MTR") == 0)
+    {
+        *mtr_enum = CAM_HRZN_MTR;
+    }
+    else if (strcmp(mtr_str, "CAM_VERT_MTR") == 0)
+    {
+        *mtr_enum = CAM_VERT_MTR;
+    }
+    else
+    {
+        result = NOK;
+        NMT_log_write(ERROR, "Incorrect LD27MG Motor Name!");
+    }
+
+    /* Exit the function */
+    NMT_log_write(DEBUG, "< result=%s",result_e2s[result]);
+    return result;
 }

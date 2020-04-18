@@ -14,7 +14,6 @@
 #include <chrono>
 #include <cstring>
 #include <stdexcept>
-#include <wiringPi.h>
 
 /*--------------------------------------------------/
 /                   Local Imports                   /
@@ -28,6 +27,7 @@
 static const unsigned int MAX_MOTORS = 2;
 static const unsigned int MAX_PINS = 2;
 static const double SETTLE_TIME = 500;
+static const double DELAY_TIME = 0.00;
 
 
 
@@ -44,6 +44,7 @@ L9110::L9110(RSXA_hw hw_config)
      */
 
     NMT_log_write(DEBUG, (char *)"> ");
+    NMT_result result = OK;
 
     /* Get the hardware Name and mode */
     this->hw_name = hw_config.hw_name;
@@ -54,44 +55,33 @@ L9110::L9110(RSXA_hw hw_config)
     {
         if (strcmp(hw_config.hw_interface[i].pin_name, "forward") == 0)
         {
-            this->forward = hw_config.hw_interface[i].pin_no;
+            this->forward = (PCA9685_PWM_CHANNEL)hw_config.hw_interface[i].pin_no;
         }
 
         else if (strcmp(hw_config.hw_interface[i].pin_name, "reverse") == 0)
         {
-            this->reverse = hw_config.hw_interface[i].pin_no;
+            this->reverse = (PCA9685_PWM_CHANNEL)hw_config.hw_interface[i].pin_no;
         }
         else
         {
             NMT_log_write(ERROR, (char *)"Forward or Reverse pinNo not found for %s", this->hw_name.c_str());
-            throw std::runtime_error("Invalid PinName Found!");
+            result = NOK;
         }
     }
 
-    /* Initialize Hardware Pins */
-    if (!(this->sim_mode))
-    {
-        /* Initialize Wiring Pi */
-        wiringPiSetup();
+    /* Initialize Motoros to Stop */
+    if (result == OK)
+        result = L9110::L9110_move_motor(STOP);
 
-        /* Set Pin Modes */
-        pinMode(this->forward, OUTPUT);
-        pinMode(this->reverse, OUTPUT);
-
-        /* Set Outputs to low so motors dont move */
-        digitalWrite(this->forward, LOW);
-        digitalWrite(this->reverse, LOW);
-
-        /* Allow everything to settle */
-        delay(SETTLE_TIME);
-    }
+    if (result == NOK)
+        throw std::runtime_error("Error! Unable to Initialize L9110 Motors");
 
     /* Exit the function */
     NMT_log_write(DEBUG, (char *)"< hw_name=%s sim_mode=%s forward=%d reverse=%d",
                                  this->hw_name.c_str(), btoa(this->sim_mode), this->forward, this->reverse);
 } 
 
-void L9110::L9110_move_motor(L9110_DIRECTIONS direction, int speed)
+NMT_result L9110::L9110_move_motor(L9110_DIRECTIONS direction, int speed)
 {
     /*!
      *  @brief     Move the motor at the desired speed
@@ -100,7 +90,10 @@ void L9110::L9110_move_motor(L9110_DIRECTIONS direction, int speed)
      *  @return    void
      */
 
-    NMT_log_write(DEBUG, (char *)"> dir=%s speed=%d", L9110_DIR_TO_STR[direction].c_str(), speed);
+    NMT_log_write(DEBUG, (char *)"> dir=%s speed=%d, sim_mode=%s", L9110_DIR_TO_STR[direction].c_str(), speed, btoa(this->sim_mode));
+
+    /* Initialize Variables */
+    NMT_result result = OK;
 
     /* Cap Max Speed to 100 and Min to 0 */
     speed = (speed > 100 ? 100 : (speed < 0 ? 0 : speed));
@@ -110,18 +103,20 @@ void L9110::L9110_move_motor(L9110_DIRECTIONS direction, int speed)
         switch (direction)
         {
             case FORWARD:
-                digitalWrite(this->forward, speed);
+                if (result == OK) {result = PCA9685_setPWM(0.00, DELAY_TIME, this->reverse);}
+                if (result == OK) {result = PCA9685_setPWM((double)speed, DELAY_TIME, this->forward);}
                 break;
             case REVERSE:
-                digitalWrite(this->reverse, speed);
+                if (result == OK) {result = PCA9685_setPWM(0.00, DELAY_TIME, this->forward);}
+                if (result == OK) {result = PCA9685_setPWM((double)speed, DELAY_TIME, this->reverse);}
                 break;
             case STOP:
-                digitalWrite(this->forward, 0.00);
-                digitalWrite(this->reverse, 0.00);
+                if (result == OK) {result = PCA9685_setPWM(0.00, DELAY_TIME, this->forward);}
+                if (result == OK) {result = PCA9685_setPWM(0.00, DELAY_TIME, this->reverse);}
                 break;
         }
-        delay(SETTLE_TIME);
     }
-    NMT_log_write(DEBUG, (char *)"< ");
+    NMT_log_write(DEBUG, (char *)"< result=%s", result_e2s[result]);
+    return result;
 }
 

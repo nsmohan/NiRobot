@@ -72,5 +72,9 @@ if __name__ == '__main__':
 
     # -- Send the Command -- #
     rmct.tx_message(tx_message)
+    response = rmct.rx_message()
 
-    print("NiBOT Response=%s"%(NMT_result.get_result(rmct.rx_message()["result"])))
+    if response:
+        print("NiBOT Response=%s"%(NMT_result.get_result(response["result"])))
+    else:
+        print "ERROR! Did not recieve a response from NiBot"

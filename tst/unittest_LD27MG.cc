@@ -17,6 +17,7 @@
 /                   Local Imports                   /
 /--------------------------------------------------*/
 #include "LD27MG.h"
+#include "RSXA.h"
 #include "PCA9685_stub.h"
 #include "NMT_stdlib.h"
 #include "NMT_log.h"
@@ -42,6 +43,7 @@ public:
 
 /** @class LD27MG_Test_Fixture
  *  Test Fixture for LD27MG Motor */
+using namespace testing;
 class LD27MG_Test_Fixture : public ::testing::Test
 {
     public:
@@ -50,16 +52,37 @@ class LD27MG_Test_Fixture : public ::testing::Test
        PCA9685_PWM_CHANNEL channel;
        PCA9685Mocker PCA9685mock;
        NMT_result result;
+       RSXA_hw hw_config;
 
        LD27MG_Test_Fixture()
        {
            this->hw_settings = {0};
            this->result = OK;
+
+           hw_config = {0};
+           strcpy(hw_config.hw_name, "CAMERA_MOTORS");
+           hw_config.hw_sim_mode = false;
+           hw_config.hw_interface = (RSXA_pins *)malloc(sizeof(RSXA_pins) * 2);
+           strcpy(hw_config.hw_interface[0].pin_name, "CAM_HRZN_MTR");
+           strcpy(hw_config.hw_interface[1].pin_name, "CAM_VERT_MTR");
+           hw_config.hw_interface[0].pin_no = 1;
+           hw_config.hw_interface[1].pin_no = 2;
+       }
+
+       void LD27MG_Init_Test()
+       {
+            EXPECT_CALL(PCA9685mock, PCA9685_setPWM(_, _, _))
+                .Times(2);
+            EXPECT_CALL(PCA9685mock, PCA9685_get_init_status(_))
+                .WillOnce(DoAll(SetArgPointee<0>(true), Return(OK)));
+            EXPECT_CALL(PCA9685mock, PCA9685_get_curret_freq())
+                .Times(1)
+                .WillOnce(Return(LD27MG_FREQ));
+            result = LD27MG_init(hw_config);
        }
 };
 
 /* ---- Start of Tests -------------*/
-using namespace testing;
 TEST_F(LD27MG_Test_Fixture, VerifyChannelMapping)
 {
    /*!
@@ -73,19 +96,20 @@ TEST_F(LD27MG_Test_Fixture, VerifyChannelMapping)
     double angle;
     double duty_cycle;
 
-    int motors[MAX_MOTORS][MAX_MOTORS] = {{CAM_HRZN_MTR, CHANNEL_15}, 
-                                          {CAM_VERT_MTR, CHANNEL_14}};
+    
+    LD27MG_Init_Test();
+    int motors[MAX_MOTORS] = {CAM_HRZN_MTR, CAM_VERT_MTR};
 
     for (int i = 0; i < MAX_MOTORS; i++)
     {
         /* Verify the Correct Channel is passed to PCA9685_getPWM */
-        EXPECT_CALL(PCA9685mock, PCA9685_getPWM(_, (PCA9685_PWM_CHANNEL)motors[i][1]))
+        EXPECT_CALL(PCA9685mock, PCA9685_getPWM(_, _))
             .Times(1)
             .WillOnce(Return(OK));
         EXPECT_CALL(PCA9685mock, PCA9685_get_curret_freq())
             .Times(1)
             .WillOnce(Return(LD27MG_FREQ));
-        ASSERT_EQ(result, LD27MG_get_current_position((LD27MG_MOTORS)motors[i][0], &angle));
+        ASSERT_EQ(result, LD27MG_get_current_position((LD27MG_MOTORS)motors[i], &angle));
     }
 }
 
@@ -213,7 +237,7 @@ TEST_F(LD27MG_Test_Fixture, VerifyInit)
     EXPECT_CALL(PCA9685mock, PCA9685_get_curret_freq())
         .Times(1)
         .WillOnce(Return(LD27MG_FREQ));
-    ASSERT_EQ(result, LD27MG_init());
+    ASSERT_EQ(result, LD27MG_init(hw_config));
 }
 
 TEST_F(LD27MG_Test_Fixture, InitBW)
@@ -234,7 +258,7 @@ TEST_F(LD27MG_Test_Fixture, InitBW)
     EXPECT_CALL(PCA9685mock, PCA9685_get_curret_freq())
         .Times(1)
         .WillOnce(Return(LD27MG_FREQ));
-    ASSERT_EQ(result, LD27MG_init());
+    ASSERT_EQ(result, LD27MG_init(hw_config));
 }
 
 TEST_F(LD27MG_Test_Fixture, InitBW2)
@@ -253,7 +277,7 @@ TEST_F(LD27MG_Test_Fixture, InitBW2)
         .WillOnce(DoAll(SetArgPointee<0>(false), Return(OK)));
     EXPECT_CALL(PCA9685mock, PCA9685_get_curret_freq())
         .Times(0);
-    ASSERT_EQ(result, LD27MG_init());
+    ASSERT_EQ(result, LD27MG_init(hw_config));
 }
 
 TEST_F(LD27MG_Test_Fixture, InitBW3)
@@ -272,7 +296,7 @@ TEST_F(LD27MG_Test_Fixture, InitBW3)
         .WillOnce(DoAll(SetArgPointee<0>(true), Return(NOK)));
     EXPECT_CALL(PCA9685mock, PCA9685_get_curret_freq())
         .Times(0);
-    ASSERT_EQ(result, LD27MG_init());
+    ASSERT_EQ(result, LD27MG_init(hw_config));
 }
 
 int main(int argc, char **argv) {

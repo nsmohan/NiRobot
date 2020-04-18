@@ -29,7 +29,8 @@ from lib_py.NMT_stdlib_py import NMT_result
 RSXA_FILE = "/etc/NiBot/RSXA.json"
 
 RMCT = "RMCT"
-MAX_BUFF_SIZE = 10240
+MAX_BUFF_SIZE = 4096
+SOCK_TIMEOUT  = 2
 
 # -- Library Implementation -- #
 class RMCTSockConnect(object):
@@ -39,6 +40,7 @@ class RMCTSockConnect(object):
         self.__rsxa_settings()
         self.multi_sock_tx = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
         self.multi_sock_rx = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+        self.multi_sock_rx.settimeout(SOCK_TIMEOUT)
         self.__config_multicast()
     
     def __del__(self):
@@ -100,7 +102,10 @@ class RMCTSockConnect(object):
         "  @return         Message recieved from the server
         """
 
-        return json.loads(self.multi_sock_rx.recv(MAX_BUFF_SIZE))
+        try:
+            return json.loads(self.multi_sock_rx.recv(MAX_BUFF_SIZE))
+        except socket.timeout:
+            return False
 
     @staticmethod
     def construct_tx_message(motor, direction="", angle=-1, speed=-1):

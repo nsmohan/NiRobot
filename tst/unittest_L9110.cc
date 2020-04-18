@@ -17,7 +17,7 @@
 /*--------------------------------------------------/
 /                   Local Imports                   /
 /--------------------------------------------------*/
-#include "wiringPi_stub.h"
+#include "PCA9685_stub.h"
 #include "L9110.hpp"
 #include "RSXA.h"
 #include "NMT_log.h"
@@ -40,7 +40,7 @@ class L9110_Test_Fixture : public ::testing::Test
 {
     public:
        RSXA_hw hw_config;
-       wiringPiMocker wpimock;
+       PCA9685Mocker pca9685mock;
 
        L9110_Test_Fixture()
        {
@@ -66,16 +66,12 @@ TEST_F(L9110_Test_Fixture, VerifyConstructorGW)
     */
 
     /* Scenario 1 - Not in Sim Mode */
-    EXPECT_CALL(wpimock, wiringPiSetup()).Times(1);
-    EXPECT_CALL(wpimock, pinMode(AnyOf(1,2), OUTPUT)).Times(2);
-    EXPECT_CALL(wpimock, digitalWrite(AnyOf(1,2), 0.00)).Times(AtLeast(2));
+    EXPECT_CALL(pca9685mock, PCA9685_setPWM(0.00, 0.00, AnyOf(CHANNEL_1,CHANNEL_2))).Times(AtLeast(2));
     L9110 l9110_obj(hw_config);
 
     /* Scenario 2 - In Sim Mode */
     hw_config.hw_sim_mode = true;
-    EXPECT_CALL(wpimock, wiringPiSetup()).Times(0);
-    EXPECT_CALL(wpimock, pinMode(_, _)).Times(0);
-    EXPECT_CALL(wpimock, digitalWrite(_, _)).Times(0);
+    EXPECT_CALL(pca9685mock, PCA9685_setPWM(_, _, _)).Times(0);
     L9110 l9110_obj1(hw_config);
 }
 
@@ -89,9 +85,7 @@ TEST_F(L9110_Test_Fixture, VerifyConstructorBW)
 
     /* Scenario 1 - Not in Sim Mode */
     strcpy(hw_config.hw_interface[0].pin_name, "Test1");
-    EXPECT_CALL(wpimock, wiringPiSetup()).Times(0);
-    EXPECT_CALL(wpimock, pinMode(_, _)).Times(0);
-    EXPECT_CALL(wpimock, digitalWrite(_, _)).Times(0);
+    EXPECT_CALL(pca9685mock, PCA9685_setPWM(_, _, _)).Times(0);
 
     /* Construct Object and catch Exception */
     try
@@ -106,9 +100,7 @@ TEST_F(L9110_Test_Fixture, VerifyConstructorBW)
 
     /* Scenario 2 - In Sim Mode */
     hw_config.hw_sim_mode = true;
-    EXPECT_CALL(wpimock, wiringPiSetup()).Times(0);
-    EXPECT_CALL(wpimock, pinMode(_, _)).Times(0);
-    EXPECT_CALL(wpimock, digitalWrite(_, _)).Times(0);
+    EXPECT_CALL(pca9685mock, PCA9685_setPWM(_, _, _)).Times(0);
 
     /* Construct Object and catch Exception */
     try
@@ -132,9 +124,7 @@ TEST_F(L9110_Test_Fixture, VerifyConstructor2BW)
 
     /* Scenario 1 - Not in Sim Mode */
     strcpy(hw_config.hw_interface[1].pin_name, "Test2");
-    EXPECT_CALL(wpimock, wiringPiSetup()).Times(0);
-    EXPECT_CALL(wpimock, pinMode(_, _)).Times(0);
-    EXPECT_CALL(wpimock, digitalWrite(_, _)).Times(0);
+    EXPECT_CALL(pca9685mock, PCA9685_setPWM(_, _, _)).Times(0);
 
     /* Construct Object and catch Exception */
     try
@@ -149,9 +139,7 @@ TEST_F(L9110_Test_Fixture, VerifyConstructor2BW)
 
     /* Scenario 2 - In Sim Mode */
     hw_config.hw_sim_mode = true;
-    EXPECT_CALL(wpimock, wiringPiSetup()).Times(0);
-    EXPECT_CALL(wpimock, pinMode(_, _)).Times(0);
-    EXPECT_CALL(wpimock, digitalWrite(_, _)).Times(0);
+    EXPECT_CALL(pca9685mock, PCA9685_setPWM(_, _, _)).Times(0);
 
     /* Construct Object and catch Exception */
     try
@@ -160,6 +148,30 @@ TEST_F(L9110_Test_Fixture, VerifyConstructor2BW)
         FAIL();
     }
     catch (std::exception &e2)
+    {
+        SUCCEED();
+    }
+}
+
+TEST_F(L9110_Test_Fixture, VerifyConstructorBW3)
+{
+   /*!
+    *  @test Verify Constructor throws an exception if
+    *  setPWM Fails
+    *  In Sim Mode and Not in Sim Mode
+    */
+
+    /* Scenario 1 - Not in Sim Mode */
+    EXPECT_CALL(pca9685mock, PCA9685_setPWM(_, _, _)).Times(1)
+        .WillOnce(Return(NOK));
+
+    /* Construct Object and catch Exception */
+    try
+    {
+        L9110 l9110_obj(hw_config);
+        FAIL();
+    }
+    catch (std::exception &e)
     {
         SUCCEED();
     }
@@ -174,19 +186,17 @@ TEST_F(L9110_Test_Fixture, VerifyMoveMotor)
     */
 
     /* Scenario 1 - Not in Sim Mode */
-    EXPECT_CALL(wpimock, wiringPiSetup()).Times(1);
-    EXPECT_CALL(wpimock, pinMode(_, _)).Times(2);
-    EXPECT_CALL(wpimock, digitalWrite(_, _)).Times(2);
+    EXPECT_CALL(pca9685mock, PCA9685_setPWM(_, _, _)).Times(2);
     L9110 l9110_obj(hw_config);
     
-    EXPECT_CALL(wpimock, digitalWrite(hw_config.hw_interface[0].pin_no, 50.00)).Times(1);
+    EXPECT_CALL(pca9685mock, PCA9685_setPWM(_, AnyOf(0, 50.00), _)).Times(2);
     l9110_obj.L9110_move_motor(FORWARD);
 
     /* Scenario 2 - Not in Sim Mode */
     hw_config.hw_sim_mode = true;
     L9110 l9110_obj1(hw_config);
 
-    EXPECT_CALL(wpimock, digitalWrite(_, _)).Times(0);
+    EXPECT_CALL(pca9685mock, PCA9685_setPWM(_, _, _)).Times(0);
     l9110_obj1.L9110_move_motor(FORWARD);
 }
 
@@ -198,12 +208,10 @@ TEST_F(L9110_Test_Fixture, VerifyMoveMotorRev)
     */
 
     /* Scenario 1 - Not in Sim Mode */
-    EXPECT_CALL(wpimock, wiringPiSetup()).Times(1);
-    EXPECT_CALL(wpimock, pinMode(_, _)).Times(2);
-    EXPECT_CALL(wpimock, digitalWrite(_, _)).Times(2);
+    EXPECT_CALL(pca9685mock, PCA9685_setPWM(_, _, _)).Times(2);
     L9110 l9110_obj(hw_config);
     
-    EXPECT_CALL(wpimock, digitalWrite(hw_config.hw_interface[1].pin_no, 50.00)).Times(1);
+    EXPECT_CALL(pca9685mock, PCA9685_setPWM(_, AnyOf(0, 50.00), _)).Times(2);
     l9110_obj.L9110_move_motor(REVERSE);
 }
 
@@ -215,12 +223,10 @@ TEST_F(L9110_Test_Fixture, VerifyMoveMotorsSTOP)
     */
 
     /* Scenario 1 - Not in Sim Mode */
-    EXPECT_CALL(wpimock, wiringPiSetup()).Times(1);
-    EXPECT_CALL(wpimock, pinMode(_, _)).Times(2);
-    EXPECT_CALL(wpimock, digitalWrite(_, _)).Times(2);
+    EXPECT_CALL(pca9685mock, PCA9685_setPWM(_, _, _)).Times(2);
     L9110 l9110_obj(hw_config);
     
-    EXPECT_CALL(wpimock, digitalWrite(_, 0.00)).Times(2);
+    EXPECT_CALL(pca9685mock, PCA9685_setPWM(0.00, 0.00, _)).Times(2);
     l9110_obj.L9110_move_motor(STOP);
 }
 
@@ -232,18 +238,42 @@ TEST_F(L9110_Test_Fixture, VerifyMoveMotorsManualSpeed)
     */
 
     /* Scenario 1 - Not in Sim Mode */
-    EXPECT_CALL(wpimock, wiringPiSetup()).Times(1);
-    EXPECT_CALL(wpimock, pinMode(_, _)).Times(2);
-    EXPECT_CALL(wpimock, digitalWrite(_, _)).Times(2);
+    EXPECT_CALL(pca9685mock, PCA9685_setPWM(_, _, _)).Times(2);
     L9110 l9110_obj(hw_config);
     
     double spd = 10.00;
 
-    EXPECT_CALL(wpimock, digitalWrite(hw_config.hw_interface[0].pin_no, spd)).Times(1);
+    EXPECT_CALL(pca9685mock, PCA9685_setPWM(_, AnyOf(0.00, spd), _)).Times(2);
     l9110_obj.L9110_move_motor(FORWARD, spd);
 
-    EXPECT_CALL(wpimock, digitalWrite(hw_config.hw_interface[1].pin_no, spd)).Times(1);
+    EXPECT_CALL(pca9685mock, PCA9685_setPWM(_, AnyOf(0.00, spd), _)).Times(2);
     l9110_obj.L9110_move_motor(REVERSE, spd);
+}
+
+TEST_F(L9110_Test_Fixture, VerifyMoveMotorsBWNOK)
+{
+   /*!
+    *  @test Verify L9110_move_motor
+    *  Verify Result is NOK if PCA9685_setPWM is NOK
+    */
+
+    /* Scenario 1 - Not in Sim Mode */
+    EXPECT_CALL(pca9685mock, PCA9685_setPWM(_, _, _)).Times(2);
+    L9110 l9110_obj(hw_config);
+    
+
+    EXPECT_CALL(pca9685mock, PCA9685_setPWM(_, _, _)).Times(1)
+        .WillRepeatedly(Return(NOK));
+    ASSERT_EQ(l9110_obj.L9110_move_motor(FORWARD), NOK);
+
+
+    EXPECT_CALL(pca9685mock, PCA9685_setPWM(_, _, _)).Times(1)
+        .WillRepeatedly(Return(NOK));
+    ASSERT_EQ(l9110_obj.L9110_move_motor(REVERSE), NOK);
+
+    EXPECT_CALL(pca9685mock, PCA9685_setPWM(_, _, _)).Times(1)
+        .WillRepeatedly(Return(NOK));
+    ASSERT_EQ(l9110_obj.L9110_move_motor(STOP), NOK);
 }
 
 int main(int argc, char **argv) {

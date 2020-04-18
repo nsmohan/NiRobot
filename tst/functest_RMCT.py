@@ -99,7 +99,8 @@ class MTDR_Test(unittest.TestCase):
             self.assertEqual(base["message"], test["message"], msg="ERROR: %s does not equal %s"%(base["message"], test["message"]))
             
     def tearDown(self):
-        os.system("sudo %s"%CLR_LOGS)
+        pass
+        #os.system("sudo %s"%CLR_LOGS)
 
 if __name__ == '__main__':
     unittest.main()

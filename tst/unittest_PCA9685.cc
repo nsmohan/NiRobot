@@ -260,7 +260,7 @@ TEST_F(PCA9685_Test_Fixture, TestsetPWMGW)
     int ch1 = channel * 4 + 0x06;
     int ch2 = ch1 + 2;
     int tics_to_on = 4095;
-    int tics_to_off = 6143;
+    int tics_to_off = 6142;
     
 
     /* Set Simulation Mode to false and set Expectations */
@@ -325,7 +325,8 @@ TEST_F(PCA9685_Test_Fixture, TestsetPWM_MaxMin)
     int ch1 = channel * 4 + 0x06;
     int ch2 = ch1 + 2;
     int tics_to_on = 4095;
-    int tics_to_off = 8191;
+    int tics_to_off = 8190;
+    int tics_to_off1 = 4094;
 
     int duty_cycles_cases[] = {-100, 200};
     
@@ -342,7 +343,7 @@ TEST_F(PCA9685_Test_Fixture, TestsetPWM_MaxMin)
     {
         duty_cycle = duty_cycles_cases[i];
         EXPECT_CALL(wpimock, wiringPiI2CWriteReg16(1, 
-                    AnyOf(ch1, ch2),  AnyOf(tics_to_on, tics_to_off)))
+                    AnyOf(ch1, ch2),  AnyOf(tics_to_on, tics_to_off, tics_to_off1)))
                 .Times(2);
         ASSERT_EQ(OK, PCA9685_setPWM(duty_cycle, delay_time,
                                          channel));

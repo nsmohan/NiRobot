@@ -56,26 +56,37 @@
                                      "pin_no"   : 4
                                     }]
                   },
+                  { "hw_name"     : "CAMERA_MOTORS",
+                    "hw_sim_mode" : false,
+                    "hw_interface": [{
+                                     "pin_name": "CAM_HRZN_MTR",
+                                     "pin_no"  : 15
+                                    },
+                                    {
+                                     "pin_name" : "CAM_VERT_MTR",
+                                     "pin_no"   : 14
+                                    }]
+                  },
                   { "hw_name"     : "LEFT_DRV_MTR",
-                    "hw_sim_mode" : true,
+                    "hw_sim_mode" : false,
                     "hw_interface": [{
                                      "pin_name": "forward",
-                                     "pin_no"  : 5
+                                     "pin_no"  : 13
                                     },
                                     {
                                      "pin_name" : "reverse",
-                                     "pin_no"   : 6
+                                     "pin_no"   : 12
                                     }]
                   },
                   { "hw_name"     : "RIGHT_DRV_MTR",
-                    "hw_sim_mode" : true,
+                    "hw_sim_mode" : false,
                     "hw_interface": [{
                                      "pin_name": "forward",
-                                     "pin_no"  : 12
+                                     "pin_no"  : 11
                                     },
                                     {
                                      "pin_name" : "reverse",
-                                     "pin_no"   : 13
+                                     "pin_no"   : 10
                                     }]
               }]
 }

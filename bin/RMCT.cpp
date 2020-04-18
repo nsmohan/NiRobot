@@ -39,7 +39,7 @@ const unsigned int SOCK_TIMEOUT = 600;
 
 /** @var NO_OF_HW
  *  Quantity of Hardware RMCT directly controls*/
-const unsigned int NO_OF_HW = 3;
+const unsigned int NO_OF_HW = 4;
 
 /*--------------------------------------------------/
 /                Structs/Classes/Enums              /
@@ -59,6 +59,10 @@ typedef struct RMDR_hw_settings
     /** @var right_motor_hw_config
      *  Right Motor Settings Structure*/
     RSXA_hw right_motor_hw_config;
+
+    /** @var cam_motor_hw_config
+     *  Camera Motor Settings */
+    RSXA_hw cam_motor_hw_config;
 
     /** @var rmct_hw_settings
      *  RMCT Task Settings */
@@ -128,6 +132,7 @@ int main(int argc, char *argv[])
 
         /* Initialize Robot Motor Controller */
         RobotMotorController rmct_obj(rmct_hw_settings.pca9685_hw_config,
+                                      rmct_hw_settings.cam_motor_hw_config,
                                       rmct_hw_settings.left_motor_hw_config,
                                       rmct_hw_settings.right_motor_hw_config);
 
@@ -273,6 +278,11 @@ static NMT_result rmct_get_robot_settings(RSXA &hw_settings, RMCT_hw_settings &r
             else if (strcmp(hw_settings.hw[i].hw_name, RIGHT_DRV_MTR.c_str()) == 0)
             {
                 memcpy(&(rmct_hw_settings.right_motor_hw_config), &(hw_settings.hw[i]), sizeof(hw_settings.hw[i]));
+                mc++;
+            }
+            else if (strcmp(hw_settings.hw[i].hw_name, LD27MG_HW_NAME) == 0)
+            {
+                memcpy(&(rmct_hw_settings.cam_motor_hw_config), &(hw_settings.hw[i]), sizeof(hw_settings.hw[i]));
                 mc++;
             }
 

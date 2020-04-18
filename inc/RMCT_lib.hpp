@@ -58,8 +58,11 @@ class RobotMotorController
     public:
         /* Constructor for RobotMotorController */
         RobotMotorController(RSXA_hw pca9685_hw_config, 
+                             RSXA_hw cam_motor_hw_config,
                              RSXA_hw left_motor_hw_config, 
                              RSXA_hw right_motor_hw_config);
+
+        ~RobotMotorController() {};
 
 
         /* Prototypes */

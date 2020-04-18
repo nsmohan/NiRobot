@@ -63,10 +63,7 @@ NMT_sock_py_LIBS    = -lNMT_sock
 L9110_LIBS         =  -lNMT_stdlib \
                       -lNMT_log \
                       -lRSXA \
-                      -lwiringPi \
-                      -lcrypt \
-                      -lm \
-                      -lrt
+                      -lPCA9685
 
 RMCT_lib_LIBS      = -lNMT_stdlib \
                      -lNMT_log \

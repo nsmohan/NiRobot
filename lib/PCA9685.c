@@ -243,7 +243,7 @@ NMT_result PCA9685_setPWM(double duty_cycle, double delay_time,
         /* Calculate number of tics for time on & off */
         int tics_to_on       = (((delay_time/100)*MAX_TICS) + 0.5) - 1;
         int tics_on_duration = (((duty_cycle/100)*MAX_TICS) + 0.5);
-        int tics_to_off      = tics_to_on + tics_on_duration; 
+        int tics_to_off      = tics_to_on + tics_on_duration -1; 
 
         /* Calculate the register address */
         int channel_reg_on  = (channel * 4) + LED0_ON_L;

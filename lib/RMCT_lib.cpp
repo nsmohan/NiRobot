@@ -26,7 +26,13 @@
 /--------------------------------------------------*/
 /** @var PWM_FREQ
  *  PWM Frequency for PCA9685 Driver */
-const float PWM_FREQ = 50.00;
+
+/** @var DEFAULT_DRV_SPEED
+ *  Default speed to drive the motors*/
+const int DEFAULT_DRV_SPEED = 50.00;
+
+const int PWM_FREQ = 50.00;
+
 
 /** @map camera_directions
  *  CAMERA_MOTOR_DIRECTIONS STR to ENUM Mapping */
@@ -45,6 +51,7 @@ std::map<std::string, L9110_DIRECTIONS> l9110_directions;
 /--------------------------------------------------*/
 using namespace std;
 RobotMotorController::RobotMotorController(RSXA_hw pca9685_hw_config, 
+                                           RSXA_hw cam_motor_hw_config,
                                            RSXA_hw left_motor_hw_config, 
                                            RSXA_hw right_motor_hw_config)
 {
@@ -77,17 +84,24 @@ RobotMotorController::RobotMotorController(RSXA_hw pca9685_hw_config,
     l9110_directions["REVERSE"] = REVERSE;
     l9110_directions["STOP"] = STOP;
 
-    /* Initialize L9110 Drive Motors */
-    left_drv_motor = Create_drv_motor(left_motor_hw_config);
-    right_drv_motor = Create_drv_motor(right_motor_hw_config);
-    
-    /* Initialize the PCA9685 Driver */
+    /* 1. Initialize the PCA9685 Driver */
     PCA9685_settings pwm_settings = {PWM_FREQ, pca9685_hw_config.hw_sim_mode};
     result = PCA9685_init(pwm_settings);
 
-    /* Initialize the Camera Motors */
+    /* 2. Initialize the Camera Motors */
     if (result == OK)
-        result = LD27MG_init();
+        result = LD27MG_init(cam_motor_hw_config);
+
+    /* 3 .Initialize L9110 Drive Motors */
+    try
+    {
+        left_drv_motor = Create_drv_motor(left_motor_hw_config);
+        right_drv_motor = Create_drv_motor(right_motor_hw_config);
+    }
+    catch (std::exception &e)
+    {
+        result = NOK;
+    }
 
     if (result !=OK)
         throw std::runtime_error("ERROR, Robot Motor Hardware Initiization Failed!");
@@ -122,6 +136,7 @@ NMT_result RobotMotorController::process_motor_action(std::string motor, std::st
     }
     else if (l9110_directions.count(direction))
     {
+        if (speed < 0) {speed = DEFAULT_DRV_SPEED;}
         if (motor == LEFT_DRV_MTR)
         {
             left_drv_motor->L9110_move_motor(l9110_directions[direction], speed);

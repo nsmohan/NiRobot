@@ -17,6 +17,7 @@
 /                   Local Imports                   /
 /--------------------------------------------------*/
 #include "NMT_log.h"
+#include "RSXA.h"
 #include "PCA9685.h"
 
 /*--------------------------------------------------/
@@ -32,6 +33,10 @@
     extern "C" 
     {
 #endif
+        /** @def LD27MG_HW_NAME
+         *  Name of LD27MG Driver */
+        #define LD27MG_HW_NAME "CAMERA_MOTORS"
+
         /** enum LD27MG_MOTORS
          *  Camera Motion Control Motors */
         typedef enum {CAM_HRZN_MTR, CAM_VERT_MTR}LD27MG_MOTORS;
@@ -44,7 +49,7 @@
 
         NMT_result LD27MG_get_current_position(LD27MG_MOTORS motor, double *angle);
 
-        NMT_result LD27MG_init();
+        NMT_result LD27MG_init(RSXA_hw hw_config);
 
 #ifdef __cplusplus
     }

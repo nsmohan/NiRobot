@@ -19,6 +19,7 @@
 /                   Local Imports                   /
 /--------------------------------------------------*/
 #include "RSXA.h"
+#include "PCA9685.h"
 
 /*--------------------------------------------------/
 /                   Constants                       /
@@ -51,7 +52,7 @@ class L9110
         ~L9110() {}
 
         /* Prototypes */
-        void L9110_move_motor(L9110_DIRECTIONS direction, int speed=DEFAULT_SPEED);
+        NMT_result L9110_move_motor(L9110_DIRECTIONS direction, int speed=DEFAULT_SPEED);
 
     private:
         /** @var sim_mode
@@ -59,11 +60,11 @@ class L9110
         bool sim_mode;
 
         /** @var forward
-         *  Pin Mapping for forward GPIO */
-        int  forward;
+         *  Pin Mapping for forward PWM Channel */
+        PCA9685_PWM_CHANNEL  forward;
 
         /** @var reverse
-         *  Pin Mapping for reverse GPIO */
-        int  reverse;
+         *  Pin Mapping for reverse PWM CHannel */
+        PCA9685_PWM_CHANNEL  reverse;
 };
 #endif

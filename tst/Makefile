@@ -36,14 +36,12 @@ unittest_PCA9685_LIBS = -lwiringPi \
 unittest_LD27MG_LIBS =  -lNMT_log \
                         -lNMT_stdlib \
                         -lPCA9685 \
+                        -lRSXA \
                         -lLD27MG
 
-unittest_L9110_LIBS = -lwiringPi \
-                      -lcrypt \
-                      -lm \
-                      -lrt \
-                      -lNMT_log \
+unittest_L9110_LIBS = -lNMT_log \
                       -lRSXA \
+                      -lPCA9685 \
                       -lL9110
 
 unittest_RMCT_lib_LIBS = -lNMT_stdlib \
@@ -79,7 +77,7 @@ $(TBLD_DIR)/unittest_PCA9685: $(OBJ_DIR)/wiringPi_stub.o $(OBJ_DIR)/unittest_PCA
 $(TBLD_DIR)/unittest_LD27MG: $(OBJ_DIR)/PCA9685_stub.o $(OBJ_DIR)/unittest_LD27MG.o
 	g++  $(LDFLAGS_T) $(RPATH) -I $(INC_DIR) -o $@ $^ $(GTST_LIBS) $(unittest_LD27MG_LIBS)
 
-$(TBLD_DIR)/unittest_L9110: $(OBJ_DIR)/wiringPi_stub.o $(OBJ_DIR)/unittest_L9110.o
+$(TBLD_DIR)/unittest_L9110: $(OBJ_DIR)/PCA9685_stub.o $(OBJ_DIR)/unittest_L9110.o
 	g++  $(LDFLAGS_T) $(RPATH) -I $(INC_DIR) -o $@ $^ $(GTST_LIBS) $(unittest_L9110_LIBS)
 
 $(TBLD_DIR)/unittest_RMCT_lib: $(OBJ_DIR)/LD27MG_stub.o $(OBJ_DIR)/unittest_RMCT_lib.o $(OBJ_DIR)/PCA9685_stub.o \
