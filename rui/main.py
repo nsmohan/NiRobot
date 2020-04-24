@@ -8,6 +8,7 @@
 "  @date      April 11, 2020
 "  @copyright 2020 - NM Technologies
 """
+
 #---------------------------------------------------#
 #                   System Imports                  #
 #---------------------------------------------------#
@@ -17,19 +18,20 @@ import PIL
 from PIL import ImageTk
 from PIL import Image
 import os
-import json
+
+#---------------------------------------------------#
+#                   Local Imports                   #
+#---------------------------------------------------#
+from ui_comps.SettingsView import SettingsTabView
+from ui_comps.LayoutBase import *
+from ui_comps.ConnectBox import ConnectBox
+
 
 #---------------------------------------------------#
 #                   Constants                       #
 #---------------------------------------------------#
-RSXA_FILE = "/etc/NiBot/RSXA.json"
+WINDOW_TITLE = "NiBot"
 
-WIDTH  = "1600"
-HEIGHT = "900"
-MAX_WIDTH = 1580
-MAX_HEIGHT = 880
-HEADER_START = (int(HEIGHT) - MAX_HEIGHT)/2
-HEADER_END   = HEADER_START + 200
 
 MIN_X = 10
 MIN_Y = 10
@@ -39,39 +41,17 @@ BODY_HEIGHT = FOOTER_MIN_Y - BODY_MIN_Y
 MIN_GAP = 15
 MIN_HEIGHT = 30
 MIN_WIDTH = 100
-BG_COLOR = "#F3F3F6"
 MY_DIR = os.path.join(os.getcwd().split("NiRobot")[0], "NiRobot")
 RUI_DIR = os.path.join(MY_DIR, "rui")
 IMG_DIR = os.path.join(RUI_DIR, "imgs")
 
-#---------------------------------------------------#
-#                   Local Imports                   #
-#---------------------------------------------------#
-class LayoutBase(object):
-
-    def __init__(self):
-        self.style = ttk.Style()
-        self.__styles()
-
-    def __styles(self):
-        self.style.configure('std.TButton',
-                             font = ('comic', 10, 'bold'), 
-                             width=15) 
-        self.style.configure('L.TButton',
-                             font = ('comic', 20, 'bold'), 
-                             width=15) 
-
-    def new_button(self, window, text, style="std"):
-        return ttk.Button(window, text=text, style=f"{style}.TButton")
 
 class LayoutHeader(LayoutBase):
     def __init__(self, window):
         self.window = window
-        self.__grpbox()
-        self.__buttons()
         self.__images()
-        self.__inputs()
         self.__layout()
+        ConnectBox(self.window)
 
     def __images(self):
         load = Image.open(os.path.join(IMG_DIR, "nibot.png"))
@@ -79,22 +59,8 @@ class LayoutHeader(LayoutBase):
         self.logo = tk.Label(self.window, image=render)
         self.logo.image = render
 
-    def __inputs(self):
-        self.host_txtbox = tk.Entry(self.connect_gb)
-
-    def __buttons(self):
-        self.cbtn =  self.new_button(self.connect_gb, "Connect")
-        self.dcbtn = self.new_button(self.connect_gb, "Disconnect")
-
-    def __grpbox(self):
-        self.connect_gb = tk.LabelFrame(self.window, text="Connect-to-NiBot", bg=BG_COLOR)
-
     def __layout(self):
-        self.logo.place(x=MIN_X, y=MIN_Y)
-        self.connect_gb.place(x=1000, y=MIN_Y, height=70, width=500)
-        self.host_txtbox.place(x=MIN_X, y=MIN_Y, height=MIN_HEIGHT, width=MIN_WIDTH)
-        self.cbtn.place(x=MIN_WIDTH + MIN_GAP, y=MIN_Y)
-        self.dcbtn.place(x=250, y=MIN_Y)
+        self.logo.place(x=0, y=0)
 
 class CameraControlBox(LayoutBase):
     def __init__(self, window):
@@ -132,7 +98,6 @@ class CameraControlBox(LayoutBase):
 
 class DriveControlBox(LayoutBase):
     def __init__(self, window):
-        super().__init__()
         self.window = window
         self.direction = tk.StringVar()
         self.__grpbox()
@@ -170,180 +135,6 @@ class DriveControlBox(LayoutBase):
         self.speed_txbx.place(x=70, y=MIN_Y + 80, height=MIN_HEIGHT, width=MIN_WIDTH)
         self.drive_ctrl_gb.place(x=MIN_X, y=MIN_Y + 150)
 
-""" 
-"  @class  SettingsTabView
-"          Object to handle the RSXA Setings TreeView
-"""
-class SettingsTabView(LayoutBase):
-    def __init__(self, window):
-
-        """ 
-        "  @brief Constructor for SettingsTabView
-        "  @param[in] window -> Parent Element
-        """
-
-        self.window = window
-        self.__tree()
-        self.__fillTree()
-        self.__buttons()
-        self.__layout()
-
-        self.toggle_simbtn["state"] = "disabled"
-        self.edit_valuebtn["state"] = "disabled"
-
-    def __buttons(self):
-        self.toggle_simbtn = self.new_button(self.window, "TOGGLE SIM", "L")
-        self.edit_valuebtn = self.new_button(self.window, "EDIT VALUE", "L")
-
-    def __tree(self):
-
-        """ 
-        "  @brief Function to initialize the Tree Widget
-        """
-
-        self.settings_tree = ttk.Treeview(self.window, height=20)
-        self.settings_tree["columns"] = ("item", "val")
-        self.settings_tree.heading("#0",text="NiBot Setting",anchor=tk.W)
-        self.settings_tree.heading("item",text="item",anchor=tk.W)
-        self.settings_tree.heading("val",text="Value",anchor=tk.W)
-        self.settings_tree.bind("<<TreeviewSelect>>", self.__handleSelect)
-
-    def __fillTree(self):
-
-        """ 
-        "  @brief Read the RSXA settings and fill the tree
-        """
-
-        rsxa_settings = self.__read_rsxa_settings()
-        rsxa_settings.pop("_comment")
-        self.__parse_settings(rsxa_settings)
-
-
-    def __layout(self):
-        self.toggle_simbtn.place(x=MIN_X, y=450)
-        self.edit_valuebtn.place(x=MIN_X * 32, y=450)
-
-    def __read_rsxa_settings(self):
-
-        """ 
-        "  @brief Read the RSXA settings file
-        """
-
-        with open(RSXA_FILE, "r") as rsxa_file:
-            return json.loads(rsxa_file.read())
-
-    def __parse_settings(self, root, node="", index = "0", key_eq_item=False):
-        """ 
-        "  @brief Parse the RSXA settings and fill the tree
-        """
-
-        # -- Loop through all the items in the file -- #
-        for key in root.keys():
-
-            # -- Set iid value -- #
-            iid = str(index) + key
-
-            if type(root[key]) == list:
-
-                # -- Insert the Parent Element -- #
-                self.settings_tree.insert(node, 'end', iid, text=key)
-
-
-                # -- Loop and fill the child elements -- #
-                for i, item in enumerate(root[key]):
-
-                    # -- Set sub id's -- #
-                    new_index = index + str(i)
-                    new_iid = iid + new_index
-
-                    display_name, display_item, display_value, set_as_item, tag, = self.__set_list_items(key, item)
-                    self.settings_tree.insert(iid, 'end', new_iid, text=display_name,
-                                              value=(display_item, display_value), tags=tag)
-
-                    # -- Repeat -- #
-                    self.__parse_settings(item, node=new_iid, index=new_index, key_eq_item=set_as_item)
-            else:
-
-                # -- Refresh Variables for each iteration -- #
-                val = ""
-                item = ""
-                val = str(root[key])
-                display_name = key
-
-                # -- Handle Special Requests -- #
-                if key_eq_item:
-                    display_name = ""
-                    item = key
-
-                # -- Insert Element into tree -- #
-                self.settings_tree.insert(node, 'end', iid,  text=display_name, value=(item, val), tags=type(root[key]))
-
-    def __set_list_items(self, key, item):
-
-        """ 
-        "  @brief Set elements for tree for list items
-        "  @param[in] key -> Dictionary Key
-        "  @param[in] item -> Dictionary items
-        """
-
-        # -- Initialize Variables -- #
-        display_value = ""
-        display_item = ""
-        display_name = ""
-        tag = ""
-        set_as_item = False
-        tags = None
-
-        # -- Determine element type and take action -- #
-        if key == "procs":
-            display_name = item["proc_name"]
-            item.pop("proc_name")
-            set_as_item = True
-        elif key == "hw":
-            display_name = item["hw_name"]
-            tag = "bool"
-            display_value = str(item["hw_sim_mode"])
-            display_item = "hw_sim_mode"
-            item.pop("hw_name")
-            item.pop("hw_sim_mode")
-        elif key == "hw_interface":
-            tag = "int"
-            display_item = item["pin_name"]
-            display_value = item["pin_no"]
-            item.pop("pin_name")
-            item.pop("pin_no")
-
-        return display_name, display_item, display_value, set_as_item, tag
-
-    def __handleSelect(self, event):
-
-        """ 
-        "  @brief Handle event if item is selected in tree
-        "  @param[in] event
-        """
-
-        # -- Get Selected item -- #
-        iid = self.settings_tree.selection()
-
-        # -- Disable both buttons if morre than 1 item selected -- #
-        if len(iid) > 1:
-            self.edit_valuebtn["state"] = "disabled"
-            self.toggle_simbtn["state"] = "disabled"
-            return 
-            
-        item = self.settings_tree.item(iid)
-
-        # -- Set Button States -- #
-        if item["values"] and item["tags"]:
-            if "bool" in item["tags"]:
-                self.edit_valuebtn["state"] = "disabled"
-                self.toggle_simbtn["state"] = "enabled"
-            else:
-                self.edit_valuebtn["state"] = "enabled"
-                self.toggle_simbtn["state"] = "disabled"
-        else:
-            self.edit_valuebtn["state"] = "disabled"
-            self.toggle_simbtn["state"] = "disabled"
 
 class LayoutBody(object):
     def __init__(self, window):
@@ -368,31 +159,29 @@ class LayoutBody(object):
         self.drive_ctrl.drive_ctrl_gb.place(x=MIN_X, y=MIN_Y + 150)
         self.settings_view.settings_tree.place(x=MIN_X, y=MIN_Y)
         
-class LayoutRoot(object):
+class GUIController(LayoutBase):
     def __init__(self, window):
+        super().__init__()
         self.window = window
-        window.configure(bg=BG_COLOR)
+        window.configure(bg=self.std_bg_color)
         self.__Frames()
-        self.header = LayoutHeader(self.border_box)
-        self.body = LayoutBody(self.border_box)
         self.__layout()
+        self.header = LayoutHeader(self.header_box)
+        self.body = LayoutBody(self.border_box)
 
     def __Frames(self):
-        self.border_box = tk.Frame(self.window, height=MAX_HEIGHT, width=MAX_WIDTH, bg=BG_COLOR)
+        self.border_box = tk.Frame(self.window, height=MAX_HEIGHT, width=MAX_WIDTH, bg=self.std_bg_color)
+        self.header_box = tk.Frame(self.border_box, height = HEADER_HEIGHT, width = MAX_WIDTH, bg=self.std_bg_color)
+        self.body_box = tk.Frame(self.border_box, height = BODY_HEIGHT, width = MAX_WIDTH, bg=self.std_bg_color)
 
     def __layout(self):
         self.border_box.place(x=(int(HEIGHT)-MAX_HEIGHT)/2, y=(int(WIDTH)-MAX_WIDTH)/2)
-        self.window.title("NiBot")
-        self.window.geometry("%sx%s"%(WIDTH, HEIGHT))
-    
-class ConnectBox(LayoutRoot):
-    def __grpbox(self):
-        self.connect_gb = LabelFrame(self.window, text="Connect-to-Robot")
-
-    def __layout(self):
-        self.connect_gb.place(x=1200, y=MIN_Y, height=MIN_HEIGHT, width=310)
+        self.header_box.place(x=0, y=0)
+        self.body_box.place(x=0, y=HEADER_HEIGHT + 1)
+        self.window.title(WINDOW_TITLE)
+        self.window.geometry(f"{WIDTH}x{HEIGHT}")
 
 if __name__ == '__main__':
     window = tk.Tk()
-    ConnectBox(window)
+    GUIController(window)
     window.mainloop()
