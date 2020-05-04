@@ -47,7 +47,8 @@ class LayoutBase(object):
         self.__styles()
         self.std_button_width  = 150
         self.std_button_height = 30
-        self.L_button_size     = 300
+        self.L_button_width    = 300
+        self.L_button_height   = 50
         self.lframe_height     = 200
         self.lframe_width      = 450
         self.std_bg_color      = "#F3F3F6"
@@ -65,13 +66,13 @@ class LayoutBase(object):
                              font = ('comic', 20, 'bold'), 
                              width=15) 
 
-    def new_button(self, window, text, style="std"):
+    def new_button(self, window, text, style="std", command=None):
 
         """ 
         "  @brief Wrapper method to create a new button
         """
 
-        return ttk.Button(window, text=text, style=f"{style}.TButton")
+        return ttk.Button(window, text=text, style=f"{style}.TButton", command=command)
 
     def new_label_frame(self, window, text):
             return ttk.LabelFrame(self.window, text=text, width=self.lframe_width, height=self.lframe_height)

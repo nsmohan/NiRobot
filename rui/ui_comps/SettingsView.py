@@ -14,18 +14,21 @@
 #---------------------------------------------------#
 import tkinter as tk
 import tkinter.ttk as ttk
+from tkinter import simpledialog
+import copy
 import json
+import zope.event
 
 #---------------------------------------------------#
 #                   Local Imports                   #
 #---------------------------------------------------#
-from ui_comps.LayoutBase import LayoutBase
+from ui_comps.LayoutBase import *
 
 #---------------------------------------------------#
 #                   Constants                       #
 #---------------------------------------------------#
 RSXA_FILE = "/etc/NiBot/RSXA.json"
-MIN_X = 10
+SETTINGS_TREE_HEIGHT = BODY_HEIGHT - 200
 
 #---------------------------------------------------#
 #                 Start of Program                  #
@@ -43,20 +46,31 @@ class SettingsTabView(LayoutBase):
         "  @param[in] window -> Parent Element
         """
 
-        # -- Initialize Class --#
+        # -- Initialize Base Class --#
+        super().__init__()
+
+        # -- Pre Init Tasks -- #
+        self.rsxa_settings = self.__read_rsxa_settings()
         self.window = window
+
+        # -- Initialize Class -- #
         self.__tree()
-        self.__fillTree()
+        self.__fillTree(copy.deepcopy(self.rsxa_settings))
         self.__buttons()
         self.__layout()
 
         # -- Set Default States -- #
-        self.toggle_simbtn["state"] = "disabled"
-        self.edit_valuebtn["state"] = "disabled"
+        zope.event.subscribers.append(self.__update_btn_states_cb)
+        zope.event.notify("init")
+        
+        # -- Global Data for Object --#
+        self.rsxa_settings_mem = copy.deepcopy(self.rsxa_settings)
 
     def __buttons(self):
-        self.toggle_simbtn = self.new_button(self.window, "TOGGLE SIM", "L")
-        self.edit_valuebtn = self.new_button(self.window, "EDIT VALUE", "L")
+        self.toggle_simbtn = self.new_button(self.window, "TOGGLE SIM", "L", command=self.__toggle_sim)
+        self.edit_valuebtn = self.new_button(self.window, "EDIT VALUE", "L", command=self.__change_setting)
+        self.undo_changesbtn = self.new_button(self.window, "UNDO CHANGES", "L", command=self.__undo_changes)
+        self.apply_btn = self.new_button(self.window, "APPLY CHANGES", "L", command=self.__apply_changes)
 
     def __tree(self):
 
@@ -64,29 +78,29 @@ class SettingsTabView(LayoutBase):
         "  @brief Function to initialize the Tree Widget
         """
 
-        self.settings_tree = ttk.Treeview(self.window, height=20)
+        self.settings_tree = ttk.Treeview(self.window)
         self.settings_tree["columns"] = ("item", "val")
         self.settings_tree.heading("#0",text="NiBot Setting",anchor=tk.W)
         self.settings_tree.heading("item",text="item",anchor=tk.W)
         self.settings_tree.heading("val",text="Value",anchor=tk.W)
         self.settings_tree.bind("<<TreeviewSelect>>", self.__handleSelect)
 
-    def __fillTree(self):
+    def __fillTree(self, rsxa_settings):
 
         """ 
-        "  @brief Read the RSXA settings and fill the tree
+        "  @brief Fille the Tree
         """
 
-        rsxa_settings = self.__read_rsxa_settings()
         rsxa_settings.pop("_comment")
         self.__parse_settings(rsxa_settings)
 
 
     def __layout(self):
-        self.toggle_simbtn.place(x=MIN_X, y=450)
-        self.edit_valuebtn.place(x=MIN_X * 32, y=450)
-        self.toggle_simbtn.update()
-        print (self.toggle_simbtn.winfo_width())
+        self.settings_tree.place(x=0, y=0, height=SETTINGS_TREE_HEIGHT)
+        self.toggle_simbtn.place(x=0, y=SETTINGS_TREE_HEIGHT + MIN_X)
+        self.edit_valuebtn.place(x=self.L_button_width, y=SETTINGS_TREE_HEIGHT + MIN_X)
+        self.undo_changesbtn.place(x=0, y=SETTINGS_TREE_HEIGHT + MIN_X + self.L_button_height)
+        self.apply_btn.place(x=self.L_button_width, y = SETTINGS_TREE_HEIGHT + MIN_X + self.L_button_height)
 
     def __read_rsxa_settings(self):
 
@@ -106,7 +120,7 @@ class SettingsTabView(LayoutBase):
         for key in root.keys():
 
             # -- Set iid value -- #
-            iid = str(index) + key
+            iid = f"{index}-{key}"
 
             if type(root[key]) == list:
 
@@ -118,7 +132,7 @@ class SettingsTabView(LayoutBase):
 
                     # -- Set sub id's -- #
                     new_index = index + str(i)
-                    new_iid = iid + new_index
+                    new_iid = f"{iid}-{new_index}"
 
                     display_name, display_item, display_value, set_as_item, tag, = self.__set_list_items(key, item)
                     self.settings_tree.insert(iid, 'end', new_iid, text=display_name,
@@ -191,8 +205,7 @@ class SettingsTabView(LayoutBase):
 
         # -- Disable both buttons if morre than 1 item selected -- #
         if len(iid) > 1:
-            self.edit_valuebtn["state"] = "disabled"
-            self.toggle_simbtn["state"] = "disabled"
+            zope.event.notify("na_select")
             return 
             
         item = self.settings_tree.item(iid)
@@ -200,13 +213,142 @@ class SettingsTabView(LayoutBase):
         # -- Set Button States -- #
         if item["values"] and item["tags"]:
             if "bool" in item["tags"]:
-                self.edit_valuebtn["state"] = "disabled"
-                self.toggle_simbtn["state"] = "enabled"
+                zope.event.notify("bool_select")
             else:
-                self.edit_valuebtn["state"] = "enabled"
-                self.toggle_simbtn["state"] = "disabled"
+                zope.event.notify("other_select")
         else:
-            self.edit_valuebtn["state"] = "disabled"
+            zope.event.notify("na_select")
+
+    def __showdialog(self, dialog_type, item_name, item_value):
+
+        """ 
+        "  @brief Show Dialog to get user Entry
+        "  param[in] dialog_type
+        "  param[in] item_name
+        "  param[in] item_value
+        """
+
+        title = "Edit NiBot Setting"
+
+        if dialog_type == str:
+            return simpledialog.askstring(title, 
+                                          f"Enter New {item_name}:",
+                                          initialvalue=item_value,
+                                          parent=self.window)
+        elif dialog_type == int:
+            return simpledialog.askinteger(title, 
+                                          f"Enter New {item_name}:",
+                                          parent=self.window,
+                                          initialvalue=item_value,
+                                          minvalue = 0,
+                                          maxvalue = 6000)
+    def __get_selected_item(self):
+
+        """ 
+        "  @brief Get the selected item
+        """
+
+        #-- Get the Tree Item --#
+        iid = self.settings_tree.selection()
+        items = self.settings_tree.item(iid)
+
+        #-- End of Function --#
+        return iid, items["values"], items["text"]
+
+    def __toggle_sim(self):
+
+        """ 
+        "  @brief Handle Toggle Sim Action
+        """
+
+        #-- Get the Selected item --#
+        iid, items, text = self.__get_selected_item()
+
+        # --Set New Sim Value --#
+        new_sim = not(items[1] == "True")
+        self.__update_tree(iid, (items[0], str(new_sim)))
+
+        # -- Update the value in Memory -- #
+        hw_item = list(filter(lambda hw: hw["hw_name"] == text, self.rsxa_settings_mem["hw"]))[0]
+        hw_item["hw_sim_mode"] = new_sim
+
+    def __change_setting(self):
+
+        """ 
+        "  @brief Edit Value Handle
+        """
+
+        #-- Get the Selected item --#
+        iid, items, text = self.__get_selected_item()
+
+        #-- Check Item name --#
+        if items[0] == "":
+            display_text = text
+        else:
+            display_text = items[0]
+
+        #-- Get User Input --#
+        new_setting = self.__showdialog(type(items[1]), display_text, items[1])
+
+        #-- Update Tree Value --#
+        if new_setting and new_setting != items[1]:
+            self.__update_tree(iid, (items[0], new_setting))
+
+    def __update_tree(self, iid, items):
+
+        """ 
+        "  @brief Update Tree Values
+        """
+        
+        self.settings_tree.item(iid, value=(items[0], items[1]))
+        zope.event.notify("update")
+
+    def __undo_changes(self):
+
+        """ 
+        "  @brief Implementation of Undo Changes Button
+        """
+
+        self.settings_tree.delete(*self.settings_tree.get_children())
+        self.__fillTree(copy.deepcopy(self.rsxa_settings))
+        zope.event.notify("reset")
+
+
+    def __apply_changes(self):
+
+        """ 
+        "  @brief Implementation of Undo Changes Button
+        """
+
+        with open("/tmp/RSXA.json", "w") as rsxa_settings:
+            json.dump(self.rsxa_settings_mem, rsxa_settings, indent=4)
+
+    def __update_btn_states_cb(self, event):
+        """ 
+        "  @brief Tree Updated Event Handler
+        "  param[in] event
+        """
+
+        if event == "init":
             self.toggle_simbtn["state"] = "disabled"
+            self.edit_valuebtn["state"] = "disabled"
+            self.undo_changesbtn["state"] = "disabled"
+            self.apply_btn["state"] = "disabled"
+        elif event == "reset":
+            self.undo_changesbtn["state"] = "disabled"
+            self.apply_btn["state"] = "disabled"
+        elif event == "update":
+            self.undo_changesbtn["state"] = "enabled"
+            self.apply_btn["state"] = "enabled"
+        elif event == "bool_select":
+            self.toggle_simbtn["state"] = "enabled"
+            self.edit_valuebtn["state"] = "disabled"
+        elif event == "other_select":
+            self.toggle_simbtn["state"] = "disabled"
+            self.edit_valuebtn["state"] = "enabled"
+        elif event == "na_select":
+            self.toggle_simbtn["state"] = "disabled"
+            self.edit_valuebtn["state"] = "disabled"
+            
 
 # --- End of File ----- #

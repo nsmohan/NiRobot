@@ -58,15 +58,16 @@ class LayoutHeader(LayoutBase):
 class LayoutBody(object):
     def __init__(self, window):
         self.window = window
+        self.settings_tab_width = 700
         self.__tabs()
+        self.__Frames()
         self.cam_ctrl = CameraControlBox(self.control_tab)
         self.drive_ctrl = DriveMotorControlBox(self.control_tab)
-        self.settings_view = SettingsTabView(self.settings_tab)
+        self.settings_view = SettingsTabView(self.rsxa_settings_box)
         self.__layout()
 
-
     def __Frames(self):
-        self.rsxa_settings_box = tk.Frame(self.settings_tab, height=BODY_HEIGHT)
+        self.rsxa_settings_box = tk.Frame(self.settings_tab, height=BODY_HEIGHT, width=self.settings_tab_width)
 
     def __tabs(self):
         self.bodytab = ttk.Notebook(self.window)
@@ -78,8 +79,8 @@ class LayoutBody(object):
     def __layout(self):
         self.bodytab.place(x=0, y=0, height=BODY_HEIGHT, width=MAX_WIDTH - 10)
         self.cam_ctrl.camctrl_gb.place(x=MIN_X, y=MIN_Y)
+        self.rsxa_settings_box.place(x=MIN_X, y=MIN_Y)
         self.drive_ctrl.drive_ctrl_gb.place(x=MIN_X, y=MIN_Y + 200)
-        self.settings_view.settings_tree.place(x=MIN_X, y=MIN_Y)
         
 class GUIController(LayoutBase):
     def __init__(self, window):
