@@ -18,6 +18,7 @@ import PIL
 from PIL import ImageTk
 from PIL import Image
 import os
+import zope.event
 
 #---------------------------------------------------#
 #                   Local Imports                   #
@@ -27,6 +28,7 @@ from ui_comps.LayoutBase import *
 from ui_comps.ConnectBox import ConnectBox
 from ui_comps.control_tab import CameraControlBox
 from ui_comps.control_tab import DriveMotorControlBox
+from lib.gui_application import GUI_Application
 
 
 #---------------------------------------------------#
@@ -39,11 +41,11 @@ IMG_DIR = os.path.join(RUI_DIR, "imgs")
 
 
 class LayoutHeader(LayoutBase):
-    def __init__(self, window):
+    def __init__(self, window, nibot_ap):
         self.window = window
         self.__images()
         self.__layout()
-        ConnectBox(self.window)
+        ConnectBox(self.window, nibot_ap)
 
     def __images(self):
         load = Image.open(os.path.join(IMG_DIR, "nibot.png"))
@@ -56,14 +58,15 @@ class LayoutHeader(LayoutBase):
 
 
 class LayoutBody(object):
-    def __init__(self, window):
+    def __init__(self, window, nibot_ap):
         self.window = window
+        self.nibot_ap = nibot_ap
         self.settings_tab_width = 700
         self.__tabs()
         self.__Frames()
         self.cam_ctrl = CameraControlBox(self.control_tab)
         self.drive_ctrl = DriveMotorControlBox(self.control_tab)
-        self.settings_view = SettingsTabView(self.rsxa_settings_box)
+        self.settings_view = SettingsTabView(self.rsxa_settings_box, self.nibot_ap)
         self.__layout()
 
     def __Frames(self):
@@ -81,16 +84,28 @@ class LayoutBody(object):
         self.cam_ctrl.camctrl_gb.place(x=MIN_X, y=MIN_Y)
         self.rsxa_settings_box.place(x=MIN_X, y=MIN_Y)
         self.drive_ctrl.drive_ctrl_gb.place(x=MIN_X, y=MIN_Y + 200)
+
+    def disable_body_tabs(self):
+        self.bodytab.tab(0, state="disabled")
+        self.bodytab.tab(1, state="disabled")
+
+    def enable_body_tabs(self):
+        self.bodytab.tab(0, state="normal")
+        self.bodytab.tab(1, state="normal")
+        self.bodytab.select(0)
         
 class GUIController(LayoutBase):
     def __init__(self, window):
         super().__init__()
+        self.nibot_ap = GUI_Application()
         self.window = window
         window.configure(bg=self.std_bg_color)
         self.__Frames()
         self.__layout()
-        self.header = LayoutHeader(self.header_box)
-        self.body = LayoutBody(self.body_box)
+        self.header = LayoutHeader(self.header_box, self.nibot_ap)
+        self.body = LayoutBody(self.body_box, self.nibot_ap)
+        self.__set_default_states()
+        zope.event.subscribers.append(self.__handle_button_states)
 
     def __Frames(self):
         self.border_box = tk.Frame(self.window, height=MAX_HEIGHT, width=MAX_WIDTH, bg=self.std_bg_color)
@@ -103,6 +118,20 @@ class GUIController(LayoutBase):
         self.body_box.place(x=0, y=HEADER_HEIGHT + 1)
         self.window.title(WINDOW_TITLE)
         self.window.geometry(f"{WIDTH}x{HEIGHT}")
+
+    def __set_default_states(self):
+        self.body.disable_body_tabs()
+
+    def __handle_button_states(self, event):
+
+        if event == "connected":
+            self.body.enable_body_tabs()
+        elif event == "disconnected":
+            self.body.disable_body_tabs()
+
+
+
+
 
 if __name__ == '__main__':
     window = tk.Tk()

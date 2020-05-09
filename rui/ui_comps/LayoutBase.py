@@ -76,3 +76,13 @@ class LayoutBase(object):
 
     def new_label_frame(self, window, text):
             return ttk.LabelFrame(self.window, text=text, width=self.lframe_width, height=self.lframe_height)
+
+    def throw_error(self, error):
+
+        """ 
+        "  @brief Display Error Messaged Passed
+        "  @param[in] error
+        """
+
+        tk.messagebox.showerror(title="NiBot", message=error)
+
