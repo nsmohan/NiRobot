@@ -16,7 +16,6 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import simpledialog
 import copy
-import json
 import zope.event
 
 #---------------------------------------------------#
@@ -39,7 +38,7 @@ SETTINGS_TREE_HEIGHT = BODY_HEIGHT - 200
 "          Object to handle the RSXA Setings TreeView
 """
 class SettingsTabView(LayoutBase):
-    def __init__(self, window):
+    def __init__(self, window, nibot_ap):
 
         """ 
         "  @brief Constructor for SettingsTabView
@@ -50,27 +49,30 @@ class SettingsTabView(LayoutBase):
         super().__init__()
 
         # -- Pre Init Tasks -- #
-        self.rsxa_settings = self.__read_rsxa_settings()
         self.window = window
+        self.nibot_ap = nibot_ap
 
         # -- Initialize Class -- #
         self.__tree()
-        self.__fillTree(copy.deepcopy(self.rsxa_settings))
         self.__buttons()
         self.__layout()
 
         # -- Set Default States -- #
         zope.event.subscribers.append(self.__update_btn_states_cb)
+        zope.event.subscribers.append(self.__refresh_rsxa_settings_cb)
         zope.event.notify("init")
         
-        # -- Global Data for Object --#
-        self.rsxa_settings_mem = copy.deepcopy(self.rsxa_settings)
 
     def __buttons(self):
-        self.toggle_simbtn = self.new_button(self.window, "TOGGLE SIM", "L", command=self.__toggle_sim)
-        self.edit_valuebtn = self.new_button(self.window, "EDIT VALUE", "L", command=self.__change_setting)
-        self.undo_changesbtn = self.new_button(self.window, "UNDO CHANGES", "L", command=self.__undo_changes)
-        self.apply_btn = self.new_button(self.window, "APPLY CHANGES", "L", command=self.__apply_changes)
+
+        """ 
+        "  @brief SettingsView Buttons
+        """
+
+        self.toggle_simbtn = self.new_button(self.window, "TOGGLE SIM", "L", command=self.__handle_toggle_sim)
+        self.edit_valuebtn = self.new_button(self.window, "EDIT VALUE", "L", command=self.__handle_change_setting)
+        self.undo_changesbtn = self.new_button(self.window, "UNDO CHANGES", "L", command=self.__handle_undo_changes)
+        self.apply_btn = self.new_button(self.window, "APPLY CHANGES", "L", command=self.__handle_apply_changes)
 
     def __tree(self):
 
@@ -96,20 +98,16 @@ class SettingsTabView(LayoutBase):
 
 
     def __layout(self):
+
+        """ 
+        "  @brief Settings View Layout
+        """
+
         self.settings_tree.place(x=0, y=0, height=SETTINGS_TREE_HEIGHT)
         self.toggle_simbtn.place(x=0, y=SETTINGS_TREE_HEIGHT + MIN_X)
         self.edit_valuebtn.place(x=self.L_button_width, y=SETTINGS_TREE_HEIGHT + MIN_X)
         self.undo_changesbtn.place(x=0, y=SETTINGS_TREE_HEIGHT + MIN_X + self.L_button_height)
         self.apply_btn.place(x=self.L_button_width, y = SETTINGS_TREE_HEIGHT + MIN_X + self.L_button_height)
-
-    def __read_rsxa_settings(self):
-
-        """ 
-        "  @brief Read the RSXA settings file
-        """
-
-        with open(RSXA_FILE, "r") as rsxa_file:
-            return json.loads(rsxa_file.read())
 
     def __parse_settings(self, root, node="", index = "0", key_eq_item=False):
         """ 
@@ -193,6 +191,9 @@ class SettingsTabView(LayoutBase):
 
         return display_name, display_item, display_value, set_as_item, tag
 
+    # --------------------------------------------------------------#
+    #                  Handle User Inputs                           #
+    #---------------------------------------------------------------#
     def __handleSelect(self, event):
 
         """ 
@@ -219,6 +220,85 @@ class SettingsTabView(LayoutBase):
         else:
             zope.event.notify("na_select")
 
+    def __handle_toggle_sim(self):
+
+        """ 
+        "  @brief Handle Toggle Sim Action
+        """
+
+        #-- Get the Selected item --#
+        iid, items, text = self.__get_selected_item()
+
+        # --Set New Sim Value --#
+        new_sim = not(items[1] == "True")
+        self.__update_tree(iid, (items[0], str(new_sim)))
+
+        # -- Update the value in Memory -- #
+        hw_item = list(filter(lambda hw: hw["hw_name"] == text, self.rsxa_settings_mem["hw"]))[0]
+        hw_item["hw_sim_mode"] = new_sim
+
+    def __handle_change_setting(self):
+
+        """ 
+        "  @brief Edit Value Handle
+        """
+
+        # -- Initialize Variables -- #
+        new_setting = None
+
+        #-- Get the Selected item --#
+        iid, items, text = self.__get_selected_item()
+
+        #-- Check Item name --#
+        if items[0] == "":
+            display_text = text
+        else:
+            display_text = items[0]
+
+        #-- Get User Input --#
+        new_setting = self.__showdialog(type(items[1]), display_text, items[1])
+
+        #-- Update Tree Value --#
+        if new_setting != None and new_setting != items[1]:
+            root_key = self.__get_treeroot(iid)
+
+            if root_key == "hw":
+                indexes = iid[0][-3:]
+                index1 = int(indexes[-2])
+                index2 = int(indexes[-1])
+                hw_interface = self.rsxa_settings_mem["hw"][index1]["hw_interface"][index2]
+                hw_interface["pin_no"] = new_setting
+            elif root_key == "procs":
+                index = int(iid[0][1])
+                key = iid[0].split("-")[1]
+                proc = self.rsxa_settings_mem["procs"][index]
+                proc[key] = new_setting
+                
+            self.__update_tree(iid, (items[0], new_setting))
+
+    def __handle_undo_changes(self):
+
+        """ 
+        "  @brief Implementation of Undo Changes Button
+        """
+
+        self.settings_tree.delete(*self.settings_tree.get_children())
+        self.__fillTree(copy.deepcopy(self.rsxa_settings))
+        zope.event.notify("reset")
+
+
+    def __handle_apply_changes(self):
+
+        """ 
+        "  @brief Implementation of Undo Changes Button
+        """
+
+        self.nibot_ap.send_rsxa_settings_to_nibot(self.rsxa_settings_mem)
+        zope.event.notify("reset")
+
+    # --------------------------------------------------------------#
+    #                  Facility Functions                           #
+    #---------------------------------------------------------------#
     def __showdialog(self, dialog_type, item_name, item_value):
 
         """ 
@@ -242,6 +322,7 @@ class SettingsTabView(LayoutBase):
                                           initialvalue=item_value,
                                           minvalue = 0,
                                           maxvalue = 6000)
+
     def __get_selected_item(self):
 
         """ 
@@ -255,45 +336,6 @@ class SettingsTabView(LayoutBase):
         #-- End of Function --#
         return iid, items["values"], items["text"]
 
-    def __toggle_sim(self):
-
-        """ 
-        "  @brief Handle Toggle Sim Action
-        """
-
-        #-- Get the Selected item --#
-        iid, items, text = self.__get_selected_item()
-
-        # --Set New Sim Value --#
-        new_sim = not(items[1] == "True")
-        self.__update_tree(iid, (items[0], str(new_sim)))
-
-        # -- Update the value in Memory -- #
-        hw_item = list(filter(lambda hw: hw["hw_name"] == text, self.rsxa_settings_mem["hw"]))[0]
-        hw_item["hw_sim_mode"] = new_sim
-
-    def __change_setting(self):
-
-        """ 
-        "  @brief Edit Value Handle
-        """
-
-        #-- Get the Selected item --#
-        iid, items, text = self.__get_selected_item()
-
-        #-- Check Item name --#
-        if items[0] == "":
-            display_text = text
-        else:
-            display_text = items[0]
-
-        #-- Get User Input --#
-        new_setting = self.__showdialog(type(items[1]), display_text, items[1])
-
-        #-- Update Tree Value --#
-        if new_setting and new_setting != items[1]:
-            self.__update_tree(iid, (items[0], new_setting))
-
     def __update_tree(self, iid, items):
 
         """ 
@@ -303,27 +345,27 @@ class SettingsTabView(LayoutBase):
         self.settings_tree.item(iid, value=(items[0], items[1]))
         zope.event.notify("update")
 
-    def __undo_changes(self):
+    def __get_treeroot(self, iid):
 
         """ 
-        "  @brief Implementation of Undo Changes Button
+        "  @brief Return the root element
+        "  param[in] iid
         """
 
-        self.settings_tree.delete(*self.settings_tree.get_children())
-        self.__fillTree(copy.deepcopy(self.rsxa_settings))
-        zope.event.notify("reset")
+        # -- Get the Root Key -- #
+        while iid != "":
+            piid = iid
+            iid = self.settings_tree.parent(iid)
+
+        #-- Exit the Function --#
+        return piid.split("-")[1]
 
 
-    def __apply_changes(self):
-
-        """ 
-        "  @brief Implementation of Undo Changes Button
-        """
-
-        with open("/tmp/RSXA.json", "w") as rsxa_settings:
-            json.dump(self.rsxa_settings_mem, rsxa_settings, indent=4)
-
+    # -----------------------------------------------------------#
+    #                  Call Back Functions                       #
+    #------------------------------------------------------------#
     def __update_btn_states_cb(self, event):
+
         """ 
         "  @brief Tree Updated Event Handler
         "  param[in] event
@@ -350,5 +392,30 @@ class SettingsTabView(LayoutBase):
             self.toggle_simbtn["state"] = "disabled"
             self.edit_valuebtn["state"] = "disabled"
             
+    def __refresh_rsxa_settings_cb(self, event):
+
+        """ 
+        "  @brief Update the Tree with Latest RSXA Settings
+        "  param[in] event
+        """
+
+        if event == "connected" or event == "reset":
+            try:
+
+
+                # -- Delete any items -- #
+                self.settings_tree.delete(*self.settings_tree.get_children())
+
+                #-- Get Settings from NiBot --#
+                self.rsxa_settings = self.nibot_ap.get_rsxa_settings_from_nibot()
+                
+                # -- Copy Settings into Memory --#
+                self.rsxa_settings_mem = copy.deepcopy(self.rsxa_settings)
+
+                # -- Fill the Tree -- #
+                self.__fillTree(copy.deepcopy(self.rsxa_settings))
+
+            except Exception as e: 
+                self.throw_error(f"Failed to Update RSXA Settings! {e}")
 
 # --- End of File ----- #

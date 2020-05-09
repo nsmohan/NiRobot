@@ -28,7 +28,7 @@ from ui_comps.LayoutBase import *
 """
 class ConnectBox(LayoutBase):
 
-    def __init__(self, window):
+    def __init__(self, window, nibot_ap):
 
         """ 
         "  @brief Constructor for ConnectBox
@@ -38,10 +38,13 @@ class ConnectBox(LayoutBase):
         # -- Initialize Class -- #
         super().__init__()
         self.window = window
+        self.nibot_ap = nibot_ap
         self.__grpbox()
         self.__buttons()
         self.__inputs()
         self.__layout()
+
+        self.default_button_states()
         
     def __grpbox(self):
         
@@ -57,8 +60,8 @@ class ConnectBox(LayoutBase):
         "  @brief Buttons defined for element
         """
 
-        self.cbtn =  self.new_button(self.connect_gb, "Connect")
-        self.dcbtn = self.new_button(self.connect_gb, "Disconnect")
+        self.cbtn =  self.new_button(self.connect_gb, "Connect", command=self.__handle_connect)
+        self.dcbtn = self.new_button(self.connect_gb, "Disconnect", command=self.__handle_disconnect)
 
     def __inputs(self):
 
@@ -80,3 +83,25 @@ class ConnectBox(LayoutBase):
         self.host_txtbox.place(x=0, y=box_height/10, width=self.std_button_width, height=self.std_button_height)
         self.cbtn.place(x=self.std_button_width, y=box_height/10)
         self.dcbtn.place(x=self.std_button_width*2, y=box_height/10)
+
+    def __handle_connect(self):
+
+        try:
+            self.nibot_ap.connect_to_nibot(self.host_txtbox.get())
+            self.active_button_states()
+        except Exception as e:
+            self.throw_error("Unable to Connect to NiBot!")
+
+    def __handle_disconnect(self):
+        self.nibot_ap.disconnect_from_nibot()
+        self.default_button_states()
+
+    def default_button_states(self):
+        self.cbtn["state"] = "normal"
+        self.dcbtn["state"] = "disabled"
+
+    def active_button_states(self):
+        self.cbtn["state"] = "disabled"
+        self.dcbtn["state"] = "normal"
+
+
