@@ -25,11 +25,10 @@ import zope.event
 #---------------------------------------------------#
 from ui_comps.SettingsView import SettingsTabView
 from ui_comps.LayoutBase import *
-from ui_comps.ConnectBox import ConnectBox
-from ui_comps.control_tab import CameraControlBox
-from ui_comps.control_tab import DriveMotorControlBox
-from lib.gui_application import GUI_Application
-
+from ui_comps.ConnectBox import ConnectBox 
+from ui_comps.control_tab import CameraControlBox 
+from ui_comps.control_tab import DriveMotorControlBox 
+from lib.gui_application import GUI_Application 
 
 #---------------------------------------------------#
 #                   Constants                       #
@@ -41,45 +40,41 @@ IMG_DIR = os.path.join(RUI_DIR, "imgs")
 
 
 class LayoutHeader(LayoutBase):
-    def __init__(self, window, nibot_ap):
-        self.window = window
-        self.__images()
-        self.__layout()
+
+    def _class_comps_init(self):
         ConnectBox(self.window, nibot_ap)
 
-    def __images(self):
+    def _images(self):
         load = Image.open(os.path.join(IMG_DIR, "nibot.png"))
         render = ImageTk.PhotoImage(load)
         self.logo = tk.Label(self.window, image=render)
         self.logo.image = render
 
-    def __layout(self):
+    def _layout(self):
         self.logo.place(x=0, y=0)
 
 
-class LayoutBody(object):
-    def __init__(self, window, nibot_ap):
-        self.window = window
-        self.nibot_ap = nibot_ap
-        self.settings_tab_width = 700
-        self.__tabs()
-        self.__Frames()
-        self.cam_ctrl = CameraControlBox(self.control_tab)
-        self.drive_ctrl = DriveMotorControlBox(self.control_tab)
-        self.settings_view = SettingsTabView(self.rsxa_settings_box, self.nibot_ap)
-        self.__layout()
+class LayoutBody(LayoutBase):
 
-    def __Frames(self):
+    def _class_comps_init(self):
+        self.cam_ctrl = CameraControlBox(self.control_tab, self.nibot_ap)
+        self.drive_ctrl = DriveMotorControlBox(self.control_tab, self.nibot_ap)
+        self.settings_view = SettingsTabView(self.rsxa_settings_box, self.nibot_ap)
+
+    def _class_vars_init(self):
+        self.settings_tab_width = 700
+
+    def _frames(self):
         self.rsxa_settings_box = tk.Frame(self.settings_tab, height=BODY_HEIGHT, width=self.settings_tab_width)
 
-    def __tabs(self):
+    def _tabs(self):
         self.bodytab = ttk.Notebook(self.window)
         self.settings_tab = ttk.Frame(self.bodytab)
         self.control_tab = ttk.Frame(self.bodytab)
         self.bodytab.add(self.control_tab, text="Control")
         self.bodytab.add(self.settings_tab, text="Settings")
 
-    def __layout(self):
+    def _layout(self):
         self.bodytab.place(x=0, y=0, height=BODY_HEIGHT, width=MAX_WIDTH - 10)
         self.cam_ctrl.camctrl_gb.place(x=MIN_X, y=MIN_Y)
         self.rsxa_settings_box.place(x=MIN_X, y=MIN_Y)
@@ -95,32 +90,25 @@ class LayoutBody(object):
         self.bodytab.select(0)
         
 class GUIController(LayoutBase):
-    def __init__(self, window):
-        super().__init__()
-        self.nibot_ap = GUI_Application()
-        self.window = window
-        window.configure(bg=self.std_bg_color)
-        self.__Frames()
-        self.__layout()
+
+    def _class_comps_init(self):
+        self.window.configure(bg=self.std_bg_color)
         self.header = LayoutHeader(self.header_box, self.nibot_ap)
         self.body = LayoutBody(self.body_box, self.nibot_ap)
-        self.__set_default_states()
         zope.event.subscribers.append(self.__handle_button_states)
+        self.body.disable_body_tabs()
 
-    def __Frames(self):
+    def _frames(self):
         self.border_box = tk.Frame(self.window, height=MAX_HEIGHT, width=MAX_WIDTH, bg=self.std_bg_color)
         self.header_box = tk.Frame(self.border_box, height = HEADER_HEIGHT, width = MAX_WIDTH, bg=self.std_bg_color)
         self.body_box = tk.Frame(self.border_box, height = BODY_HEIGHT, width = MAX_WIDTH, bg=self.std_bg_color)
 
-    def __layout(self):
+    def _layout(self):
         self.border_box.place(x=(int(HEIGHT)-MAX_HEIGHT)/2, y=(int(WIDTH)-MAX_WIDTH)/2)
         self.header_box.place(x=0, y=0)
         self.body_box.place(x=0, y=HEADER_HEIGHT + 1)
         self.window.title(WINDOW_TITLE)
         self.window.geometry(f"{WIDTH}x{HEIGHT}")
-
-    def __set_default_states(self):
-        self.body.disable_body_tabs()
 
     def __handle_button_states(self, event):
 
@@ -135,5 +123,6 @@ class GUIController(LayoutBase):
 
 if __name__ == '__main__':
     window = tk.Tk()
-    GUIController(window)
+    nibot_ap = GUI_Application()
+    GUIController(window, nibot_ap)
     window.mainloop()

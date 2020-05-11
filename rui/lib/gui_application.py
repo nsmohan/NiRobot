@@ -20,11 +20,13 @@ import json
 #                   Local Imports                   #
 #---------------------------------------------------#
 from lib_py.NMT_transport import NMT_transport
+from lib_py.NMT_stdlib_py import NMT_result
+from lib_py.rmct_sock_lib import RMCTSockConnect
 
 #---------------------------------------------------#
 #                   Constants                       #
 #---------------------------------------------------#
-LOCAL_RSXA_FILE = "/tmp/RSXA.json"
+LOCAL_RSXA_FILE = "/etc/NiBot/RSXA.json"
 REMOTE_RSXA_FILE = "/etc/NiBot/RSXA.json"
 
 """ 
@@ -66,6 +68,9 @@ class GUI_Application(object):
             print(e)
             raise Exception ("Unable to Connect to NiBot!")
 
+        print("SSH Connection Successful!")
+        self.rmct = RMCTSockConnect()
+
     def disconnect_from_nibot(self):
 
         """ 
@@ -101,4 +106,28 @@ class GUI_Application(object):
             print(e)
             raise Exception("Failed to Get RSXA JSON File!")
 
+
+    def perform_nibot_motor_action(self, motor, direction, angle=-1, speed=-1):
+
+        """ 
+        "  @brief Perform NiBot Motor Action
+        "  @param[in] motor
+        "  @param[in] direction
+        "  @param[in] angle
+        "  @param[in] speed
+        """
+
+        # -- Construct TX Message --#
+        tx_message = self.rmct.construct_tx_message(motor, direction, angle, speed)
+
+        # --Send the Message --#
+        self.rmct.tx_message(tx_message)
+
+        #-- Wait for the Response -- #
+        response = self.rmct.rx_message()
+
+        if response:
+            print("NiBOT Response=%s"%(NMT_result.get_result(response["result"])))
+        else:
+            raise Exception("NiBot Motor Action Failure!")
 

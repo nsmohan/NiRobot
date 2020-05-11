@@ -45,8 +45,7 @@ def valid_tx_message(motor, direction="", angle=-1, speed=-1):
     """
 
     if (motor == "CAMERA"):
-        pass
-        #assert direction in CAM_DIRECTIONS, "Direction should be provided if motor == camera"
+        assert direction in CAM_DIRECTIONS, "Direction should be provided if motor == camera"
     elif (motor in CAMERA_MOTORS):
         assert angle >= 0, "Angle should be provided when motor == (CAM_HRZN_MTR or CAM_VERT_MTR)"
     elif (motor in DRIVE_MOTORS):
@@ -77,4 +76,4 @@ if __name__ == '__main__':
     if response:
         print("NiBOT Response=%s"%(NMT_result.get_result(response["result"])))
     else:
-        print "ERROR! Did not recieve a response from NiBot"
+        print("ERROR! Did not recieve a response from NiBot")

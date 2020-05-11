@@ -58,7 +58,8 @@ class RMCTSockConnect(object):
             rsxa = json.load(rsxa_file)
 
         # -- Find the Settings Needed -- #
-        rmct_proc = filter(lambda p: p["proc_name"] == RMCT, rsxa["procs"])[0]
+        rmct_proc = list(filter(lambda p: p["proc_name"] == RMCT, rsxa["procs"]))[0]
+        
 
         # -- Load the Settings into the object -- #
         self.rmct_server_ip = rmct_proc["server_ip"]
@@ -94,7 +95,8 @@ class RMCTSockConnect(object):
         """
 
         print ("Sending request to NiBot ..... {}".format(message))
-        self.multi_sock_tx.sendto(message,(self.rmct_server_ip, self.rmct_server_port))
+        print(message)
+        self.multi_sock_tx.sendto(message.encode(),(self.rmct_server_ip, self.rmct_server_port))
 
     def rx_message(self):
         """ 
