@@ -26,7 +26,6 @@ from ui_comps.LayoutBase import *
 #---------------------------------------------------#
 #                   Constants                       #
 #---------------------------------------------------#
-RSXA_FILE = "/etc/NiBot/RSXA.json"
 SETTINGS_TREE_HEIGHT = BODY_HEIGHT - 200
 
 #---------------------------------------------------#
@@ -38,32 +37,17 @@ SETTINGS_TREE_HEIGHT = BODY_HEIGHT - 200
 "          Object to handle the RSXA Setings TreeView
 """
 class SettingsTabView(LayoutBase):
-    def __init__(self, window, nibot_ap):
 
-        """ 
-        "  @brief Constructor for SettingsTabView
-        "  @param[in] window -> Parent Element
-        """
+    def _class_comps_init(self):
 
-        # -- Initialize Base Class --#
-        super().__init__()
-
-        # -- Pre Init Tasks -- #
-        self.window = window
-        self.nibot_ap = nibot_ap
-
-        # -- Initialize Class -- #
-        self.__tree()
-        self.__buttons()
-        self.__layout()
-
-        # -- Set Default States -- #
+        # -- Configure Call Backs-- #
         zope.event.subscribers.append(self.__update_btn_states_cb)
         zope.event.subscribers.append(self.__refresh_rsxa_settings_cb)
-        zope.event.notify("init")
-        
 
-    def __buttons(self):
+        # -- Send Init Event -- #
+        zope.event.notify("init")
+
+    def _buttons(self):
 
         """ 
         "  @brief SettingsView Buttons
@@ -74,7 +58,7 @@ class SettingsTabView(LayoutBase):
         self.undo_changesbtn = self.new_button(self.window, "UNDO CHANGES", "L", command=self.__handle_undo_changes)
         self.apply_btn = self.new_button(self.window, "APPLY CHANGES", "L", command=self.__handle_apply_changes)
 
-    def __tree(self):
+    def _tree(self):
 
         """ 
         "  @brief Function to initialize the Tree Widget
@@ -87,17 +71,7 @@ class SettingsTabView(LayoutBase):
         self.settings_tree.heading("val",text="Value",anchor=tk.W)
         self.settings_tree.bind("<<TreeviewSelect>>", self.__handleSelect)
 
-    def __fillTree(self, rsxa_settings):
-
-        """ 
-        "  @brief Fille the Tree
-        """
-
-        rsxa_settings.pop("_comment")
-        self.__parse_settings(rsxa_settings)
-
-
-    def __layout(self):
+    def _layout(self):
 
         """ 
         "  @brief Settings View Layout
@@ -108,10 +82,26 @@ class SettingsTabView(LayoutBase):
         self.edit_valuebtn.place(x=self.L_button_width, y=SETTINGS_TREE_HEIGHT + MIN_X)
         self.undo_changesbtn.place(x=0, y=SETTINGS_TREE_HEIGHT + MIN_X + self.L_button_height)
         self.apply_btn.place(x=self.L_button_width, y = SETTINGS_TREE_HEIGHT + MIN_X + self.L_button_height)
+        
+    def __fillTree(self, rsxa_settings):
+
+        """ 
+        "  @brief Fille the Tree
+        "  @param[in] rsxa_settings
+        """
+
+        rsxa_settings.pop("_comment")
+        self.__parse_settings(rsxa_settings)
+
+
 
     def __parse_settings(self, root, node="", index = "0", key_eq_item=False):
         """ 
         "  @brief Parse the RSXA settings and fill the tree
+        "  @param[in] root
+        "  @param[in] node
+        "  @param[in] index
+        "  @param[in] key_eq_item
         """
 
         # -- Loop through all the items in the file -- #
@@ -293,8 +283,11 @@ class SettingsTabView(LayoutBase):
         "  @brief Implementation of Undo Changes Button
         """
 
-        self.nibot_ap.send_rsxa_settings_to_nibot(self.rsxa_settings_mem)
-        zope.event.notify("reset")
+        try:
+            self.nibot_ap.send_rsxa_settings_to_nibot(self.rsxa_settings_mem)
+            zope.event.notify("reset")
+        except Exception as e:
+            self.throw_error(f"Update Settings Failed! {e}")
 
     # --------------------------------------------------------------#
     #                  Facility Functions                           #
@@ -340,6 +333,8 @@ class SettingsTabView(LayoutBase):
 
         """ 
         "  @brief Update Tree Values
+        "  @param[in] iid
+        "  @param[in] items
         """
         
         self.settings_tree.item(iid, value=(items[0], items[1]))

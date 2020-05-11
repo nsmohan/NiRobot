@@ -39,6 +39,6 @@ def get_local_ip():
 if __name__== "__main__":
     
     client_ip = get_local_ip()
-    print "IP Address is: %s"%(client_ip)
+    print ("IP Address is: %s"%(client_ip))
 
     

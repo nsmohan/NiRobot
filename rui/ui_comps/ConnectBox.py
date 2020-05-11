@@ -28,25 +28,12 @@ from ui_comps.LayoutBase import *
 """
 class ConnectBox(LayoutBase):
 
-    def __init__(self, window, nibot_ap):
 
-        """ 
-        "  @brief Constructor for ConnectBox
-        "  @param[in] window -> Parent Element
-        """
-
-        # -- Initialize Class -- #
-        super().__init__()
-        self.window = window
-        self.nibot_ap = nibot_ap
-        self.__grpbox()
-        self.__buttons()
-        self.__inputs()
-        self.__layout()
-
-        self.default_button_states()
         
-    def __grpbox(self):
+    def _class_comps_init(self):
+        self.default_button_states()
+
+    def _grpbox(self):
         
         """ 
         "  @brief Group Boxes defined for element
@@ -54,7 +41,7 @@ class ConnectBox(LayoutBase):
 
         self.connect_gb = tk.LabelFrame(self.window, text="Connect-to-NiBot", bg=self.std_bg_color)
 
-    def __buttons(self):
+    def _buttons(self):
 
         """ 
         "  @brief Buttons defined for element
@@ -63,7 +50,7 @@ class ConnectBox(LayoutBase):
         self.cbtn =  self.new_button(self.connect_gb, "Connect", command=self.__handle_connect)
         self.dcbtn = self.new_button(self.connect_gb, "Disconnect", command=self.__handle_disconnect)
 
-    def __inputs(self):
+    def _inputs(self):
 
         """ 
         "  @brief Inputs for element
@@ -71,7 +58,7 @@ class ConnectBox(LayoutBase):
 
         self.host_txtbox = ttk.Entry(self.connect_gb)
 
-    def __layout(self):
+    def _layout(self):
 
         """ 
         "  @brief Element Layout
