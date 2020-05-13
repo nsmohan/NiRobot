@@ -73,7 +73,6 @@ RobotMotorController::RobotMotorController(RSXA_hw pca9685_hw_config,
     camera_directions["RIGHT"] = RIGHT;
     camera_directions["CUSTOM"] = CUSTOM;
     camera_directions["UP"] = UP;
-    camera_directions["UP"] = UP;
 
     /* Fill Camera Motors */
     ld27mg_motors["CAM_HRZN_MTR"] = CAM_HRZN_MTR;

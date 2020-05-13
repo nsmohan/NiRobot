@@ -26,8 +26,8 @@ import zope.event
 from ui_comps.SettingsView import SettingsTabView
 from ui_comps.LayoutBase import *
 from ui_comps.ConnectBox import ConnectBox 
-from ui_comps.control_tab import CameraControlBox 
-from ui_comps.control_tab import DriveMotorControlBox 
+from ui_comps.CameraControlBox import CameraControlBox 
+from ui_comps.DriveMotorControlBox import DriveMotorControlBox 
 from lib.gui_application import GUI_Application 
 
 #---------------------------------------------------#
