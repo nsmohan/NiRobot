@@ -24,6 +24,8 @@ from ui_comps.LayoutBase import *
 HOME_ANGLE = 90.00
 DEFAULT_SPEED = 50
 
+DRIVE_MOTORS = ["DRIVE_DRV_MTR", "LEFT_DRV_MTR", "RIGHT_DRV_MTR"]
+
 class MotorControlHandle(LayoutBase):
 
     def motor_ctrl_action(self, motor, direction="", angle="", speed=""):
@@ -32,9 +34,11 @@ class MotorControlHandle(LayoutBase):
         "  @brief Validate Button Press and Perform Action
         "  @param[in] motor
         "  @param[in] direction
+        "  @param[in] angle
+        "  @param[in] speed
         """
 
-        #-- Check Preconditions --#
+        # -- Check for Single Camera Motor Movement -- #
         if (motor == "CAM_HRZN_MTR" or motor == "CAM_VERT_MTR") \
                 and not angle:
 
@@ -50,7 +54,8 @@ class MotorControlHandle(LayoutBase):
         else:
              angle = -1
 
-        if speed != "":
+        # -- Check if Speed is provided --#
+        if speed != "" and motor in DRIVE_MOTORS:
             try:
                 speed = int(speed)
             except ValueError:
@@ -58,6 +63,7 @@ class MotorControlHandle(LayoutBase):
         else:
             speed = -1
 
+        #-- Check for Dual Dirve Motor Movement --#
         if motor == "DRIVE_DRV_MTR":
 
             #-- Move the motor --#
@@ -66,7 +72,7 @@ class MotorControlHandle(LayoutBase):
         else:
 
             #-- Move the motor --#
-            self.__move_motor(motor, direction, angle=angle, speed=speed)
+            self.__move_motor((motor, direction, angle, speed))
 
     def __drive(self, direction, speed):
 
@@ -74,8 +80,12 @@ class MotorControlHandle(LayoutBase):
         "  @brief Drive the Robot Forward/Reverse
         """
 
-        self.__move_motor("LEFT_DRV_MTR", direction=direction, speed=speed)
-        self.__move_motor("RIGHT_DRV_MTR", direction=direction, speed=speed)
+        #-- Construct Actions --#
+        action = (("LEFT_DRV_MTR", direction, -1, speed),
+                 ("RIGHT_DRV_MTR", direction, -1, speed))
+
+        #-- Perform Action --#
+        self.__move_motor(action)
 
     def drive_left(self):
 
@@ -83,8 +93,12 @@ class MotorControlHandle(LayoutBase):
         "  @brief Drive the Robot Left
         """
 
-        self.__move_motor("LEFT_DRV_MTR", direction="REVERSE", speed=DEFAULT_SPEED)
-        self.__move_motor("RIGHT_DRV_MTR", direction="FORWARD", speed=DEFAULT_SPEED)
+        #-- Construct Actions --#
+        action = (("LEFT_DRV_MTR", "REVERSE", -1, DEFAULT_SPEED),
+                 ("RIGHT_DRV_MTR", "FORWARD", -1, DEFAULT_SPEED))
+
+        #-- Perform Action --#
+        self.__move_motor(action)
 
 
     def drive_right(self):
@@ -93,8 +107,12 @@ class MotorControlHandle(LayoutBase):
         "  @brief Drive the Robot Right
         """
 
-        self.__move_motor("LEFT_DRV_MTR", direction="FORWARD", speed=DEFAULT_SPEED)
-        self.__move_motor("RIGHT_DRV_MTR", direction="REVERSE", speed=DEFAULT_SPEED)
+        #-- Construct Actions --#
+        action = (("LEFT_DRV_MTR", "FORWARD", -1, DEFAULT_SPEED),
+                 ("RIGHT_DRV_MTR", "REVERSE", -1, DEFAULT_SPEED))
+
+        #-- Perform Action --#
+        self.__move_motor(action)
 
     def move_camera_home(self):
 
@@ -102,14 +120,23 @@ class MotorControlHandle(LayoutBase):
         "  @brief Move the Camera Motors to Home Position
         """
 
-        self.__move_motor("CAM_HRZN_MTR", angle=HOME_ANGLE)
-        self.__move_motor("CAM_VERT_MTR", angle=HOME_ANGLE)
+        # -- Construct Actions --#
+        action = (("CAM_HRZN_MTR", "", HOME_ANGLE, -1),
+                 ("CAM_VERT_MTR", "", HOME_ANGLE, -1))
 
-    def __move_motor(self, motor, direction="", angle=-1, speed=-1):
+        #-- Perform Action --#
+        self.__move_motor(action)
 
-        #-- Move the Motor --#
+    def __move_motor(self, action):
+
+        """ 
+        "  @brief Send Request to Perform Action on NiBot
+        "  @param[in] action
+        """
+
         try:
-            self.nibot_ap.perform_nibot_motor_action(motor, direction=direction, angle=angle, speed=speed)
+            #-- Move the Motor --#
+            self.nibot_ap.perform_nibot_motor_action(action)
         except Exception as e:
             print (e)
             self.throw_error("Failed to perform motor action!")
