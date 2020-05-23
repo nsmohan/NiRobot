@@ -107,7 +107,7 @@ class GUI_Application(object):
             raise Exception("Failed to Get RSXA JSON File!")
 
 
-    def perform_nibot_motor_action(self, motor, direction="", angle=-1, speed=-1):
+    def perform_nibot_motor_action(self, actions):
 
         """ 
         "  @brief Perform NiBot Motor Action
@@ -118,7 +118,8 @@ class GUI_Application(object):
         """
 
         # -- Construct TX Message --#
-        tx_message = self.rmct.construct_tx_message(motor, direction, angle, speed)
+        tx_message = \
+            list(map(lambda action: self.rmct.construct_tx_message(action), actions))
 
         # --Send the Message --#
         self.rmct.tx_message(tx_message)
