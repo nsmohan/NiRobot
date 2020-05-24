@@ -2,7 +2,7 @@
 #__author__      = "Nitin Mohan
 #__copyright__   = "Copy Right 2018. NM Technologies"
 
-export PROJ_DIR    = /home/nmohan/github/NiRobot
+export PROJ_DIR    = $(PWD)
 export PY_DIR      = /usr/include/python2.7
 export BIN_DIR     = $(PROJ_DIR)/bin
 export OBJ_DIR     = $(PROJ_DIR)/Obj
