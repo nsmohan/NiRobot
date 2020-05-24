@@ -1,6 +1,6 @@
 {
     "_comment" : "Robot Operation Settings",
-    "log_dir"  : "/var/log/NiRobot",
+    "log_dir"  : "/var/log/NiBot",
     "procs"    : [{ 
                     "proc_name" : "RMCT",
                     "server_ip"  : "224.3.1.1",

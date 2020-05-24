@@ -90,7 +90,7 @@ NMT_result L9110::L9110_move_motor(L9110_DIRECTIONS direction, int speed)
      *  @return    void
      */
 
-    NMT_log_write(DEBUG, (char *)"> dir=%s speed=%d, sim_mode=%s", L9110_DIR_TO_STR[direction].c_str(), speed, btoa(this->sim_mode));
+    NMT_log_write(DEBUG, (char *)"> dir=%s speed=%d", L9110_DIR_TO_STR[direction].c_str(), speed);
 
     /* Initialize Variables */
     NMT_result result = OK;
