@@ -10,6 +10,7 @@
 Obj
 bld
 tst/lib_py
+rui/lib_py
 tools/lib_py
 rui/lib_py
 html
