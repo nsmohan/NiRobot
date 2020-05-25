@@ -186,28 +186,34 @@ static void rmct_main_loop(NMT_sock_multicast server_sock, NMT_sock_multicast cl
             /* Parse the message as JSON Object */
             reader.parse(rx_message, mc);
 
-            if (rmct_validate_robot_action(mc))
+            for (Json::Value::ArrayIndex i = 0; i != mc.size() && result == OK; i++)
             {
-                if (mc["type"].asString() == "hw_action")
+                if (rmct_validate_robot_action(mc[i]))
                 {
-                    /* Process Request */
-                    result = rmct_obj.process_motor_action(mc["motor"].asString(), mc["direction"].asString(),
-                                                           mc["angle"].asDouble(), mc["speed"].asInt());
-                    /* Free rx_message */
-                    free(rx_message);
+                    if (mc[i]["type"].asString() == "hw_action")
+                    {
+                        /* Process Request */
+                        result = rmct_obj.process_motor_action(mc[i]["motor"].asString(),
+                                                               mc[i]["direction"].asString(),
+                                                               mc[i]["angle"].asDouble(), 
+                                                               mc[i]["speed"].asInt());
+                    }
+                    else if (mc[i]["type"].asString() == "proc_action")
+                    {
+                        /* Process proc_action */
+                        if (mc[i]["action"].asString() == "exit") {terminate_proc = true;}
+                        result = OK;
+                    }
                 }
-                else if (mc["type"].asString() == "proc_action")
+                else
                 {
-                    /* Process proc_action */
-                    if (mc["action"].asString() == "exit") {terminate_proc = true;}
-                    result = OK;
+                    result = NOK;
+                    NMT_log_write(ERROR, (char *)"Invalid Message Recieved");
                 }
             }
-            else
-            {
-                result = NOK;
-                NMT_log_write(ERROR, (char *)"Invalid Message Recieved");
-            }
+
+            /* Free rx_message */
+            free(rx_message);
 
             /* Send Acknowledgement */
             ack["result"] = result;

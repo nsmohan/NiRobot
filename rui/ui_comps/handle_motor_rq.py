@@ -71,8 +71,11 @@ class MotorControlHandle(LayoutBase):
 
         else:
 
+            #-- Construct Action from Args Passed --#
+            action = [(motor, direction, angle, speed)]
+
             #-- Move the motor --#
-            self.__move_motor((motor, direction, angle, speed))
+            self.__move_motor(action)
 
     def __drive(self, direction, speed):
 
@@ -81,8 +84,8 @@ class MotorControlHandle(LayoutBase):
         """
 
         #-- Construct Actions --#
-        action = (("LEFT_DRV_MTR", direction, -1, speed),
-                 ("RIGHT_DRV_MTR", direction, -1, speed))
+        action =[("LEFT_DRV_MTR", direction, -1, speed),
+                 ("RIGHT_DRV_MTR", direction, -1, speed)]
 
         #-- Perform Action --#
         self.__move_motor(action)
@@ -94,8 +97,8 @@ class MotorControlHandle(LayoutBase):
         """
 
         #-- Construct Actions --#
-        action = (("LEFT_DRV_MTR", "REVERSE", -1, DEFAULT_SPEED),
-                 ("RIGHT_DRV_MTR", "FORWARD", -1, DEFAULT_SPEED))
+        action = [("LEFT_DRV_MTR", "REVERSE", -1, DEFAULT_SPEED),
+                 ("RIGHT_DRV_MTR", "FORWARD", -1, DEFAULT_SPEED)]
 
         #-- Perform Action --#
         self.__move_motor(action)
@@ -108,8 +111,8 @@ class MotorControlHandle(LayoutBase):
         """
 
         #-- Construct Actions --#
-        action = (("LEFT_DRV_MTR", "FORWARD", -1, DEFAULT_SPEED),
-                 ("RIGHT_DRV_MTR", "REVERSE", -1, DEFAULT_SPEED))
+        action = [("LEFT_DRV_MTR", "FORWARD", -1, DEFAULT_SPEED),
+                 ("RIGHT_DRV_MTR", "REVERSE", -1, DEFAULT_SPEED)]
 
         #-- Perform Action --#
         self.__move_motor(action)
@@ -121,8 +124,8 @@ class MotorControlHandle(LayoutBase):
         """
 
         # -- Construct Actions --#
-        action = (("CAM_HRZN_MTR", "", HOME_ANGLE, -1),
-                 ("CAM_VERT_MTR", "", HOME_ANGLE, -1))
+        action = [("CAM_HRZN_MTR", "", HOME_ANGLE, -1),
+                 ("CAM_VERT_MTR", "", HOME_ANGLE, -1)]
 
         #-- Perform Action --#
         self.__move_motor(action)

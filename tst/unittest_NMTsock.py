@@ -15,7 +15,7 @@ import unittest
 #---------------------------------------------------#
 #                   Constants                       #
 #---------------------------------------------------#
-LOG_DIR     = "/var/log/NiRobot"
+LOG_DIR     = "/var/log/NiBot"
 MULTICAST_PORT = 5500
 MULTICAST_IP   = "224.3.29.71"
 TIMEOUT       = 1
@@ -47,6 +47,7 @@ class NMT_sock_Test(unittest.TestCase):
          #
 
         #@var Test messaget that is sent 
+        print("I am here!")
         message_tx = "This is a test message"
 
         # - Create instnace of the server object and check the result is ok
