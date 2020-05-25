@@ -62,14 +62,20 @@ class GUI_Application(object):
         """
 
         try:
-            self.nibot = NMT_transport(ip_address)
+            self.nibot = NMT_transport(ip_address,
+                                       username="nibot",
+                                       password="nibot")
+
+            # -- Socket Connection --#
+            self.rmct = RMCTSockConnect()
+
             zope.event.notify("connected")
+            print("SSH Connection Successful!")
+
         except Exception as e:
             print(e)
             raise Exception ("Unable to Connect to NiBot!")
 
-        print("SSH Connection Successful!")
-        self.rmct = RMCTSockConnect()
 
     def disconnect_from_nibot(self):
 
@@ -118,8 +124,7 @@ class GUI_Application(object):
         """
 
         # -- Construct TX Message --#
-        tx_message = \
-            list(map(lambda action: self.rmct.construct_tx_message(action), actions))
+        tx_message = self.rmct.construct_tx_message(actions)
 
         # --Send the Message --#
         self.rmct.tx_message(tx_message)

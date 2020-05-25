@@ -18,13 +18,12 @@ from ctypes import *
 NMT_stdlib = CDLL("Obj/libNMT_stdlib.so")
 
 #NMT_result ENUM
-class NMT_result():
-    __slots__ = ('OK', 'NOK')
-    def __init__(self, OK=None, NOK=None):
-        if OK:
-            self.OK = 0
-        if NOK:
-            self.NOK = 1
+class NMT_result(object):
+
+    OK = 0
+    NOK = 1
+    def __init__(self):
+        pass
 
     @staticmethod
     def get_result(status):

@@ -32,10 +32,10 @@ class CameraControlBox(MotorControlHandle):
         "  @brief Initialize Class Variables
         """
 
-        self.UP       = lambda: self.motor_ctrl_action("CAMERA", "UP")
-        self.DOWN     = lambda: self.motor_ctrl_action("CAMERA", "DOWN")
-        self.LEFT     = lambda: self.motor_ctrl_action("CAMERA", "LEFT")
-        self.RIGHT    = lambda: self.motor_ctrl_action("CAMERA", "RIGHT")
+        self.UP       = lambda: self.motor_ctrl_action("CAMERA", direction="UP")
+        self.DOWN     = lambda: self.motor_ctrl_action("CAMERA", direction="DOWN")
+        self.LEFT     = lambda: self.motor_ctrl_action("CAMERA", direction="LEFT")
+        self.RIGHT    = lambda: self.motor_ctrl_action("CAMERA", direction="RIGHT")
         self.HOME     = lambda: self.move_camera_home()
         self.HRNZ_MTR = lambda: self.motor_ctrl_action("CAM_HRZN_MTR", angle=self.angle_txbx.get())
         self.VERT_MTR = lambda: self.motor_ctrl_action("CAM_VERT_MTR", angle=self.angle_txbx.get())

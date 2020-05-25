@@ -20,13 +20,13 @@ import time
 #                   Local Imports                   #
 #---------------------------------------------------#
 from lib_py.rmct_sock_lib import RMCTSockConnect
-from lib_py.rmct_sock_lib import NMT_result
+from lib_py.NMT_stdlib_py import NMT_result
 from lib_py import NMT_log_parse
 
 #---------------------------------------------------#
 #                   Constants                       #
 #---------------------------------------------------#
-LOG_DIR  = "/var/log/NiRobot"
+LOG_DIR  = "/var/log/NiBot"
 ROOT       = os.getcwd().split("NiRobot")[0]
 TOOLS_PATH = os.path.join(ROOT, "NiRobot", "tools")
 DAT_PATH = os.path.join(ROOT, "NiRobot", "tst", "dat")
@@ -53,7 +53,9 @@ class MTDR_Test(unittest.TestCase):
 
         # -- Send Message with Camera Directions -- #
         for direction in cam_directions:
-            message = self.rmct.construct_tx_message(camera, direction)
+
+            actions = [(camera, direction, -1, -1)]
+            message = self.rmct.construct_tx_message(actions)
             self.rmct.tx_message(message)
             rx_message = self.rmct.rx_message()
             self.assertEqual("ack", rx_message["type"])
@@ -62,7 +64,8 @@ class MTDR_Test(unittest.TestCase):
 
         # -- Specify Custom Angle for motors --#
         for motor in camera_motors:
-            message = self.rmct.construct_tx_message(motor, angle=angle)
+            actions = [(motor, "", angle, -1)]
+            message = self.rmct.construct_tx_message(actions)
             self.rmct.tx_message(message)
             rx_message = self.rmct.rx_message()
             self.assertEqual("ack", rx_message["type"])
@@ -72,7 +75,8 @@ class MTDR_Test(unittest.TestCase):
         # -- Test with Drive Motor -- #
         for drv_motor in drive_motors:
             for direction in drv_directions:
-                message = self.rmct.construct_tx_message(drv_motor, direction=direction, speed=speed)
+                actions = [(drv_motor, direction, -1, speed)]
+                message = self.rmct.construct_tx_message(actions)
                 self.rmct.tx_message(message)
                 rx_message = self.rmct.rx_message()
                 self.assertEqual("ack", rx_message["type"])
@@ -80,7 +84,8 @@ class MTDR_Test(unittest.TestCase):
                 time.sleep(0.5)
 
         # -- Negative Scenario -- #
-        message = self.rmct.construct_tx_message(camera)
+        actions = [(camera, "", -1, -1)]
+        message = self.rmct.construct_tx_message(actions)
         self.rmct.tx_message(message)
         rx_message = self.rmct.rx_message()
         self.assertEqual("ack", rx_message["type"])
