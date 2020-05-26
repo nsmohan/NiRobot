@@ -124,10 +124,7 @@ class GUI_Application(object):
         """
 
         # -- Construct TX Message --#
-        tx_message = list(map(lambda action: self.rmct.construct_tx_message(action[0],
-                                                                            action[1],
-                                                                            action[2],
-                                                                            action[3]), actions))
+        tx_message = self.rmct.construct_tx_message(actions)
 
         # --Send the Message --#
         self.rmct.tx_message(tx_message)

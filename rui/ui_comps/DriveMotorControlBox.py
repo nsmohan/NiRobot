@@ -43,8 +43,8 @@ class DriveMotorControlBox(MotorControlHandle):
                                                       speed=self.speed_txbx.get())
         self.STOP    = lambda: self.motor_ctrl_action(self.motor.get(),
                                                       "STOP")
-        self.LEFT    = self.drive_left()
-        self.RIGHT   = self.drive_right()
+        self.LEFT    = lambda: self.drive_left()
+        self.RIGHT   = lambda: self.drive_right()
 
     def _class_comps_init(self):
 
