@@ -46,7 +46,7 @@ class GUI_Application(object):
             return json.loads(rsxa_file.read())
 
 
-    def __wrtie_rsxa_settings(self, rsxa_settings):
+    def __write_rsxa_settings(self, rsxa_settings):
 
         """ 
         "  @brief Write RSXA Settings to File
@@ -93,7 +93,7 @@ class GUI_Application(object):
         """
 
         try:
-            self.__wrtie_rsxa_settings(rsxa_settings)
+            self.__write_rsxa_settings(rsxa_settings)
             self.nibot.send_file(LOCAL_RSXA_FILE, REMOTE_RSXA_FILE)
         except Exception as e:
             print(e)
@@ -139,4 +139,3 @@ class GUI_Application(object):
             print("NiBOT Response=%s"%(NMT_result.get_result(response["result"])))
         else:
             raise Exception("NiBot Motor Action Failure!")
-

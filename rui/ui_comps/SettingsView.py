@@ -110,7 +110,7 @@ class SettingsTabView(LayoutBase):
             # -- Set iid value -- #
             iid = f"{index}-{key}"
 
-            if type(root[key]) == list:
+            if isinstance(root[key], list):
 
                 # -- Insert the Parent Element -- #
                 self.settings_tree.insert(node, 'end', iid, text=key)
@@ -249,7 +249,7 @@ class SettingsTabView(LayoutBase):
         new_setting = self.__showdialog(type(items[1]), display_text, items[1])
 
         #-- Update Tree Value --#
-        if new_setting != None and new_setting != items[1]:
+        if new_setting is not None and new_setting != items[1]:
             root_key = self.__get_treeroot(iid)
 
             if root_key == "hw":

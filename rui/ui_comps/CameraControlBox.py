@@ -36,7 +36,7 @@ class CameraControlBox(MotorControlHandle):
         self.DOWN     = lambda: self.motor_ctrl_action("CAMERA", direction="DOWN")
         self.LEFT     = lambda: self.motor_ctrl_action("CAMERA", direction="LEFT")
         self.RIGHT    = lambda: self.motor_ctrl_action("CAMERA", direction="RIGHT")
-        self.HOME     = lambda: self.move_camera_home()
+        self.HOME     = self.move_camera_home()
         self.HRNZ_MTR = lambda: self.motor_ctrl_action("CAM_HRZN_MTR", angle=self.angle_txbx.get())
         self.VERT_MTR = lambda: self.motor_ctrl_action("CAM_VERT_MTR", angle=self.angle_txbx.get())
 

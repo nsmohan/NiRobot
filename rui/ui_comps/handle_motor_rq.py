@@ -63,7 +63,7 @@ class MotorControlHandle(LayoutBase):
         else:
             speed = -1
 
-        #-- Check for Dual Dirve Motor Movement --#
+        #-- Check for Dual Drive Motor Movement --#
         if motor == "DRIVE_DRV_MTR":
 
             #-- Move the motor --#

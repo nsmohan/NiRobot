@@ -35,11 +35,16 @@ class DriveMotorControlBox(MotorControlHandle):
 
         self.motor = tk.StringVar()
 
-        self.FORWARD = lambda: self.motor_ctrl_action(self.motor.get(), direction="FORWARD", speed=self.speed_txbx.get())
-        self.REVERSE = lambda: self.motor_ctrl_action(self.motor.get(), direction="REVERSE", speed=self.speed_txbx.get())
-        self.STOP    = lambda: self.motor_ctrl_action(self.motor.get(), "STOP")
-        self.LEFT    = lambda: self.drive_left()
-        self.RIGHT   = lambda: self.drive_right()
+        self.FORWARD = lambda: self.motor_ctrl_action(self.motor.get(),
+                                                      direction="FORWARD",
+                                                      speed=self.speed_txbx.get())
+        self.REVERSE = lambda: self.motor_ctrl_action(self.motor.get(),
+                                                      direction="REVERSE",
+                                                      speed=self.speed_txbx.get())
+        self.STOP    = lambda: self.motor_ctrl_action(self.motor.get(),
+                                                      "STOP")
+        self.LEFT    = self.drive_left()
+        self.RIGHT   = self.drive_right()
 
     def _class_comps_init(self):
 

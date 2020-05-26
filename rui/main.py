@@ -59,7 +59,7 @@ class LayoutBody(LayoutBase):
     def _class_comps_init(self):
         self.cam_ctrl = CameraControlBox(self.control_tab, self.nibot_ap)
         self.drive_ctrl = DriveMotorControlBox(self.control_tab, self.nibot_ap)
-        self.settings_view = SettingsTabView(self.rsxa_settings_box, self.nibot_ap)
+        SettingsTabView(self.rsxa_settings_box, self.nibot_ap)
 
     def _class_vars_init(self):
         self.settings_tab_width = 700
@@ -116,10 +116,6 @@ class GUIController(LayoutBase):
             self.body.enable_body_tabs()
         elif event == "disconnected":
             self.body.disable_body_tabs()
-
-
-
-
 
 if __name__ == '__main__':
     window = tk.Tk()

@@ -90,5 +90,3 @@ class ConnectBox(LayoutBase):
     def active_button_states(self):
         self.cbtn["state"] = "disabled"
         self.dcbtn["state"] = "normal"
-
-

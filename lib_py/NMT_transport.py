@@ -45,6 +45,9 @@ class NMT_transport(object):
         self.__sshConnect()
         self.__scpConnect()
 
+    #---------------------------------------------------#
+    #                   Private Methods                 #
+    #---------------------------------------------------#
     def __del__(self):
 
         """ 
@@ -90,7 +93,15 @@ class NMT_transport(object):
         except scp.SCPException as e:
             raise Exception("Unable to Create SCP Connection!")
 
+    #---------------------------------------------------#
+    #                   Public Methods                  #
+    #---------------------------------------------------#
     def send_command(self, command):
+
+        """ 
+        "  @brief Send command to host
+        "  param[in] command -> Command to be sent
+        """
 
         try:
             stdin, stdout, stderr = self.ssh.exec_command(command)
@@ -119,5 +130,3 @@ class NMT_transport(object):
             self.scp.get(remote_path, recursive=True, local_path=local_path) 
         except scp.SCPException:
             raise Exception("Failed to Get file from Host!")
-    
-

@@ -150,4 +150,3 @@ class LayoutBase(object):
         """
 
         tk.messagebox.showerror(title="NiBot", message=error)
-
