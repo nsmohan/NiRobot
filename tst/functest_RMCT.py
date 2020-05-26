@@ -34,7 +34,7 @@ CLR_LOGS   = os.path.join(TOOLS_PATH, "clear_logs.sh")
 BASE_FILE = "rmct_base.log"
 
 # ---- Start of Tests -----#
-class MTDR_Test(unittest.TestCase):
+class RMCT_Test(unittest.TestCase):
 
     def setUp(self):
         os.system("sudo %s"%CLR_LOGS)
