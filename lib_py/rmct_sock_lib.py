@@ -43,6 +43,10 @@ class RMCTSockConnect(object):
         self.multi_sock_rx.settimeout(SOCK_TIMEOUT)
         self.__config_multicast()
     
+
+    #---------------------------------------------------#
+    #                   Private Methods                 #
+    #---------------------------------------------------#
     def __del__(self):
         self.multi_sock_tx.close()
         self.multi_sock_rx.close()
@@ -58,7 +62,8 @@ class RMCTSockConnect(object):
             rsxa = json.load(rsxa_file)
 
         # -- Find the Settings Needed -- #
-        rmct_proc = filter(lambda p: p["proc_name"] == RMCT, rsxa["procs"])[0]
+        rmct_proc = list(filter(lambda p: p["proc_name"] == RMCT, rsxa["procs"]))[0]
+        
 
         # -- Load the Settings into the object -- #
         self.rmct_server_ip = rmct_proc["server_ip"]
@@ -66,9 +71,6 @@ class RMCTSockConnect(object):
         self.rmct_client_ip = rmct_proc["client_ip"]
         self.rmct_client_port = rmct_proc["client_p"]
 
-    def show_rsxa_settings(self):
-        print ("server_ip=%s\nclient_ip=%s\nserver_port=%d\nclient_port=%d"%(self.rmct_server_ip, self.rmct_client_ip,
-                                                                             self.rmct_server_port, self.rmct_client_port))
     def __config_multicast(self):
         """ 
         "  @brief  Configure Client/Server sockets for communication with RMCT
@@ -87,6 +89,40 @@ class RMCTSockConnect(object):
         self.multi_sock_rx.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
         self.multi_sock_rx.bind((self.rmct_client_ip, self.rmct_client_port))
 
+    def __get_tx_message(self, motor, direction, angle, speed):
+
+            """ 
+            "  @brief              Compile Message for NiBot
+            "  param[in] motor     Name of motor to be moved
+            "  param[in] direction Direction to move in
+            "  param[in] angle     Manually override motor angle
+            "  param[in] speed     Set the speed of the motor
+            """
+            # -- Construct Message --#
+            tx_message              = {}
+            tx_message["type"]      = "hw_action"
+            tx_message["motor"]     = motor
+            tx_message["direction"] = direction
+            tx_message["angle"]     = angle
+            tx_message["speed"]     = speed
+
+            return tx_message
+
+    #---------------------------------------------------#
+    #                   Public Methods                  #
+    #---------------------------------------------------#
+    
+    def show_rsxa_settings(self):
+
+        """ 
+        "  @brief                Show RSXA Settings on the screen
+        """
+
+        print ("server_ip=%s\nclient_ip=%s\nserver_port=%d\nclient_port=%d"%(self.rmct_server_ip, 
+                                                                             self.rmct_client_ip,
+                                                                             self.rmct_server_port,
+                                                                             self.rmct_client_port))
+
     def tx_message(self, message):
         """ 
         "  @brief                Send Message to RMCT over the socket
@@ -94,7 +130,7 @@ class RMCTSockConnect(object):
         """
 
         print ("Sending request to NiBot ..... {}".format(message))
-        self.multi_sock_tx.sendto(message,(self.rmct_server_ip, self.rmct_server_port))
+        self.multi_sock_tx.sendto(message.encode(),(self.rmct_server_ip, self.rmct_server_port))
 
     def rx_message(self):
         """ 
@@ -107,21 +143,13 @@ class RMCTSockConnect(object):
         except socket.timeout:
             return False
 
-    @staticmethod
-    def construct_tx_message(motor, direction="", angle=-1, speed=-1):
+    def construct_tx_message(self, actions):
         """ 
-        "  @brief              Validate the arguements provided
-        "  param[in] motor     Name of motor to be moved
-        "  param[in] direction Direction to move in
-        "  param[in] angle     Manually override motor angle
-        "  param[in] speed     Set the speed of the motor
+        "  @brief              Construct Array of TX Messages
+        "  param[in] actions   Actions to be performed
         """
 
-        tx_message = {}
-        tx_message["type"] = "hw_action"
-        tx_message["motor"] = motor
-        tx_message["direction"] = direction
-        tx_message["angle"] = angle
-        tx_message["speed"] = speed
-
-        return json.dumps(tx_message)
+        return json.dumps(list(map(lambda action: self.__get_tx_message(action[0],
+                                                                        action[1],
+                                                                        action[2],
+                                                                        action[3]), actions)))

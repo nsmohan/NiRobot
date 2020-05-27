@@ -3,7 +3,7 @@
     "log_dir"  : "/var/log/NiBot",
     "procs"    : [{ 
                     "proc_name" : "RMCT",
-                    "server_ip"  : "224.3.1.1",
+                    "server_ip" : "224.3.1.1",
                     "server_p"  : 5600,
                     "client_ip" : "224.3.1.1",
                     "client_p"  : 5601

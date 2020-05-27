@@ -15,7 +15,6 @@ import unittest
 #---------------------------------------------------#
 #                   Constants                       #
 #---------------------------------------------------#
-LOG_DIR     = "/var/log/NiBot"
 MULTICAST_PORT = 5500
 MULTICAST_IP   = "224.3.29.71"
 TIMEOUT       = 1
