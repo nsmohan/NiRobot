@@ -11,9 +11,13 @@ OBJS        = NMT_stdlib.so \
               NMT_log.so \
               RSXA.so \
               PCA9685.so \
-              MTDR.so \
-              CAM_MOTOR_CTRL.so \
-              HCxSR04.so
+              LD27MG.so \
+              HCxSR04.so \
+              NMT_sock.so \
+              L9110.so \
+              RMCT_lib.so
+
+PY_OBJS =    NMT_sock.so
 
 #---------------------------------------#
 #                                       #
@@ -26,7 +30,6 @@ NMT_log_LIBS        = -lNMT_stdlib \
                       -lc
 
 RSXA_LIBS           = -lNMT_stdlib \
-                      -lNMT_log \
                       -ljson-c \
                       -lc
 
@@ -39,25 +42,10 @@ PCA9685_LIBS        = -lNMT_stdlib \
                       -lrt \
                       -lRSXA
 
-MTDR_LIBS           = -lNMT_stdlib \
+LD27MG_LIBS         = -lNMT_stdlib \
                       -lNMT_log \
-                      -lwiringPi \
                       -lPCA9685 \
-                      -lcrypt \
-                      -lm \
-                      -lrt \
                       -lRSXA
-
-CAM_MOTOR_CTRL_LIBS = -lNMT_stdlib \
-                      -lNMT_log \
-                      -lwiringPi \
-                      -lMTDR \
-                      -lPCA9685 \
-                      -lcrypt \
-                      -lm \
-                      -lrt \
-                      -lRSXA
-
 
 HCxSR04_LIBS        = -lNMT_log \
                       -lNMT_stdlib \
@@ -67,8 +55,26 @@ HCxSR04_LIBS        = -lNMT_log \
                       -lm \
                       -lrt
 
+NMT_sock_LIBS       = -lNMT_stdlib \
+                      -lNMT_log \
+
+NMT_sock_py_LIBS    = -lNMT_sock
+
+L9110_LIBS         =  -lNMT_stdlib \
+                      -lNMT_log \
+                      -lRSXA \
+                      -lPCA9685
+
+RMCT_lib_LIBS      = -lNMT_stdlib \
+                     -lNMT_log \
+                     -lRSXA \
+                     -lL9110 \
+                     -lPCA9685 \
+                     -lLD27MG
+
 # -------Update output file name ---------#
 TARGET_OBJS := $(foreach OBJ,$(OBJS),$(OBJ_DIR)/lib$(OBJ))
+TARGET_OBJS += $(foreach OBJ,$(PY_OBJS),$(OBJ_DIR)/$(OBJ))
 
 all: $(TARGET_OBJS)
 .PHONY: all
@@ -80,6 +86,11 @@ $(OBJ_DIR)/lib%.so: $(LIB_DIR)/%.c $(INC_DIR)/%.h
 # -----Build C++ Files ---------#
 $(OBJ_DIR)/lib%.so: $(LIB_DIR)/%.cpp $(INC_DIR)/%.hpp
 	g++ $(CFLAGS) $(SFLAGS) $(RPATH) -o  $@ $< $($(*)_LIBS)
+
+# -----Build C++ Files ---------#
+$(OBJ_DIR)/%.so: $(LIB_DIR)/%_py.cpp $(INC_DIR)/%.hpp
+	g++ $(CFLAGS) $(SFLAGS) $(RPATH) -o  $@ $<  $($(*)_py_LIBS) -lboost_python
+
 
 clean:
 	rm -rf $(OBJ_DIR)/*.so

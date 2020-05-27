@@ -1,0 +1,288 @@
+2020-4-17 15:19:30->DEBUG->RMCT->NMT_read_socket->216: < result=OK
+2020-4-17 15:19:30->DEBUG->RMCT->rmct_validate_robot_action->227: >
+2020-4-17 15:19:30->DEBUG->RMCT->rmct_validate_robot_action->244: < valid=true
+2020-4-17 15:19:30->DEBUG->RMCT->process_motor_action->117: > motor=CAMERA direction=UP angle=-1.00 speed=-1
+2020-4-17 15:19:30->DEBUG->RMCT->move_camera_motor->167: > direction=UP, angle_to_move=0.00, default_angle=10.00
+2020-4-17 15:19:30->DEBUG->RMCT->LD27MG_get_current_position->93: > motor=CAM_VERT_MTR
+2020-4-17 15:19:30->DEBUG->RMCT->LD27MG_m2c->217: > motor=CAM_VERT_MTR
+2020-4-17 15:19:30->DEBUG->RMCT->LD27MG_m2c->235: < channel=CHANNEL_14
+2020-4-17 15:19:30->DEBUG->RMCT->PCA9685_getPWM->285: > channel=CHANNEL_14
+2020-4-17 15:19:30->DEBUG->RMCT->PCA9685_getPWM->307: < duty_cycle=12.194824 result=OK
+2020-4-17 15:19:30->DEBUG->RMCT->PCA9685_get_curret_freq->367: > 
+2020-4-17 15:19:30->DEBUG->RMCT->PCA9685_get_curret_freq->368: < freq=50.00
+2020-4-17 15:19:30->DEBUG->RMCT->LD27MG_get_angle->278: > angle: 12.194824
+2020-4-17 15:19:30->DEBUG->RMCT->LD27MG_get_angle->292: < on_time: 2.44ms off_time: 20.00ms angle: 261.76
+2020-4-17 15:19:30->DEBUG->RMCT->LD27MG_get_current_position->111: < angle=261.76 result=OK
+2020-4-17 15:19:30->DEBUG->RMCT->LD27MG_move_motor->125: > motor=CAM_VERT_MTR angle=271.760254
+2020-4-17 15:19:30->DEBUG->RMCT->LD27MG_m2c->217: > motor=CAM_VERT_MTR
+2020-4-17 15:19:30->DEBUG->RMCT->LD27MG_m2c->235: < channel=CHANNEL_14
+2020-4-17 15:19:30->DEBUG->RMCT->PCA9685_get_curret_freq->367: > 
+2020-4-17 15:19:30->DEBUG->RMCT->PCA9685_get_curret_freq->368: < freq=50.00
+2020-4-17 15:19:30->DEBUG->RMCT->LD27MG_get_duty_cycle->247: > angle: 271.760254
+2020-4-17 15:19:30->DEBUG->RMCT->LD27MG_get_duty_cycle->265: < on_time: 1.83ms off_time: 20.00ms duty_cycle: 9.17%
+2020-4-17 15:19:30->DEBUG->RMCT->PCA9685_setPWM->231: > freq: 50.000000 duty_cycle: 9.166667 delay_time: 0.000000 fd: 1 channel: 14
+2020-4-17 15:19:30->DEBUG->RMCT->PCA9685_setPWM->235: hw_name=PCA9685_PWM_DRIVER SIM_MODE=true
+2020-4-17 15:19:30->DEBUG->RMCT->PCA9685_setPWM->254: tics_to_on:0 tics_on_duration:375 tics_to_off:375 channel_reg_on:3E channel_reg_off:40
+2020-4-17 15:19:30->DEBUG->RMCT->PCA9685_setPWM->264: < OK
+2020-4-17 15:19:30->DEBUG->RMCT->LD27MG_move_motor->142: < result=OK
+2020-4-17 15:19:30->DEBUG->RMCT->move_camera_motor->218: < result=OK
+2020-4-17 15:19:30->DEBUG->RMCT->process_motor_action->148: < result=OK
+2020-4-17 15:19:30->DEBUG->RMCT->NMT_write_socket->169: > 
+2020-4-17 15:19:30->DEBUG->RMCT->NMT_write_socket->180: < result=OK
+2020-4-17 15:19:30->DEBUG->RMCT->NMT_read_socket->192: > 
+2020-4-17 15:19:31->DEBUG->RMCT->NMT_read_socket->216: < result=OK
+2020-4-17 15:19:31->DEBUG->RMCT->rmct_validate_robot_action->227: >
+2020-4-17 15:19:31->DEBUG->RMCT->rmct_validate_robot_action->244: < valid=true
+2020-4-17 15:19:31->DEBUG->RMCT->process_motor_action->117: > motor=CAMERA direction=DOWN angle=-1.00 speed=-1
+2020-4-17 15:19:31->DEBUG->RMCT->move_camera_motor->167: > direction=DOWN, angle_to_move=0.00, default_angle=10.00
+2020-4-17 15:19:31->DEBUG->RMCT->LD27MG_get_current_position->93: > motor=CAM_VERT_MTR
+2020-4-17 15:19:31->DEBUG->RMCT->LD27MG_m2c->217: > motor=CAM_VERT_MTR
+2020-4-17 15:19:31->DEBUG->RMCT->LD27MG_m2c->235: < channel=CHANNEL_14
+2020-4-17 15:19:31->DEBUG->RMCT->PCA9685_getPWM->285: > channel=CHANNEL_14
+2020-4-17 15:19:31->DEBUG->RMCT->PCA9685_getPWM->307: < duty_cycle=12.194824 result=OK
+2020-4-17 15:19:31->DEBUG->RMCT->PCA9685_get_curret_freq->367: > 
+2020-4-17 15:19:31->DEBUG->RMCT->PCA9685_get_curret_freq->368: < freq=50.00
+2020-4-17 15:19:31->DEBUG->RMCT->LD27MG_get_angle->278: > angle: 12.194824
+2020-4-17 15:19:31->DEBUG->RMCT->LD27MG_get_angle->292: < on_time: 2.44ms off_time: 20.00ms angle: 261.76
+2020-4-17 15:19:31->DEBUG->RMCT->LD27MG_get_current_position->111: < angle=261.76 result=OK
+2020-4-17 15:19:31->DEBUG->RMCT->LD27MG_move_motor->125: > motor=CAM_VERT_MTR angle=251.760254
+2020-4-17 15:19:31->DEBUG->RMCT->LD27MG_m2c->217: > motor=CAM_VERT_MTR
+2020-4-17 15:19:31->DEBUG->RMCT->LD27MG_m2c->235: < channel=CHANNEL_14
+2020-4-17 15:19:31->DEBUG->RMCT->PCA9685_get_curret_freq->367: > 
+2020-4-17 15:19:31->DEBUG->RMCT->PCA9685_get_curret_freq->368: < freq=50.00
+2020-4-17 15:19:31->DEBUG->RMCT->LD27MG_get_duty_cycle->247: > angle: 251.760254
+2020-4-17 15:19:31->DEBUG->RMCT->LD27MG_get_duty_cycle->265: < on_time: 1.83ms off_time: 20.00ms duty_cycle: 9.17%
+2020-4-17 15:19:31->DEBUG->RMCT->PCA9685_setPWM->231: > freq: 50.000000 duty_cycle: 9.166667 delay_time: 0.000000 fd: 1 channel: 14
+2020-4-17 15:19:31->DEBUG->RMCT->PCA9685_setPWM->235: hw_name=PCA9685_PWM_DRIVER SIM_MODE=true
+2020-4-17 15:19:31->DEBUG->RMCT->PCA9685_setPWM->254: tics_to_on:0 tics_on_duration:375 tics_to_off:375 channel_reg_on:3E channel_reg_off:40
+2020-4-17 15:19:31->DEBUG->RMCT->PCA9685_setPWM->264: < OK
+2020-4-17 15:19:31->DEBUG->RMCT->LD27MG_move_motor->142: < result=OK
+2020-4-17 15:19:31->DEBUG->RMCT->move_camera_motor->218: < result=OK
+2020-4-17 15:19:31->DEBUG->RMCT->process_motor_action->148: < result=OK
+2020-4-17 15:19:31->DEBUG->RMCT->NMT_write_socket->169: > 
+2020-4-17 15:19:31->DEBUG->RMCT->NMT_write_socket->180: < result=OK
+2020-4-17 15:19:31->DEBUG->RMCT->NMT_read_socket->192: > 
+2020-4-17 15:19:31->DEBUG->RMCT->NMT_read_socket->216: < result=OK
+2020-4-17 15:19:31->DEBUG->RMCT->rmct_validate_robot_action->227: >
+2020-4-17 15:19:31->DEBUG->RMCT->rmct_validate_robot_action->244: < valid=true
+2020-4-17 15:19:31->DEBUG->RMCT->process_motor_action->117: > motor=CAMERA direction=LEFT angle=-1.00 speed=-1
+2020-4-17 15:19:31->DEBUG->RMCT->move_camera_motor->167: > direction=LEFT, angle_to_move=0.00, default_angle=10.00
+2020-4-17 15:19:31->DEBUG->RMCT->LD27MG_get_current_position->93: > motor=CAM_HRZN_MTR
+2020-4-17 15:19:31->DEBUG->RMCT->LD27MG_m2c->217: > motor=CAM_HRZN_MTR
+2020-4-17 15:19:31->DEBUG->RMCT->LD27MG_m2c->235: < channel=CHANNEL_15
+2020-4-17 15:19:31->DEBUG->RMCT->PCA9685_getPWM->285: > channel=CHANNEL_15
+2020-4-17 15:19:31->DEBUG->RMCT->PCA9685_getPWM->307: < duty_cycle=12.194824 result=OK
+2020-4-17 15:19:31->DEBUG->RMCT->PCA9685_get_curret_freq->367: > 
+2020-4-17 15:19:31->DEBUG->RMCT->PCA9685_get_curret_freq->368: < freq=50.00
+2020-4-17 15:19:31->DEBUG->RMCT->LD27MG_get_angle->278: > angle: 12.194824
+2020-4-17 15:19:31->DEBUG->RMCT->LD27MG_get_angle->292: < on_time: 2.44ms off_time: 20.00ms angle: 261.76
+2020-4-17 15:19:31->DEBUG->RMCT->LD27MG_get_current_position->111: < angle=261.76 result=OK
+2020-4-17 15:19:31->DEBUG->RMCT->LD27MG_move_motor->125: > motor=CAM_HRZN_MTR angle=271.760254
+2020-4-17 15:19:31->DEBUG->RMCT->LD27MG_m2c->217: > motor=CAM_HRZN_MTR
+2020-4-17 15:19:31->DEBUG->RMCT->LD27MG_m2c->235: < channel=CHANNEL_15
+2020-4-17 15:19:31->DEBUG->RMCT->PCA9685_get_curret_freq->367: > 
+2020-4-17 15:19:31->DEBUG->RMCT->PCA9685_get_curret_freq->368: < freq=50.00
+2020-4-17 15:19:31->DEBUG->RMCT->LD27MG_get_duty_cycle->247: > angle: 271.760254
+2020-4-17 15:19:31->DEBUG->RMCT->LD27MG_get_duty_cycle->265: < on_time: 1.83ms off_time: 20.00ms duty_cycle: 9.17%
+2020-4-17 15:19:31->DEBUG->RMCT->PCA9685_setPWM->231: > freq: 50.000000 duty_cycle: 9.166667 delay_time: 0.000000 fd: 1 channel: 15
+2020-4-17 15:19:31->DEBUG->RMCT->PCA9685_setPWM->235: hw_name=PCA9685_PWM_DRIVER SIM_MODE=true
+2020-4-17 15:19:31->DEBUG->RMCT->PCA9685_setPWM->254: tics_to_on:0 tics_on_duration:375 tics_to_off:375 channel_reg_on:42 channel_reg_off:44
+2020-4-17 15:19:31->DEBUG->RMCT->PCA9685_setPWM->264: < OK
+2020-4-17 15:19:31->DEBUG->RMCT->LD27MG_move_motor->142: < result=OK
+2020-4-17 15:19:31->DEBUG->RMCT->move_camera_motor->218: < result=OK
+2020-4-17 15:19:31->DEBUG->RMCT->process_motor_action->148: < result=OK
+2020-4-17 15:19:31->DEBUG->RMCT->NMT_write_socket->169: > 
+2020-4-17 15:19:31->DEBUG->RMCT->NMT_write_socket->180: < result=OK
+2020-4-17 15:19:31->DEBUG->RMCT->NMT_read_socket->192: > 
+2020-4-17 15:19:32->DEBUG->RMCT->NMT_read_socket->216: < result=OK
+2020-4-17 15:19:32->DEBUG->RMCT->rmct_validate_robot_action->227: >
+2020-4-17 15:19:32->DEBUG->RMCT->rmct_validate_robot_action->244: < valid=true
+2020-4-17 15:19:32->DEBUG->RMCT->process_motor_action->117: > motor=CAMERA direction=RIGHT angle=-1.00 speed=-1
+2020-4-17 15:19:32->DEBUG->RMCT->move_camera_motor->167: > direction=RIGHT, angle_to_move=0.00, default_angle=10.00
+2020-4-17 15:19:32->DEBUG->RMCT->LD27MG_get_current_position->93: > motor=CAM_HRZN_MTR
+2020-4-17 15:19:32->DEBUG->RMCT->LD27MG_m2c->217: > motor=CAM_HRZN_MTR
+2020-4-17 15:19:32->DEBUG->RMCT->LD27MG_m2c->235: < channel=CHANNEL_15
+2020-4-17 15:19:32->DEBUG->RMCT->PCA9685_getPWM->285: > channel=CHANNEL_15
+2020-4-17 15:19:32->DEBUG->RMCT->PCA9685_getPWM->307: < duty_cycle=12.194824 result=OK
+2020-4-17 15:19:32->DEBUG->RMCT->PCA9685_get_curret_freq->367: > 
+2020-4-17 15:19:32->DEBUG->RMCT->PCA9685_get_curret_freq->368: < freq=50.00
+2020-4-17 15:19:32->DEBUG->RMCT->LD27MG_get_angle->278: > angle: 12.194824
+2020-4-17 15:19:32->DEBUG->RMCT->LD27MG_get_angle->292: < on_time: 2.44ms off_time: 20.00ms angle: 261.76
+2020-4-17 15:19:32->DEBUG->RMCT->LD27MG_get_current_position->111: < angle=261.76 result=OK
+2020-4-17 15:19:32->DEBUG->RMCT->LD27MG_move_motor->125: > motor=CAM_HRZN_MTR angle=251.760254
+2020-4-17 15:19:32->DEBUG->RMCT->LD27MG_m2c->217: > motor=CAM_HRZN_MTR
+2020-4-17 15:19:32->DEBUG->RMCT->LD27MG_m2c->235: < channel=CHANNEL_15
+2020-4-17 15:19:32->DEBUG->RMCT->PCA9685_get_curret_freq->367: > 
+2020-4-17 15:19:32->DEBUG->RMCT->PCA9685_get_curret_freq->368: < freq=50.00
+2020-4-17 15:19:32->DEBUG->RMCT->LD27MG_get_duty_cycle->247: > angle: 251.760254
+2020-4-17 15:19:32->DEBUG->RMCT->LD27MG_get_duty_cycle->265: < on_time: 1.83ms off_time: 20.00ms duty_cycle: 9.17%
+2020-4-17 15:19:32->DEBUG->RMCT->PCA9685_setPWM->231: > freq: 50.000000 duty_cycle: 9.166667 delay_time: 0.000000 fd: 1 channel: 15
+2020-4-17 15:19:32->DEBUG->RMCT->PCA9685_setPWM->235: hw_name=PCA9685_PWM_DRIVER SIM_MODE=true
+2020-4-17 15:19:32->DEBUG->RMCT->PCA9685_setPWM->254: tics_to_on:0 tics_on_duration:375 tics_to_off:375 channel_reg_on:42 channel_reg_off:44
+2020-4-17 15:19:32->DEBUG->RMCT->PCA9685_setPWM->264: < OK
+2020-4-17 15:19:32->DEBUG->RMCT->LD27MG_move_motor->142: < result=OK
+2020-4-17 15:19:32->DEBUG->RMCT->move_camera_motor->218: < result=OK
+2020-4-17 15:19:32->DEBUG->RMCT->process_motor_action->148: < result=OK
+2020-4-17 15:19:32->DEBUG->RMCT->NMT_write_socket->169: > 
+2020-4-17 15:19:32->DEBUG->RMCT->NMT_write_socket->180: < result=OK
+2020-4-17 15:19:32->DEBUG->RMCT->NMT_read_socket->192: > 
+2020-4-17 15:19:32->DEBUG->RMCT->NMT_read_socket->216: < result=OK
+2020-4-17 15:19:32->DEBUG->RMCT->rmct_validate_robot_action->227: >
+2020-4-17 15:19:32->DEBUG->RMCT->rmct_validate_robot_action->244: < valid=true
+2020-4-17 15:19:32->DEBUG->RMCT->process_motor_action->117: > motor=CAM_HRZN_MTR direction= angle=45.00 speed=-1
+2020-4-17 15:19:32->DEBUG->RMCT->move_camera_motor->167: > direction=CUSTOM, angle_to_move=45.00, default_angle=10.00
+2020-4-17 15:19:32->DEBUG->RMCT->LD27MG_move_motor->125: > motor=CAM_HRZN_MTR angle=45.000000
+2020-4-17 15:19:32->DEBUG->RMCT->LD27MG_m2c->217: > motor=CAM_HRZN_MTR
+2020-4-17 15:19:32->DEBUG->RMCT->LD27MG_m2c->235: < channel=CHANNEL_15
+2020-4-17 15:19:32->DEBUG->RMCT->PCA9685_get_curret_freq->367: > 
+2020-4-17 15:19:32->DEBUG->RMCT->PCA9685_get_curret_freq->368: < freq=50.00
+2020-4-17 15:19:32->DEBUG->RMCT->LD27MG_get_duty_cycle->247: > angle: 45.000000
+2020-4-17 15:19:32->DEBUG->RMCT->LD27MG_get_duty_cycle->265: < on_time: 0.83ms off_time: 20.00ms duty_cycle: 4.17%
+2020-4-17 15:19:32->DEBUG->RMCT->PCA9685_setPWM->231: > freq: 50.000000 duty_cycle: 4.166667 delay_time: 0.000000 fd: 1 channel: 15
+2020-4-17 15:19:32->DEBUG->RMCT->PCA9685_setPWM->235: hw_name=PCA9685_PWM_DRIVER SIM_MODE=true
+2020-4-17 15:19:32->DEBUG->RMCT->PCA9685_setPWM->254: tics_to_on:0 tics_on_duration:171 tics_to_off:171 channel_reg_on:42 channel_reg_off:44
+2020-4-17 15:19:32->DEBUG->RMCT->PCA9685_setPWM->264: < OK
+2020-4-17 15:19:32->DEBUG->RMCT->LD27MG_move_motor->142: < result=OK
+2020-4-17 15:19:32->DEBUG->RMCT->move_camera_motor->218: < result=OK
+2020-4-17 15:19:32->DEBUG->RMCT->process_motor_action->148: < result=OK
+2020-4-17 15:19:32->DEBUG->RMCT->NMT_write_socket->169: > 
+2020-4-17 15:19:32->DEBUG->RMCT->NMT_write_socket->180: < result=OK
+2020-4-17 15:19:32->DEBUG->RMCT->NMT_read_socket->192: > 
+2020-4-17 15:19:33->DEBUG->RMCT->NMT_read_socket->216: < result=OK
+2020-4-17 15:19:33->DEBUG->RMCT->rmct_validate_robot_action->227: >
+2020-4-17 15:19:33->DEBUG->RMCT->rmct_validate_robot_action->244: < valid=true
+2020-4-17 15:19:33->DEBUG->RMCT->process_motor_action->117: > motor=CAM_VERT_MTR direction= angle=45.00 speed=-1
+2020-4-17 15:19:33->DEBUG->RMCT->move_camera_motor->167: > direction=CUSTOM, angle_to_move=45.00, default_angle=10.00
+2020-4-17 15:19:33->DEBUG->RMCT->LD27MG_move_motor->125: > motor=CAM_VERT_MTR angle=45.000000
+2020-4-17 15:19:33->DEBUG->RMCT->LD27MG_m2c->217: > motor=CAM_VERT_MTR
+2020-4-17 15:19:33->DEBUG->RMCT->LD27MG_m2c->235: < channel=CHANNEL_14
+2020-4-17 15:19:33->DEBUG->RMCT->PCA9685_get_curret_freq->367: > 
+2020-4-17 15:19:33->DEBUG->RMCT->PCA9685_get_curret_freq->368: < freq=50.00
+2020-4-17 15:19:33->DEBUG->RMCT->LD27MG_get_duty_cycle->247: > angle: 45.000000
+2020-4-17 15:19:33->DEBUG->RMCT->LD27MG_get_duty_cycle->265: < on_time: 0.83ms off_time: 20.00ms duty_cycle: 4.17%
+2020-4-17 15:19:33->DEBUG->RMCT->PCA9685_setPWM->231: > freq: 50.000000 duty_cycle: 4.166667 delay_time: 0.000000 fd: 1 channel: 14
+2020-4-17 15:19:33->DEBUG->RMCT->PCA9685_setPWM->235: hw_name=PCA9685_PWM_DRIVER SIM_MODE=true
+2020-4-17 15:19:33->DEBUG->RMCT->PCA9685_setPWM->254: tics_to_on:0 tics_on_duration:171 tics_to_off:171 channel_reg_on:3E channel_reg_off:40
+2020-4-17 15:19:33->DEBUG->RMCT->PCA9685_setPWM->264: < OK
+2020-4-17 15:19:33->DEBUG->RMCT->LD27MG_move_motor->142: < result=OK
+2020-4-17 15:19:33->DEBUG->RMCT->move_camera_motor->218: < result=OK
+2020-4-17 15:19:33->DEBUG->RMCT->process_motor_action->148: < result=OK
+2020-4-17 15:19:33->DEBUG->RMCT->NMT_write_socket->169: > 
+2020-4-17 15:19:33->DEBUG->RMCT->NMT_write_socket->180: < result=OK
+2020-4-17 15:19:33->DEBUG->RMCT->NMT_read_socket->192: > 
+2020-4-17 15:19:33->DEBUG->RMCT->NMT_read_socket->216: < result=OK
+2020-4-17 15:19:33->DEBUG->RMCT->rmct_validate_robot_action->227: >
+2020-4-17 15:19:33->DEBUG->RMCT->rmct_validate_robot_action->244: < valid=true
+2020-4-17 15:19:33->DEBUG->RMCT->process_motor_action->117: > motor=LEFT_DRV_MTR direction=FORWARD angle=-1.00 speed=30
+2020-4-17 15:19:33->DEBUG->RMCT->L9110_move_motor->93: > dir=FORWARD speed=30
+2020-4-17 15:19:33->DEBUG->RMCT->PCA9685_setPWM->231: > freq: 50.000000 duty_cycle: 0.000000 delay_time: 0.000000 fd: 1 channel: 12
+2020-4-17 15:19:33->DEBUG->RMCT->PCA9685_setPWM->235: hw_name=PCA9685_PWM_DRIVER SIM_MODE=true
+2020-4-17 15:19:33->DEBUG->RMCT->PCA9685_setPWM->254: tics_to_on:0 tics_on_duration:0 tics_to_off:0 channel_reg_on:36 channel_reg_off:38
+2020-4-17 15:19:33->DEBUG->RMCT->PCA9685_setPWM->264: < OK
+2020-4-17 15:19:33->DEBUG->RMCT->PCA9685_setPWM->231: > freq: 50.000000 duty_cycle: 30.000000 delay_time: 0.000000 fd: 1 channel: 13
+2020-4-17 15:19:33->DEBUG->RMCT->PCA9685_setPWM->235: hw_name=PCA9685_PWM_DRIVER SIM_MODE=true
+2020-4-17 15:19:33->DEBUG->RMCT->PCA9685_setPWM->254: tics_to_on:0 tics_on_duration:1229 tics_to_off:1229 channel_reg_on:3A channel_reg_off:3C
+2020-4-17 15:19:33->DEBUG->RMCT->PCA9685_setPWM->264: < OK
+2020-4-17 15:19:33->DEBUG->RMCT->L9110_move_motor->119: < result=OK
+2020-4-17 15:19:33->DEBUG->RMCT->process_motor_action->148: < result=OK
+2020-4-17 15:19:33->DEBUG->RMCT->NMT_write_socket->169: > 
+2020-4-17 15:19:33->DEBUG->RMCT->NMT_write_socket->180: < result=OK
+2020-4-17 15:19:33->DEBUG->RMCT->NMT_read_socket->192: > 
+2020-4-17 15:19:34->DEBUG->RMCT->NMT_read_socket->216: < result=OK
+2020-4-17 15:19:34->DEBUG->RMCT->rmct_validate_robot_action->227: >
+2020-4-17 15:19:34->DEBUG->RMCT->rmct_validate_robot_action->244: < valid=true
+2020-4-17 15:19:34->DEBUG->RMCT->process_motor_action->117: > motor=LEFT_DRV_MTR direction=REVERSE angle=-1.00 speed=30
+2020-4-17 15:19:34->DEBUG->RMCT->L9110_move_motor->93: > dir=REVERSE speed=30
+2020-4-17 15:19:34->DEBUG->RMCT->PCA9685_setPWM->231: > freq: 50.000000 duty_cycle: 0.000000 delay_time: 0.000000 fd: 1 channel: 13
+2020-4-17 15:19:34->DEBUG->RMCT->PCA9685_setPWM->235: hw_name=PCA9685_PWM_DRIVER SIM_MODE=true
+2020-4-17 15:19:34->DEBUG->RMCT->PCA9685_setPWM->254: tics_to_on:0 tics_on_duration:0 tics_to_off:0 channel_reg_on:3A channel_reg_off:3C
+2020-4-17 15:19:34->DEBUG->RMCT->PCA9685_setPWM->264: < OK
+2020-4-17 15:19:34->DEBUG->RMCT->PCA9685_setPWM->231: > freq: 50.000000 duty_cycle: 30.000000 delay_time: 0.000000 fd: 1 channel: 12
+2020-4-17 15:19:34->DEBUG->RMCT->PCA9685_setPWM->235: hw_name=PCA9685_PWM_DRIVER SIM_MODE=true
+2020-4-17 15:19:34->DEBUG->RMCT->PCA9685_setPWM->254: tics_to_on:0 tics_on_duration:1229 tics_to_off:1229 channel_reg_on:36 channel_reg_off:38
+2020-4-17 15:19:34->DEBUG->RMCT->PCA9685_setPWM->264: < OK
+2020-4-17 15:19:34->DEBUG->RMCT->L9110_move_motor->119: < result=OK
+2020-4-17 15:19:34->DEBUG->RMCT->process_motor_action->148: < result=OK
+2020-4-17 15:19:34->DEBUG->RMCT->NMT_write_socket->169: > 
+2020-4-17 15:19:34->DEBUG->RMCT->NMT_write_socket->180: < result=OK
+2020-4-17 15:19:34->DEBUG->RMCT->NMT_read_socket->192: > 
+2020-4-17 15:19:34->DEBUG->RMCT->NMT_read_socket->216: < result=OK
+2020-4-17 15:19:34->DEBUG->RMCT->rmct_validate_robot_action->227: >
+2020-4-17 15:19:34->DEBUG->RMCT->rmct_validate_robot_action->244: < valid=true
+2020-4-17 15:19:34->DEBUG->RMCT->process_motor_action->117: > motor=LEFT_DRV_MTR direction=STOP angle=-1.00 speed=30
+2020-4-17 15:19:34->DEBUG->RMCT->L9110_move_motor->93: > dir=STOP speed=30
+2020-4-17 15:19:34->DEBUG->RMCT->PCA9685_setPWM->231: > freq: 50.000000 duty_cycle: 0.000000 delay_time: 0.000000 fd: 1 channel: 13
+2020-4-17 15:19:34->DEBUG->RMCT->PCA9685_setPWM->235: hw_name=PCA9685_PWM_DRIVER SIM_MODE=true
+2020-4-17 15:19:34->DEBUG->RMCT->PCA9685_setPWM->254: tics_to_on:0 tics_on_duration:0 tics_to_off:0 channel_reg_on:3A channel_reg_off:3C
+2020-4-17 15:19:34->DEBUG->RMCT->PCA9685_setPWM->264: < OK
+2020-4-17 15:19:34->DEBUG->RMCT->PCA9685_setPWM->231: > freq: 50.000000 duty_cycle: 0.000000 delay_time: 0.000000 fd: 1 channel: 12
+2020-4-17 15:19:34->DEBUG->RMCT->PCA9685_setPWM->235: hw_name=PCA9685_PWM_DRIVER SIM_MODE=true
+2020-4-17 15:19:34->DEBUG->RMCT->PCA9685_setPWM->254: tics_to_on:0 tics_on_duration:0 tics_to_off:0 channel_reg_on:36 channel_reg_off:38
+2020-4-17 15:19:34->DEBUG->RMCT->PCA9685_setPWM->264: < OK
+2020-4-17 15:19:34->DEBUG->RMCT->L9110_move_motor->119: < result=OK
+2020-4-17 15:19:34->DEBUG->RMCT->process_motor_action->148: < result=OK
+2020-4-17 15:19:34->DEBUG->RMCT->NMT_write_socket->169: > 
+2020-4-17 15:19:34->DEBUG->RMCT->NMT_write_socket->180: < result=OK
+2020-4-17 15:19:34->DEBUG->RMCT->NMT_read_socket->192: > 
+2020-4-17 15:19:35->DEBUG->RMCT->NMT_read_socket->216: < result=OK
+2020-4-17 15:19:35->DEBUG->RMCT->rmct_validate_robot_action->227: >
+2020-4-17 15:19:35->DEBUG->RMCT->rmct_validate_robot_action->244: < valid=true
+2020-4-17 15:19:35->DEBUG->RMCT->process_motor_action->117: > motor=RIGHT_DRV_MTR direction=FORWARD angle=-1.00 speed=30
+2020-4-17 15:19:35->DEBUG->RMCT->L9110_move_motor->93: > dir=FORWARD speed=30
+2020-4-17 15:19:35->DEBUG->RMCT->PCA9685_setPWM->231: > freq: 50.000000 duty_cycle: 0.000000 delay_time: 0.000000 fd: 1 channel: 10
+2020-4-17 15:19:35->DEBUG->RMCT->PCA9685_setPWM->235: hw_name=PCA9685_PWM_DRIVER SIM_MODE=true
+2020-4-17 15:19:35->DEBUG->RMCT->PCA9685_setPWM->254: tics_to_on:0 tics_on_duration:0 tics_to_off:0 channel_reg_on:2E channel_reg_off:30
+2020-4-17 15:19:35->DEBUG->RMCT->PCA9685_setPWM->264: < OK
+2020-4-17 15:19:35->DEBUG->RMCT->PCA9685_setPWM->231: > freq: 50.000000 duty_cycle: 30.000000 delay_time: 0.000000 fd: 1 channel: 11
+2020-4-17 15:19:35->DEBUG->RMCT->PCA9685_setPWM->235: hw_name=PCA9685_PWM_DRIVER SIM_MODE=true
+2020-4-17 15:19:35->DEBUG->RMCT->PCA9685_setPWM->254: tics_to_on:0 tics_on_duration:1229 tics_to_off:1229 channel_reg_on:32 channel_reg_off:34
+2020-4-17 15:19:35->DEBUG->RMCT->PCA9685_setPWM->264: < OK
+2020-4-17 15:19:35->DEBUG->RMCT->L9110_move_motor->119: < result=OK
+2020-4-17 15:19:35->DEBUG->RMCT->process_motor_action->148: < result=OK
+2020-4-17 15:19:35->DEBUG->RMCT->NMT_write_socket->169: > 
+2020-4-17 15:19:35->DEBUG->RMCT->NMT_write_socket->180: < result=OK
+2020-4-17 15:19:35->DEBUG->RMCT->NMT_read_socket->192: > 
+2020-4-17 15:19:35->DEBUG->RMCT->NMT_read_socket->216: < result=OK
+2020-4-17 15:19:35->DEBUG->RMCT->rmct_validate_robot_action->227: >
+2020-4-17 15:19:35->DEBUG->RMCT->rmct_validate_robot_action->244: < valid=true
+2020-4-17 15:19:35->DEBUG->RMCT->process_motor_action->117: > motor=RIGHT_DRV_MTR direction=REVERSE angle=-1.00 speed=30
+2020-4-17 15:19:35->DEBUG->RMCT->L9110_move_motor->93: > dir=REVERSE speed=30
+2020-4-17 15:19:35->DEBUG->RMCT->PCA9685_setPWM->231: > freq: 50.000000 duty_cycle: 0.000000 delay_time: 0.000000 fd: 1 channel: 11
+2020-4-17 15:19:35->DEBUG->RMCT->PCA9685_setPWM->235: hw_name=PCA9685_PWM_DRIVER SIM_MODE=true
+2020-4-17 15:19:35->DEBUG->RMCT->PCA9685_setPWM->254: tics_to_on:0 tics_on_duration:0 tics_to_off:0 channel_reg_on:32 channel_reg_off:34
+2020-4-17 15:19:35->DEBUG->RMCT->PCA9685_setPWM->264: < OK
+2020-4-17 15:19:35->DEBUG->RMCT->PCA9685_setPWM->231: > freq: 50.000000 duty_cycle: 30.000000 delay_time: 0.000000 fd: 1 channel: 10
+2020-4-17 15:19:35->DEBUG->RMCT->PCA9685_setPWM->235: hw_name=PCA9685_PWM_DRIVER SIM_MODE=true
+2020-4-17 15:19:35->DEBUG->RMCT->PCA9685_setPWM->254: tics_to_on:0 tics_on_duration:1229 tics_to_off:1229 channel_reg_on:2E channel_reg_off:30
+2020-4-17 15:19:35->DEBUG->RMCT->PCA9685_setPWM->264: < OK
+2020-4-17 15:19:35->DEBUG->RMCT->L9110_move_motor->119: < result=OK
+2020-4-17 15:19:35->DEBUG->RMCT->process_motor_action->148: < result=OK
+2020-4-17 15:19:35->DEBUG->RMCT->NMT_write_socket->169: > 
+2020-4-17 15:19:35->DEBUG->RMCT->NMT_write_socket->180: < result=OK
+2020-4-17 15:19:35->DEBUG->RMCT->NMT_read_socket->192: > 
+2020-4-17 15:19:36->DEBUG->RMCT->NMT_read_socket->216: < result=OK
+2020-4-17 15:19:36->DEBUG->RMCT->rmct_validate_robot_action->227: >
+2020-4-17 15:19:36->DEBUG->RMCT->rmct_validate_robot_action->244: < valid=true
+2020-4-17 15:19:36->DEBUG->RMCT->process_motor_action->117: > motor=RIGHT_DRV_MTR direction=STOP angle=-1.00 speed=30
+2020-4-17 15:19:36->DEBUG->RMCT->L9110_move_motor->93: > dir=STOP speed=30
+2020-4-17 15:19:36->DEBUG->RMCT->PCA9685_setPWM->231: > freq: 50.000000 duty_cycle: 0.000000 delay_time: 0.000000 fd: 1 channel: 11
+2020-4-17 15:19:36->DEBUG->RMCT->PCA9685_setPWM->235: hw_name=PCA9685_PWM_DRIVER SIM_MODE=true
+2020-4-17 15:19:36->DEBUG->RMCT->PCA9685_setPWM->254: tics_to_on:0 tics_on_duration:0 tics_to_off:0 channel_reg_on:32 channel_reg_off:34
+2020-4-17 15:19:36->DEBUG->RMCT->PCA9685_setPWM->264: < OK
+2020-4-17 15:19:36->DEBUG->RMCT->PCA9685_setPWM->231: > freq: 50.000000 duty_cycle: 0.000000 delay_time: 0.000000 fd: 1 channel: 10
+2020-4-17 15:19:36->DEBUG->RMCT->PCA9685_setPWM->235: hw_name=PCA9685_PWM_DRIVER SIM_MODE=true
+2020-4-17 15:19:36->DEBUG->RMCT->PCA9685_setPWM->254: tics_to_on:0 tics_on_duration:0 tics_to_off:0 channel_reg_on:2E channel_reg_off:30
+2020-4-17 15:19:36->DEBUG->RMCT->PCA9685_setPWM->264: < OK
+2020-4-17 15:19:36->DEBUG->RMCT->L9110_move_motor->119: < result=OK
+2020-4-17 15:19:36->DEBUG->RMCT->process_motor_action->148: < result=OK
+2020-4-17 15:19:36->DEBUG->RMCT->NMT_write_socket->169: > 
+2020-4-17 15:19:36->DEBUG->RMCT->NMT_write_socket->180: < result=OK
+2020-4-17 15:19:36->DEBUG->RMCT->NMT_read_socket->192: > 
+2020-4-17 15:19:36->DEBUG->RMCT->NMT_read_socket->216: < result=OK
+2020-4-17 15:19:36->DEBUG->RMCT->rmct_validate_robot_action->227: >
+2020-4-17 15:19:36->DEBUG->RMCT->rmct_validate_robot_action->244: < valid=true
+2020-4-17 15:19:36->DEBUG->RMCT->process_motor_action->117: > motor=CAMERA direction= angle=-1.00 speed=-1
+2020-4-17 15:19:36->DEBUG->RMCT->process_motor_action->148: < result=NOK
+2020-4-17 15:19:36->DEBUG->RMCT->NMT_write_socket->169: > 
+2020-4-17 15:19:36->DEBUG->RMCT->NMT_write_socket->180: < result=OK
+2020-4-17 15:19:36->DEBUG->RMCT->NMT_read_socket->192: > 

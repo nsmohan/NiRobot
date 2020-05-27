@@ -9,8 +9,8 @@
 *.lock
 Obj
 bld
-gui/photonetwork_gui/.vs
-gui/photonetwork_gui/packages
-gui/photonetwork_gui/photonetwork_gui.sln
-gui/photonetwork_gui/photonetwork_gui/bin
-gui/photonetwork_gui/photonetwork_gui/obj
+tst/lib_py
+tools/lib_py
+rui/lib_py
+html
+latex
