@@ -13,11 +13,11 @@ OBJS        = NMT_stdlib.so \
               PCA9685.so \
               LD27MG.so \
               HCxSR04.so \
-              NMT_sock.so \
+              NMT_sock_base.so \
+              NMT_sock_multi.so \
+              NMT_sock_tcp.so \
               L9110.so \
               RMCT_lib.so
-
-PY_OBJS =    NMT_sock.so
 
 #---------------------------------------#
 #                                       #
@@ -55,10 +55,17 @@ HCxSR04_LIBS        = -lNMT_log \
                       -lm \
                       -lrt
 
-NMT_sock_LIBS       = -lNMT_stdlib \
-                      -lNMT_log \
+NMT_sock_base_LIBS   = -lNMT_stdlib \
+                       -lNMT_log
 
-NMT_sock_py_LIBS    = -lNMT_sock
+NMT_sock_multi_LIBS  = -lNMT_stdlib \
+                       -lNMT_log \
+                       -lNMT_sock_base
+
+NMT_sock_tcp_LIBS    = -lNMT_stdlib \
+                       -lNMT_log \
+                       -lNMT_sock_base
+
 
 L9110_LIBS         =  -lNMT_stdlib \
                       -lNMT_log \
@@ -90,7 +97,6 @@ $(OBJ_DIR)/lib%.so: $(LIB_DIR)/%.cpp $(INC_DIR)/%.hpp
 # -----Build C++ Files ---------#
 $(OBJ_DIR)/%.so: $(LIB_DIR)/%_py.cpp $(INC_DIR)/%.hpp
 	g++ $(CFLAGS) $(SFLAGS) $(RPATH) -o  $@ $<  $($(*)_py_LIBS) -lboost_python
-
 
 clean:
 	rm -rf $(OBJ_DIR)/*.so

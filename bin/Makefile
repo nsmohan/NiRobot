@@ -23,7 +23,8 @@ regdump_LIBS = -lNMT_stdlib \
 RMCT_LIBS     = -lNMT_stdlib \
                 -lNMT_log \
                 -lRSXA \
-                -lNMT_sock \
+                -lNMT_sock_base \
+                -lNMT_sock_multi \
                 -ljsoncpp \
                 -lRMCT_lib \
                 -lL9110
