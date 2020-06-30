@@ -135,7 +135,6 @@ void NMT_sock_tcp::init_select()
     for (int sd : this->client_sockets)
     {   
         /* Add to Read List of Valid */
-        cout << "sd=" << sd << endl;
         if(sd > 0)   
             FD_SET(sd, &this->readfds);   
              
@@ -197,7 +196,7 @@ tuple<NMT_result, bool> NMT_sock_tcp::accept_new_connection()
     {
         if ((client_fd = accept(this->sock,
                                (struct sockaddr*) &this->my_address,
-                               &this->adder_len) < 0))
+                               &this->adder_len)) < 0)
         {
             result = NOK;
             NMT_log_write(ERROR, (char *)"Failed to accept Socket Connection!");

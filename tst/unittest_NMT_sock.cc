@@ -158,23 +158,18 @@ TEST_F(NMT_sock_Test_Fixture, GW_Test_txrx_tcp)
     int local_port = 5550;
 
     /* Setup Client/Server Objects */
-    //NMT_sock_tcp tcp_server(local_port, "127.0.0.1", SOCK_SERVER, 60);
-
-    std::cout << "I am here!" << std::endl;
+    NMT_sock_tcp tcp_server(local_port, "127.0.0.1", SOCK_SERVER, 10);
     NMT_sock_tcp tcp_client1(local_port,"127.0.0.1", SOCK_CLIENT);
-    /**
     NMT_sock_tcp tcp_client2(local_port,"127.0.0.1", SOCK_CLIENT);
-    */
 
-    /* Write to Socket */
     result = tcp_client1.NMT_write_socket(test_message);
     ASSERT_EQ(result, OK);
 
     /* Read from Socket */
-    //tie(result, out_message1, client_id) = tcp_server.NMT_read_socket();
-    //ASSERT_EQ(result, OK);
-    std::cout << "Result=" << result_e2s[result] << std::endl;
+    tie(result, out_message1, client_id) = tcp_server.NMT_read_socket();
+    ASSERT_EQ(result, OK);
 
+    std::cout << "Result=" << result_e2s[result] << std::endl;
     std::cout << "message=" << out_message1 << std::endl;
 }
 

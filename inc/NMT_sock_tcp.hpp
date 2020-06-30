@@ -41,7 +41,7 @@ class NMT_sock_tcp: public NMT_sock
             
         /** @var client_sockets
          *  Client Sockets Array */
-        std::vector <int> client_sockets;
+        std::vector <int> client_sockets = {0};
 
         int max_sd;
 

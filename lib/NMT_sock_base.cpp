@@ -118,7 +118,7 @@ NMT_result NMT_sock::NMT_init_server()
     NMT_log_write(DEBUG, (char *)"> ");
     NMT_result result = OK;
 
-    if ((this->sock = socket(AF_INET, this->type, 0)) < 0)
+    if ((this->sock = socket(AF_INET, this->type, 0)) <= 0)
         result = NOK;
 
     if (result == OK)
@@ -171,6 +171,7 @@ NMT_result NMT_sock::NMT_init_server()
         {
             /* Listen for TCP Connection */
             listen(this->sock, MAX_CLIENTS);
+            NMT_log_write(DEBUG, (char *)"Listening on TCP Socket");
         }
     }
 
