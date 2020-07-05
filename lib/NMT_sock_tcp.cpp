@@ -36,6 +36,7 @@ NMT_sock_tcp::~NMT_sock_tcp()
 {
     NMT_log_write(DEBUG, (char *)"> ");
 
+    shutdown(this->sock, SHUT_RDWR);
     close(this->sock);
 
     NMT_log_write(DEBUG, (char *)"< ");
