@@ -28,9 +28,9 @@ class NMT_sock_multi : public NMT_sock
         /* Constructor */
         NMT_sock_multi(unsigned int port,
                        std::string ip_address,
-                       sock_mode sock_mode,
+                       SOCK_MODE SOCK_MODE,
                        unsigned int socket_timeout = 60)
-            : NMT_sock(port, ip_address, sock_mode, SOCK_MULTI_CAST, socket_timeout) {};
+            : NMT_sock(port, ip_address, SOCK_MODE, SOCK_MULTI_CAST, socket_timeout) {};
 
         std::tuple<NMT_result, std::string> NMT_read_socket();
         NMT_result NMT_write_socket(char *message);

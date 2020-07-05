@@ -31,7 +31,7 @@ if [ ! -d $CNF_DIR ]; then mkdir $CNF_DIR; fi
 cp $SRC_CNF_DIR/RSXA.json $CNF_DIR
 
 # -----Set Appropriate Permissions --#
-chmod 777 $CNF_DIR
+chmod -R 777 $CNF_DIR
 chmod -R 777 $LOG_DIR
  
 echo "**************** NIBOT Configuration Complete! *************************"

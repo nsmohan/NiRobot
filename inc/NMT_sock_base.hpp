@@ -27,16 +27,21 @@
 const int MAX_CLIENTS = 5;
 
 /**
- * @enum sock_mode
+ * @enum SOCK_MODE
  * Socket Mode (Server or Client)
  */
-typedef enum sock_mode {SOCK_CLIENT, SOCK_SERVER}sock_mode;
+typedef enum SOCK_MODE {SOCK_CLIENT, SOCK_SERVER}SOCK_MODE;
+const std::string sock_mode_e2s[] = {"SOCK_CLIENT", "SOCK_SERVER"};
 
 /**
- * @enum sock_type
+ * @enum SOCK_TYPE
  */
-typedef enum sock_type {SOCK_TCP, SOCK_MULTI_CAST}sock_type;
+typedef enum SOCK_TYPE {SOCK_TCP, SOCK_MULTI_CAST}SOCK_TYPE;
+const std::string sock_type_e2s[] = {"SOCK_TCP", "SOCK_MULTI_CAST"};
 
+/**
+ * @enum SOCK_STATE
+ */
 typedef enum SOCK_STATE {SOCK_OK, SOCK_ERROR, SOCK_DISCONNECTED, SOCK_IDLE}sock_state;
 const std::string sock_state_e2s[] {"SOCK_OK", "SOCK_ERROR", "SOCK_DISCONNECTED", "SOCK_IDLE"};
 
@@ -46,8 +51,8 @@ class NMT_sock
         /* Constructor */
         NMT_sock(unsigned int port, 
                  std::string ip_address,
-                 sock_mode socket_mode,
-                 sock_type socket_type,
+                 SOCK_MODE socket_mode,
+                 SOCK_TYPE socket_type,
                  unsigned int socket_timeout = 60);
 
         /* Getter to return the result */
@@ -59,11 +64,29 @@ class NMT_sock
          *  Object which contains current systems attributes*/
         struct sockaddr_in my_address; 
         
+        /** @var adder_len
+         *  Address Length */
         socklen_t adder_len;
 
         /** @var sock
          *  Socket object */
         int sock; 
+
+        /** @var port
+         *  Port to communicate on */
+        unsigned int port;
+
+        /** @var multicast_ip
+         *  IP Address to send multicast messages to */
+       std::string  ip_address;
+
+        /** @var mode
+         *  Mode of socket */
+        SOCK_MODE mode;
+
+        /** @var s_type
+         *  Type of socket */
+        int type;
 
         /** @var max_buffer_size
          *  Max Size of Buffer */
@@ -76,28 +99,10 @@ class NMT_sock
         /* Prototypes */
         SOCK_STATE NMT_sock_check_message(int nbytes, int client=-1);
 
-
-
     private:
         /** @var result
          *  Varible to set the overall state of the object */
         NMT_result result = OK;
-
-        /** @var port
-         *  Port to communicate on */
-        unsigned int port;
-
-        /** @var multicast_ip
-         *  IP Address to send multicast messages to */
-       std::string  ip_address;
-
-        /** @var mode
-         *  Mode of socket */
-        sock_mode mode;
-
-        /** @var s_type
-         *  Type of socket */
-        int type;
 
         /** @var socket_timeout
          *  Time out for Client */

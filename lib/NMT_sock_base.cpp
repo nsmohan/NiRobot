@@ -27,7 +27,7 @@
 
 using namespace std;
 NMT_sock::NMT_sock(unsigned int port, string ip_address,
-                   sock_mode socket_mode, sock_type socket_type,
+                   SOCK_MODE socket_mode, SOCK_TYPE socket_type,
                    unsigned int socket_timeout) : 
                    port(port), ip_address(ip_address), mode(socket_mode), 
                    socket_timeout(socket_timeout)
@@ -42,11 +42,16 @@ NMT_sock::NMT_sock(unsigned int port, string ip_address,
      *  @return    NMT_result
      */
 
+    NMT_log_write(DEBUG, (char *)"> port=%u, ip_address=%s, mode=%s, type=%s, time_out=%u",
+                  port, ip_address.c_str(), sock_mode_e2s[socket_mode].c_str(), sock_type_e2s[socket_type].c_str(), socket_timeout);
+
     /* Check Socket Type */
     socket_type == SOCK_TCP ? this->type = SOCK_STREAM : this->type = SOCK_DGRAM;
 
     /* Initialize socket as Client/Server */
     socket_mode == SOCK_SERVER ? this->result = NMT_init_server() : this->result = NMT_init_client();
+
+    NMT_log_write(DEBUG, (char *)"< ");
 }
 
 /*------------------------------------------------------------------------/
@@ -119,7 +124,11 @@ NMT_result NMT_sock::NMT_init_server()
     NMT_result result = OK;
 
     if ((this->sock = socket(AF_INET, this->type, 0)) <= 0)
+    {
+        NMT_log_write(ERROR, (char *)"Failed to create Socket!");
         result = NOK;
+        cout << "Error=" << errno << endl;
+    }
 
     if (result == OK)
     {

@@ -32,11 +32,17 @@ class NMT_sock_tcp: public NMT_sock
         /* Constructor */
         NMT_sock_tcp(unsigned int port,
                      std::string ip_address,
-                     sock_mode sock_mode,
+                     SOCK_MODE SOCK_MODE,
                      unsigned int socket_timeout = 60)
-            : NMT_sock(port, ip_address, sock_mode, SOCK_TCP, socket_timeout) {}; 
+            : NMT_sock(port, ip_address, SOCK_MODE, SOCK_TCP, socket_timeout) {}; 
+
+        /* Destructor */
+        ~NMT_sock_tcp();
+
+        /* Prototypes */
         std::tuple<NMT_result, std::string, int> NMT_read_socket();
         NMT_result NMT_write_socket(std::string message, int sock_id=-1);
+
     private: 
             
         /** @var client_sockets
@@ -52,6 +58,7 @@ class NMT_sock_tcp: public NMT_sock
         void init_select();
         std::tuple<NMT_result, bool> listen();
         std::tuple<NMT_result, bool> accept_new_connection();
-        std::tuple<SOCK_STATE, std::string, int> read_message();
+        std::tuple<SOCK_STATE, std::string, int> read_client_message();
+        std::tuple<SOCK_STATE, std::string> read_server_message();
 };
 #endif

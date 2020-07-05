@@ -1,5 +1,4 @@
-/** 
- *  @file      NMT_sock_tcp.cpp
+/** *  @file      NMT_sock_tcp.cpp
  *  @brief     NMT Multi-Cast Sockets
  *  @details   Library to establish multi-cast sockets
  *  @author    Nitin Mohan
@@ -33,6 +32,15 @@ using namespace std;
 /*-------------------------------------------------------------------------------------/
 /                                  Public Interfaces                                  /
 /-----------------------------------------------------------------------------------*/
+NMT_sock_tcp::~NMT_sock_tcp()
+{
+    NMT_log_write(DEBUG, (char *)"> ");
+
+    close(this->sock);
+
+    NMT_log_write(DEBUG, (char *)"< ");
+}
+
 tuple<NMT_result, string, int> NMT_sock_tcp::NMT_read_socket()
 {
     /*!
@@ -54,19 +62,29 @@ tuple<NMT_result, string, int> NMT_sock_tcp::NMT_read_socket()
     while (((state == SOCK_DISCONNECTED) || (state == SOCK_IDLE)) && 
             (!time_out) && (result == OK))
     {
-        /* Initialize Select */
-        NMT_sock_tcp::init_select();
+        if (this->mode == SOCK_SERVER)
+        {
+            /* Initialize Select */
+            NMT_sock_tcp::init_select();
 
-        /* Listen on Socket */
-        tie(result, time_out) = NMT_sock_tcp::listen();
+            /* Listen on Socket */
+            tie(result, time_out) = NMT_sock_tcp::listen();
 
-        /* Check for New Connection */
-        if ((result == OK) && (!time_out))
-            tie(result, new_connection) = NMT_sock_tcp::accept_new_connection();
+            /* Check for New Connection */
+            if ((result == OK) && (!time_out))
+                tie(result, new_connection) = NMT_sock_tcp::accept_new_connection();
 
-        /* Read the message */
-        if ((result == OK) && (!time_out) && (!new_connection))
-            tie(state, rx_message, client) = NMT_sock_tcp::read_message();
+            /* Read the message */
+            if ((result == OK) && (!time_out) && (!new_connection))
+                tie(state, rx_message, client) = NMT_sock_tcp::read_client_message();
+        }
+        else
+        {
+            /* Read the message */
+            tie(state, rx_message) = NMT_sock_tcp::read_server_message();
+            client = this->sock;
+        }
+            
     }
 
     /* Do we have a failure ? */
@@ -114,6 +132,7 @@ NMT_result NMT_sock_tcp::NMT_write_socket(string message, int sock_id)
 /*-------------------------------------------------------------------------------------/
 /                                  Private Methods                                    /
 /-----------------------------------------------------------------------------------*/
+
 void NMT_sock_tcp::init_select()
 {
     /*!
@@ -215,7 +234,7 @@ tuple<NMT_result, bool> NMT_sock_tcp::accept_new_connection()
     return make_tuple(result, new_connection);
 }
 
-tuple<SOCK_STATE, string, int> NMT_sock_tcp::read_message()
+tuple<SOCK_STATE, string, int> NMT_sock_tcp::read_client_message()
 {
     NMT_log_write(DEBUG, (char *)"> ");
 
@@ -230,7 +249,6 @@ tuple<SOCK_STATE, string, int> NMT_sock_tcp::read_message()
     for (auto client_p = this->client_sockets.begin(); 
          client_p != this->client_sockets.end(); client_p++)   
         {   
-            cout << "client= " << *client_p << endl;
             if (FD_ISSET(*client_p, &(this->readfds)))
             {   
                 /* Hold Client */
@@ -266,5 +284,39 @@ tuple<SOCK_STATE, string, int> NMT_sock_tcp::read_message()
                          (char *)sock_state_e2s[state].c_str(),
                          client);
     return make_tuple(state, message, client);
+}
+
+tuple<SOCK_STATE, string> NMT_sock_tcp::read_server_message()
+{
+    NMT_log_write(DEBUG, (char *)"> ");
+
+    /* Initialize Varibles */
+    int nbytes;
+    SOCK_STATE state = SOCK_IDLE;
+    char msgbuf[max_buffer_size];
+    string message;
+
+    /* Read Incoming Message */
+    nbytes = read(this->sock, msgbuf, max_buffer_size); 
+
+    /* Check State */
+    state = NMT_sock::NMT_sock_check_message(nbytes, this->sock);
+
+    switch (state)
+    {
+        case SOCK_OK:
+            msgbuf[nbytes] = '\0';
+            message = msgbuf;
+            break;
+        case SOCK_DISCONNECTED:
+        case SOCK_ERROR:
+        case SOCK_IDLE:
+            /* Do Nothing */
+            break;
+    }
+
+    NMT_log_write(DEBUG, (char *)"< state=%s",
+                         (char *)sock_state_e2s[state].c_str());
+    return make_tuple(state, message);
 }
 
