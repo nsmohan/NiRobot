@@ -24,7 +24,7 @@ RMCT_LIBS     = -lNMT_stdlib \
                 -lNMT_log \
                 -lRSXA \
                 -lNMT_sock_base \
-                -lNMT_sock_multi \
+                -lNMT_sock_tcp \
                 -ljsoncpp \
                 -lRMCT_lib \
                 -lL9110

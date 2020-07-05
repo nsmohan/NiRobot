@@ -256,7 +256,7 @@ SOCK_STATE NMT_sock::NMT_sock_check_message(int nbytes, int client)
                     (socklen_t*)&adder_len);  
 
         NMT_log_write(WARNING,
-                      (char *)"Host disconnected , ip %s , port %d \n",  
+                      (char *)"Host disconnected: ip %s, port %d ", 
                       inet_ntoa(this->my_address.sin_addr),
                       ntohs(this->my_address.sin_port));   
     }

@@ -245,10 +245,11 @@ tuple<SOCK_STATE, string, int> NMT_sock_tcp::read_client_message()
     char msgbuf[max_buffer_size];
     int client = -1;
     string message = "";
+    bool msgrecv = false;
 
     /* Check who sent the message and read it */
     for (auto client_p = this->client_sockets.begin(); 
-         client_p != this->client_sockets.end(); client_p++)   
+         client_p != this->client_sockets.end(); client_p++)
         {   
             if (FD_ISSET(*client_p, &(this->readfds)))
             {   
@@ -260,6 +261,9 @@ tuple<SOCK_STATE, string, int> NMT_sock_tcp::read_client_message()
 
                 /* Check State */
                 state = NMT_sock::NMT_sock_check_message(nbytes, *client_p);
+
+                /* Set Flag */
+                msgrecv = true;
 
                 switch (state)
                 {
@@ -278,12 +282,15 @@ tuple<SOCK_STATE, string, int> NMT_sock_tcp::read_client_message()
                         break;
                 }
             }   
+
+            /* Break Out of Loop */
+            if (msgrecv)
+                break;
         }   
 
     /* Exit the Function */
     NMT_log_write(DEBUG, (char *)"< state=%s, client=%d", 
-                         (char *)sock_state_e2s[state].c_str(),
-                         client);
+                         (char *)sock_state_e2s[state].c_str(), client);
     return make_tuple(state, message, client);
 }
 
