@@ -127,6 +127,7 @@ class NMT_transport(object):
         """
 
         try:
-            self.scp.get(remote_path, recursive=True, local_path=local_path) 
+            self.scp.get(remote_path=remote_path, recursive=True, local_path=local_path) 
         except scp.SCPException:
+            print("Reading file")
             raise Exception("Failed to Get file from Host!")

@@ -67,7 +67,7 @@ class GUI_Application(object):
                                        password="nibot")
 
             # -- Socket Connection --#
-            self.rmct = RMCTSockConnect()
+            self.rmct = RMCTSockConnect(ip_address)
 
             zope.event.notify("connected")
             print("SSH Connection Successful!")

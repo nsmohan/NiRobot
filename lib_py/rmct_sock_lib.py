@@ -34,8 +34,8 @@ MAX_BUFF_SIZE = 4096
 # -- Library Implementation -- #
 class RMCTSockConnect(object):
 
-    def __init__(self):
-        self.__rsxa_settings()
+    def __init__(self, ip_address=""):
+        self.__rsxa_settings(ip_address)
         self.__create_and_connect_socket()
     
     #---------------------------------------------------#
@@ -53,7 +53,7 @@ class RMCTSockConnect(object):
         self.client_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client_sock.connect((self.rmct_server_ip, self.rmct_server_port))
         
-    def __rsxa_settings(self):
+    def __rsxa_settings(self, ip_address):
 
         """ 
         "  @brief  Read the Robot Settings file and get needed settings
@@ -67,8 +67,14 @@ class RMCTSockConnect(object):
         rmct_proc = list(filter(lambda p: p["proc_name"] == RMCT, rsxa["procs"]))[0]
         
         # -- Load the Settings into the object -- #
-        self.rmct_server_ip = rmct_proc["server_ip"]
+        if ip_address:
+            # -- Override IP Address --#
+            self.rmct_server_ip = ip_address
+        else:
+            self.rmct_server_ip = rmct_proc["server_ip"]
         self.rmct_server_port = rmct_proc["server_p"]
+
+        print(f"RMCT_IP={self.rmct_server_ip} PORT={self.rmct_server_port}")
 
     def __get_tx_message(self, motor, direction, angle, speed):
 
