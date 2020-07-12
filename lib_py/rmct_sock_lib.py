@@ -74,8 +74,6 @@ class RMCTSockConnect(object):
             self.rmct_server_ip = rmct_proc["server_ip"]
         self.rmct_server_port = rmct_proc["server_p"]
 
-        print(f"RMCT_IP={self.rmct_server_ip} PORT={self.rmct_server_port}")
-
     def __get_tx_message(self, motor, direction, angle, speed):
 
             """ 

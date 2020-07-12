@@ -85,7 +85,6 @@ tuple<NMT_result, string, int> NMT_sock_tcp::NMT_read_socket()
             tie(state, rx_message) = NMT_sock_tcp::read_server_message();
             client = this->sock;
         }
-            
     }
 
     /* Do we have a failure ? */

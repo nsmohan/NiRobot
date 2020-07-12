@@ -44,7 +44,6 @@ class NMT_sock_tcp: public NMT_sock
         NMT_result NMT_write_socket(std::string message, int sock_id=-1);
 
     private: 
-            
         /** @var client_sockets
          *  Client Sockets Array */
         std::vector <int> client_sockets = {0};

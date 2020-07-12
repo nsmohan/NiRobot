@@ -59,7 +59,6 @@ class NMT_sock
         NMT_result NMT_get_result() {return this->result;}
 
     protected:
-
         /** @var my_address
          *  Object which contains current systems attributes*/
         struct sockaddr_in my_address; 
@@ -118,6 +117,5 @@ class NMT_sock
         NMT_result NMT_sock_set_multi_cast();
         NMT_result NMT_sock_read_tcp_message(socklen_t adder_len, char **message);
         NMT_result NMT_sock_read_multi_message(socklen_t adder_len, char **message);
-
 };
 #endif

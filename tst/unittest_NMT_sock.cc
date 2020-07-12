@@ -125,7 +125,6 @@ TEST_F(NMT_sock_Test_Fixture_multi, BW_ServerTimeout)
 
 TEST_F(NMT_sock_Test_Fixture_multi, BW_PortMisMatch)
 {
-
     /**
      * @test Test Client does not rx anything when it joins with the incorrect port number
      * @step 1. Create 2 instances Server and Client (Client subscribes to incorrect port)
