@@ -91,6 +91,8 @@ class RMCT_Test(unittest.TestCase):
         self.assertEqual("ack", rx_message["type"])
         self.assertEqual(NMT_result.NOK, rx_message["result"])
 
+        #-- Add 2 Second delay to allow time for logs to update --#
+        time.sleep(2)
         self.validate_logs()
 
     def validate_logs(self):

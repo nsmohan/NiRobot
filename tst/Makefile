@@ -23,7 +23,8 @@ GTST_LIBS = -lgtest_main \
 TSTS            = $(TBLD_DIR)/unittest_PCA9685 \
                   $(TBLD_DIR)/unittest_LD27MG \
                   $(TBLD_DIR)/unittest_L9110 \
-                  $(TBLD_DIR)/unittest_RMCT_lib
+                  $(TBLD_DIR)/unittest_RMCT_lib \
+                  $(TBLD_DIR)/unittest_NMT_sock
 
 unittest_PCA9685_LIBS = -lwiringPi \
                         -lcrypt \
@@ -56,6 +57,12 @@ unittest_RMCT_lib_LIBS = -lNMT_stdlib \
                          -lrt \
                          -lRMCT_lib
 
+unittest_NMT_sock_LIBS = -lNMT_stdlib \
+                         -lNMT_log \
+                         -lNMT_sock_base \
+                         -lNMT_sock_multi \
+                         -lNMT_sock_tcp
+
 all: $(ACTIONS) \
      $(TSTS)
 .PHONY: all
@@ -79,6 +86,9 @@ $(TBLD_DIR)/unittest_LD27MG: $(OBJ_DIR)/PCA9685_stub.o $(OBJ_DIR)/unittest_LD27M
 
 $(TBLD_DIR)/unittest_L9110: $(OBJ_DIR)/PCA9685_stub.o $(OBJ_DIR)/unittest_L9110.o
 	g++  $(LDFLAGS_T) $(RPATH) -I $(INC_DIR) -o $@ $^ $(GTST_LIBS) $(unittest_L9110_LIBS)
+
+$(TBLD_DIR)/unittest_NMT_sock: $(OBJ_DIR)/unittest_NMT_sock.o
+	g++  $(LDFLAGS_T) $(RPATH) -I $(INC_DIR) -o $@ $^ $(GTST_LIBS) $(unittest_NMT_sock_LIBS)
 
 $(TBLD_DIR)/unittest_RMCT_lib: $(OBJ_DIR)/LD27MG_stub.o $(OBJ_DIR)/unittest_RMCT_lib.o $(OBJ_DIR)/PCA9685_stub.o \
                                $(OBJ_DIR)/wiringPi_stub.o

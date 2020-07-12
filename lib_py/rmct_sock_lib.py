@@ -30,28 +30,30 @@ RSXA_FILE = "/etc/NiBot/RSXA.json"
 
 RMCT = "RMCT"
 MAX_BUFF_SIZE = 4096
-SOCK_TIMEOUT  = 2
 
 # -- Library Implementation -- #
 class RMCTSockConnect(object):
 
-    def __init__(self):
-        self.ip = str(getip.get_local_ip())
-        self.__rsxa_settings()
-        self.multi_sock_tx = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
-        self.multi_sock_rx = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
-        self.multi_sock_rx.settimeout(SOCK_TIMEOUT)
-        self.__config_multicast()
+    def __init__(self, ip_address=""):
+        self.__rsxa_settings(ip_address)
+        self.__create_and_connect_socket()
     
-
     #---------------------------------------------------#
     #                   Private Methods                 #
     #---------------------------------------------------#
     def __del__(self):
-        self.multi_sock_tx.close()
-        self.multi_sock_rx.close()
-    
-    def __rsxa_settings(self):
+        self.client_sock.close()
+
+    def __create_and_connect_socket(self):
+
+        """ 
+        "  @brief  Construct TCP Socket and Connect to RMCT
+        """
+
+        self.client_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.client_sock.connect((self.rmct_server_ip, self.rmct_server_port))
+        
+    def __rsxa_settings(self, ip_address):
 
         """ 
         "  @brief  Read the Robot Settings file and get needed settings
@@ -64,30 +66,13 @@ class RMCTSockConnect(object):
         # -- Find the Settings Needed -- #
         rmct_proc = list(filter(lambda p: p["proc_name"] == RMCT, rsxa["procs"]))[0]
         
-
         # -- Load the Settings into the object -- #
-        self.rmct_server_ip = rmct_proc["server_ip"]
+        if ip_address:
+            # -- Override IP Address --#
+            self.rmct_server_ip = ip_address
+        else:
+            self.rmct_server_ip = rmct_proc["server_ip"]
         self.rmct_server_port = rmct_proc["server_p"]
-        self.rmct_client_ip = rmct_proc["client_ip"]
-        self.rmct_client_port = rmct_proc["client_p"]
-
-    def __config_multicast(self):
-        """ 
-        "  @brief  Configure Client/Server sockets for communication with RMCT
-        """
-
-        # -- Configure the Server ---#
-        self.multi_sock_tx.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.multi_sock_tx.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_IF, socket.inet_aton(self.ip))
-        self.multi_sock_tx.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 2)
-        membership_request = socket.inet_aton(self.rmct_server_ip) + socket.inet_aton(self.ip)
-        self.multi_sock_tx.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, membership_request)
-
-        # -- Configure the Client -- #
-        self.multi_sock_rx.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        mreq = struct.pack("4sl", socket.inet_aton(self.rmct_client_ip), socket.INADDR_ANY)
-        self.multi_sock_rx.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
-        self.multi_sock_rx.bind((self.rmct_client_ip, self.rmct_client_port))
 
     def __get_tx_message(self, motor, direction, angle, speed):
 
@@ -115,7 +100,7 @@ class RMCTSockConnect(object):
     def show_rsxa_settings(self):
 
         """ 
-        "  @brief                Show RSXA Settings on the screen
+        "  @brief Show RSXA Settings on the screen
         """
 
         print ("server_ip=%s\nclient_ip=%s\nserver_port=%d\nclient_port=%d"%(self.rmct_server_ip, 
@@ -130,7 +115,7 @@ class RMCTSockConnect(object):
         """
 
         print ("Sending request to NiBot ..... {}".format(message))
-        self.multi_sock_tx.sendto(message.encode(),(self.rmct_server_ip, self.rmct_server_port))
+        self.client_sock.send(message.encode())
 
     def rx_message(self):
         """ 
@@ -139,7 +124,7 @@ class RMCTSockConnect(object):
         """
 
         try:
-            return json.loads(self.multi_sock_rx.recv(MAX_BUFF_SIZE))
+            return json.loads(self.client_sock.recv(MAX_BUFF_SIZE))
         except socket.timeout:
             return False
 

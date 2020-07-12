@@ -22,7 +22,7 @@
 /--------------------------------------------------*/
 #include "RSXA.h"
 #include "NMT_log.h"
-#include "NMT_sock.hpp"
+#include "NMT_sock_tcp.hpp"
 #include "RMCT_lib.hpp"
 
 /*--------------------------------------------------/
@@ -31,7 +31,6 @@
 /** @var MY_NAME
  *  Name of this process */
 #define MY_NAME "RMCT"
-
 
 /** @var SOCK_TIMEOUT
  *  Quantity of Hardware RMCT directly controls*/
@@ -75,7 +74,7 @@ typedef struct RMDR_hw_settings
 static bool rmct_validate_robot_action(Json::Value mc);
 static void rmct_control_print_usage(int es);
 static NMT_result rmct_get_robot_settings(RSXA &hw_settings, RMCT_hw_settings &rmct_hw_settings);
-static void rmct_main_loop(NMT_sock_multicast server_sock, NMT_sock_multicast client_sock, RobotMotorController rmct_obj);
+static void rmct_main_loop(NMT_sock_tcp server_sock, RobotMotorController rmct_obj);
 
 /*--------------------------------------------------/
 /           Entry Point for RMCT Process            /
@@ -141,12 +140,11 @@ int main(int argc, char *argv[])
 
         /* Initialize Sockets */
         RSXA_procs sock_config = rmct_hw_settings.rmct_task_config;
-        NMT_sock_multicast client_sock(sock_config.server_p, sock_config.server_ip, SOCK_CLIENT, SOCK_TIMEOUT);
-        NMT_sock_multicast server_sock(sock_config.client_p, sock_config.client_ip, SOCK_SERVER);
+        NMT_sock_tcp server_sock(sock_config.server_p, sock_config.server_ip, SOCK_SERVER, SOCK_TIMEOUT);
 
         /* 5. Start the Program */
         cout << "RMCT Executed .............. " << endl;
-        rmct_main_loop(server_sock, client_sock, rmct_obj);
+        rmct_main_loop(server_sock, rmct_obj);
     }
 
     /* Exit the program */
@@ -155,8 +153,7 @@ int main(int argc, char *argv[])
     return result;
 }
 
-static void rmct_main_loop(NMT_sock_multicast server_sock, NMT_sock_multicast client_sock,
-                           RobotMotorController rmct_obj)
+static void rmct_main_loop(NMT_sock_tcp server_sock, RobotMotorController rmct_obj)
 {
     /*!
      *  @brief     Main Loop for RMCT
@@ -171,7 +168,8 @@ static void rmct_main_loop(NMT_sock_multicast server_sock, NMT_sock_multicast cl
     Json::Value  mc;
     Json::Value  ack;
     Json::Reader reader;
-    char *rx_message;
+    string rx_message;
+    int client_id;
     bool terminate_proc = false;
     ack["type"] = "ack";
 
@@ -179,7 +177,7 @@ static void rmct_main_loop(NMT_sock_multicast server_sock, NMT_sock_multicast cl
     while ((result == OK) && (!terminate_proc))
     {
         /* Listen on the socket */
-        result = client_sock.NMT_read_socket(&rx_message); 
+        tie(result, rx_message, client_id) = server_sock.NMT_read_socket(); 
 
         if (result == OK)
         {
@@ -212,12 +210,9 @@ static void rmct_main_loop(NMT_sock_multicast server_sock, NMT_sock_multicast cl
                 }
             }
 
-            /* Free rx_message */
-            free(rx_message);
-
             /* Send Acknowledgement */
             ack["result"] = result;
-            result = server_sock.NMT_write_socket((char *)(ack.toStyledString()).c_str());
+            result = server_sock.NMT_write_socket((char *)(ack.toStyledString()).c_str(), client_id);
         }
     }
     return;
