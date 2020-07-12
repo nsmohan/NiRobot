@@ -1,4 +1,4 @@
-/*SOCK_DGRAM** 
+/** 
  *  @file      RMCT.cpp
  *  @brief     Robot Motor Controller
  *  @details   Main Task which allows the control of the hardware motors
