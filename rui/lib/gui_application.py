@@ -28,6 +28,7 @@ from lib_py.rmct_sock_lib import RMCTSockConnect
 #---------------------------------------------------#
 LOCAL_RSXA_FILE = "/etc/NiBot/RSXA.json"
 REMOTE_RSXA_FILE = "/etc/NiBot/RSXA.json"
+RMCT_TASK = "/home/nibot/NiRobot/tools/test.sh"
 
 """ 
 "  @class  GUI_Application
@@ -65,17 +66,22 @@ class GUI_Application(object):
             self.nibot = NMT_transport(ip_address,
                                        username="nibot",
                                        password="nibot")
-
-            # -- Socket Connection --#
-            self.rmct = RMCTSockConnect(ip_address)
-
-            zope.event.notify("connected")
-            print("SSH Connection Successful!")
-
         except Exception as e:
             print(e)
             raise Exception ("Unable to Connect to NiBot!")
+        else:
+            if not GUI_Application.is_task_running(self.nibot, "RMCT"):
+                print("RMCT Task not running in NiBot...... ")
+                GUI_Application.start_task(self.nibot, RMCT_TASK)
+                print("Stared RMCT....")
 
+            # -- Connect to RMCT Socket --#
+            print("Creating Socket Connection with RMCT")
+            self.rmct = RMCTSockConnect(ip_address)
+                
+            #-- Raise Connected Event --#
+            zope.event.notify("connected")
+            print("SSH Connection Successful!")
 
     def disconnect_from_nibot(self):
 
@@ -136,3 +142,32 @@ class GUI_Application(object):
             print("NiBOT Response=%s"%(NMT_result.get_result(response["result"])))
         else:
             raise Exception("NiBot Motor Action Failure!")
+
+    @staticmethod
+    def is_task_running(ssh_server, task):
+
+        """ 
+        "  @brief Method to check if a task is running
+        "  @param[in] task - task to look for
+        "  @param[out] task_running - (True = running | False = Not running)
+        """
+
+        #-- Check if the task is running --#
+        stdout, stderr = ssh_server.send_command(f"pgrep {task}")
+
+        # -- Exit the function --#
+        print (stdout.decode("utf-8"))
+        return stdout.decode("utf-8") != ""
+
+    @staticmethod
+    def start_task(ssh_server, task):
+
+        """ 
+        "  @brief Start a task over SSH
+        "  @param[in] task - task to start
+        """
+
+        # -- Starting the task -- #
+        print ("Starting task ...", task) 
+        stdout, stderr = ssh_server.send_command(task, blocking=False)
+

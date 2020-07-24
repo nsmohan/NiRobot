@@ -55,6 +55,7 @@ if __name__ == '__main__':
 
     # -- Parse arguments -- #
     parser = argparse.ArgumentParser()
+    parser.add_argument('-i', '--ip_address', required=False, help = "Enter IP Address for Remote Server")
     parser.add_argument('-m', '--motor', required=False, choices=MOTORS, help = "NiBot Motor to be moved")
     parser.add_argument('-d', '--direction', required=False, default="", choices=DIRECTIONS, help ="Directon the motor needs to be moved")
     parser.add_argument('-a', '--angle', required=False, type=int, default= -1, help ="Manually set the camera motor angle")
@@ -62,7 +63,13 @@ if __name__ == '__main__':
     parser.add_argument('-e', '--exit', required=False, action="store_true", help ="Shutdown the RMCT Process")
     args = parser.parse_args()
 
-    rmct = RMCTSockConnect()
+    # -- Create Socket Connection --#
+    if args.ip_address: 
+        print (f"Connecting to: {args.ip_address}")
+        rmct = RMCTSockConnect(args.ip_address)
+    else:
+        rmct = RMCTSockConnect()
+
     if (args.exit):
         tx_message = json.dumps([({"type": "proc_action", "action": "exit"})])
     else:
