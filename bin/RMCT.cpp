@@ -200,6 +200,7 @@ static void rmct_main_loop(NMT_sock_tcp server_sock, RobotMotorController rmct_o
                     {
                         /* Process proc_action */
                         if (mc[i]["action"].asString() == "exit") {terminate_proc = true;}
+                        NMT_log_write(DEBUG, (char *)"Request to terminate RMCT Recieved");
                         result = OK;
                     }
                 }

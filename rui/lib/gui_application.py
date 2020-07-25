@@ -15,6 +15,7 @@
 #---------------------------------------------------#
 import zope.event
 import json
+import time
 
 #---------------------------------------------------#
 #                   Local Imports                   #
@@ -28,7 +29,7 @@ from lib_py.rmct_sock_lib import RMCTSockConnect
 #---------------------------------------------------#
 LOCAL_RSXA_FILE = "/etc/NiBot/RSXA.json"
 REMOTE_RSXA_FILE = "/etc/NiBot/RSXA.json"
-RMCT_TASK = "/home/nibot/NiRobot/tools/test.sh"
+RMCT_TASK = "/home/nibot/NiRobot/bld/RMCT"
 
 """ 
 "  @class  GUI_Application
@@ -62,6 +63,9 @@ class GUI_Application(object):
         "  @brief Connect to NiBot and create instnace of object
         """
 
+        #-- Store IP Address in Object --#
+        self.ip_address = ip_address
+
         try:
             self.nibot = NMT_transport(ip_address,
                                        username="nibot",
@@ -73,12 +77,11 @@ class GUI_Application(object):
             if not GUI_Application.is_task_running(self.nibot, "RMCT"):
                 print("RMCT Task not running in NiBot...... ")
                 GUI_Application.start_task(self.nibot, RMCT_TASK)
-                print("Stared RMCT....")
+                time.sleep(1) #2 Second Delay to allow the process to start
 
-            # -- Connect to RMCT Socket --#
-            print("Creating Socket Connection with RMCT")
-            self.rmct = RMCTSockConnect(ip_address)
-                
+            #-- RMCT Socket --#
+            self.connect_to_rmct()
+
             #-- Raise Connected Event --#
             zope.event.notify("connected")
             print("SSH Connection Successful!")
@@ -92,17 +95,44 @@ class GUI_Application(object):
         del(self.nibot)
         zope.event.notify("disconnected")
 
+    def update_rsxa_settings_on_nibot(self, rsxa_settings):
+
+        """ 
+        "  @brief Send RSXA Settings file to NiBot
+        "  @param[in] rsxa_settings
+        """
+
+        # -- Send the Settings File --#
+        try:
+            self.send_rsxa_settings_to_nibot(rsxa_settings)
+        except Exception as e:
+            print(e)
+            raise Exception("Failed to Update RSXA Settings")
+        else:
+            if GUI_Application.is_task_running(self.nibot, "RMCT"):
+
+                print("Restarting RMCT Task.....")
+                self.rmct.stop_rmct()
+
+                time.sleep(1)  #Delay to allow task to exit
+
+                GUI_Application.start_task(self.nibot, RMCT_TASK)
+                time.sleep(1) #1 Second Delay to allow the process to start
+
+                #-- RMCT Socket --#
+                self.connect_to_rmct()
+
     def send_rsxa_settings_to_nibot(self, rsxa_settings):
 
         """ 
         "  @brief Send RSXA Settings file to NiBot
+        "  @param[in] rsxa_settings
         """
 
         try:
             self.__write_rsxa_settings(rsxa_settings)
             self.nibot.send_file(LOCAL_RSXA_FILE, REMOTE_RSXA_FILE)
         except Exception as e:
-            print(e)
             raise Exception("Failed to send RSXA.json file")
 
     def get_rsxa_settings_from_nibot(self):
@@ -156,7 +186,6 @@ class GUI_Application(object):
         stdout, stderr = ssh_server.send_command(f"pgrep {task}")
 
         # -- Exit the function --#
-        print (stdout.decode("utf-8"))
         return stdout.decode("utf-8") != ""
 
     @staticmethod
@@ -169,5 +198,15 @@ class GUI_Application(object):
 
         # -- Starting the task -- #
         print ("Starting task ...", task) 
-        stdout, stderr = ssh_server.send_command(task, blocking=False)
+        ssh_server.send_command(task, blocking=False)
+
+    def connect_to_rmct(self):
+
+        """ 
+        "  @brief Start a task over SSH
+        """
+
+        # -- Connect to RMCT Socket --#
+        print("Creating Socket Connection with RMCT")
+        self.rmct = RMCTSockConnect(self.ip_address)
 

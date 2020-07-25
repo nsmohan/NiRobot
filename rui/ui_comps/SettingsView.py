@@ -284,7 +284,7 @@ class SettingsTabView(LayoutBase):
         """
 
         try:
-            self.nibot_ap.send_rsxa_settings_to_nibot(self.rsxa_settings_mem)
+            self.nibot_ap.update_rsxa_settings_on_nibot(self.rsxa_settings_mem)
             zope.event.notify("reset")
         except Exception as e:
             self.throw_error(f"Update Settings Failed! {e}")
