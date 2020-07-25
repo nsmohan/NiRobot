@@ -128,6 +128,17 @@ class RMCTSockConnect(object):
         except socket.timeout:
             return False
 
+    
+    def stop_rmct(self):
+
+        """ 
+        "  @brief Send Message to RMCT to gracefully exit
+        """
+
+        print("Stopping RMCT Task......")
+        message = json.dumps([({"type": "proc_action", "action": "exit"})])
+        self.tx_message(message)
+
     def construct_tx_message(self, actions):
         """ 
         "  @brief              Construct Array of TX Messages

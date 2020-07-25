@@ -16,6 +16,7 @@ __copyright__          = "Copy Right 2019. NM Technologies"
 #---------------------------------------------------#
 import paramiko
 import scp
+import socket
 
 #---------------------------------------------------#
 #                   Constants                       #
@@ -96,19 +97,28 @@ class NMT_transport(object):
     #---------------------------------------------------#
     #                   Public Methods                  #
     #---------------------------------------------------#
-    def send_command(self, command):
+    def send_command(self, command, blocking=True):
 
         """ 
         "  @brief Send command to host
         "  param[in] command -> Command to be sent
         """
 
+        # -- Set timeout --#
+        if blocking: 
+            time_out = None
+        else:
+            time_out = 0.0
+
         try:
-            stdin, stdout, stderr = self.ssh.exec_command(command)
-        except scp.SSHException as sshException:
+            stdin, stdout, stderr = self.ssh.exec_command(command, timeout=time_out)
+        except paramiko.ssh_exception.SSHException:
             raise Exception("Failed to Send Command to Host!")
-        
-        return stdout.read(), stderr.read()
+        except socket.timeout:
+            pass # --Error Expected --#
+
+        if blocking:
+            return stdout.read(), stderr.read()
 
     def send_file(self, source_file, remote_path):
 

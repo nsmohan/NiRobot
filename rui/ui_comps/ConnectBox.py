@@ -75,9 +75,10 @@ class ConnectBox(LayoutBase):
 
         try:
             self.nibot_ap.connect_to_nibot(self.host_txtbox.get())
-            self.active_button_states()
         except Exception as e:
-            self.throw_error("Unable to Connect to NiBot!")
+            self.throw_error("Unable to Connect to NiBot! {}".format(e))
+        else:
+            self.active_button_states()
 
     def __handle_disconnect(self):
         self.nibot_ap.disconnect_from_nibot()
