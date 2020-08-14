@@ -36,30 +36,6 @@
  *  log_dir key */
 const char *LOG_DIR     = "log_dir";
 
-/** @var PROCS
- *  proc key */
-const char *PROCS       = "procs";
-
-/** @var PROC_NAME
- *  proc_name key */
-const char *PROC_NAME    = "proc_name";
-
-/** @var SERVER_IP
- *  server_ip key */
-const char *SERVER_IP   = "server_ip";
-
-/** @var SERVER_P
- *  server_p key */
-const char *SERVER_P    = "server_p";
-
-/** @var CLIENT_IP
- *  client_ip key */
-const char *CLIENT_IP   = "client_ip";
-
-/** @var CLIENT_P
- *  client_p key */
-const char *CLIENT_P    = "client_p";
-
 /** @var HW
  *  hw key */
 const char *HW          = "hw";
@@ -159,8 +135,6 @@ static NMT_result RSXA_parse_json(char *data_to_parse, RSXA *RSXA_Object)
     struct json_object *jobj_hw_v = {0};
     struct json_object *jobj_hw_gpio = {0};
     struct json_object *jobj_hw_gpio_v = {0};
-    struct json_object *jobj_procs = {0};
-    struct json_object *jobj_procs_v = {0};
     struct json_object *jvalues = {0};
     
     /* Parse the file */
@@ -172,50 +146,22 @@ static NMT_result RSXA_parse_json(char *data_to_parse, RSXA *RSXA_Object)
     /* Copy log directory to struct */
     if (result == OK) {strcpy(RSXA_Object->log_dir, json_object_get_string(jvalues));}
 
-    /* Get the procs object */
-    if (result == OK) {result = RSXA_find_key(rsxa_root_obj, PROCS, &jobj_procs);}
-
     /* Get the hw object */
-    if (result == OK) {result = RSXA_find_key(rsxa_root_obj, HW, &jobj_hw);}
+    if (result == OK) {RSXA_find_key(rsxa_root_obj, HW, &jobj_hw);}
 
-    /* Get number of procs elements */
-    if (result == OK) {RSXA_Object->array_len_procs = json_object_array_length(jobj_procs);}
-
-    /* Get number of hw elements */
-    if (result == OK) {RSXA_Object->array_len_hw = json_object_array_length(jobj_hw);}
-
-    if ((result == OK) && (RSXA_Object->array_len_procs > 0))
+    if (result == OK)
     {
-        /* Allocate Memory for RSXA_procs */
-        RSXA_Object->procs = (RSXA_procs *)malloc(sizeof(RSXA_procs) * RSXA_Object->array_len_procs);
+        /* Get number of hw elements */
+        RSXA_Object->array_len_hw = json_object_array_length(jobj_hw);
 
-        for (int i = 0; i < RSXA_Object->array_len_procs; i++)
+        if (RSXA_Object->array_len_hw < 1)
         {
-            jobj_procs_v = json_object_array_get_idx(jobj_procs, i);
-
-            /* Get and populate the hardware name */
-            result = RSXA_find_key(jobj_procs_v, PROC_NAME, &jvalues);
-            if (result == OK) {strcpy(RSXA_Object->procs[i].proc_name, json_object_get_string(jvalues));}
-
-            /* Get and server ip address*/
-            result = RSXA_find_key(jobj_procs_v, SERVER_IP, &jvalues);
-            if (result == OK) {strcpy(RSXA_Object->procs[i].server_ip, json_object_get_string(jvalues));}
-
-            /* Get and populate the hardware name */
-            result = RSXA_find_key(jobj_procs_v, SERVER_P, &jvalues);
-            if (result == OK) {RSXA_Object->procs[i].server_p  = json_object_get_int(jvalues);}
-
-            /* Get and populate the hardware name */
-            result = RSXA_find_key(jobj_procs_v, CLIENT_IP, &jvalues);
-            if (result == OK) {strcpy(RSXA_Object->procs[i].client_ip, json_object_get_string(jvalues));}
-
-            /* Get and populate the hardware name */
-            result = RSXA_find_key(jobj_procs_v, CLIENT_P, &jvalues);
-            if (result == OK) {RSXA_Object->procs[i].client_p  = json_object_get_int(jvalues);}
+            printf("Error! No elements found hw key \n");
+            result = NOK;
         }
     }
 
-    if ((result == OK) && (RSXA_Object->array_len_hw > 0))
+    if (result == OK)
     {
         /* Allocate Memory for RSXA_hw */
         RSXA_Object->hw = (RSXA_hw *)malloc(sizeof(RSXA_hw) * RSXA_Object->array_len_hw);
@@ -285,7 +231,6 @@ void RSXA_free_mem(RSXA *RSXA_Object)
      *  @return     void
      */
 
-    /* Free RSXA_hw */
     for (int i = 0; i < RSXA_Object->array_len_hw; i++)
     {
         if (RSXA_Object->hw[i].array_len_hw_int > 0)
@@ -293,7 +238,4 @@ void RSXA_free_mem(RSXA *RSXA_Object)
     }
 
     free(RSXA_Object->hw);
-
-    /* Free RSXA_Procs */
-    free(RSXA_Object->procs);
 }

@@ -45,8 +45,6 @@ class NMT_RSXA_test(unittest.TestCase):
 
         # -- Prepare Test -- #
         test_data = {"log_dir": "/test/test_file",
-                     "procs"  : [{"proc_name": "UnitTest", "server_ip": "224.1.1.1",
-                                  "server_p": 1000, "client_ip": "224.1.2.3", "client_p": 2000}],
                      "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False, 
                              "hw_interface":[{"pin_name": "p1", "pin_no": 1}, 
                                              {"pin_name": "p2", "pin_no": 2}]},
@@ -86,8 +84,6 @@ class NMT_RSXA_test(unittest.TestCase):
 
         # -- Prepare Test -- #
         test_data = {"log_dirs": "/test/test_file",
-                     "procs"  : [{"proc_name": "UnitTest", "server_ip": "224.1.1.1",
-                                  "server_p": 1000, "client_ip": "224.1.2.3", "client_p": 2000}],
                      "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False, 
                              "hw_interface":[{"pin_name": "p1", "pin_no": 1}]}]}
 
@@ -105,8 +101,6 @@ class NMT_RSXA_test(unittest.TestCase):
 
         # -- Prepare Test -- #
         test_data = {"log_dir": "/test/test_file",
-                     "procs"  : [{"proc_name": "UnitTest", "server_ip": "224.1.1.1",
-                                  "server_p": 1000, "client_ip": "224.1.2.3", "client_p": 2000}],
                      "hw": [{"hw_names": "UnitTest_HW1", "hw_sim_mode": False, 
                              "hw_interface":[{"pin_name": "p1", "pin_no": 1}]}]} 
 
@@ -124,8 +118,6 @@ class NMT_RSXA_test(unittest.TestCase):
 
         # -- Prepare Test -- #
         test_data = {"log_dir": "/test/test_file",
-                     "procs"  : [{"proc_name": "UnitTest", "server_ip": "224.1.1.1",
-                                  "server_p": 1000, "client_ip": "224.1.2.3", "client_p": 2000}],
                      "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_modes": False, 
                              "hw_interface":[{"pin_name": "p1", "pin_no": 1}]}]} 
 
@@ -143,8 +135,6 @@ class NMT_RSXA_test(unittest.TestCase):
 
         # -- Prepare Test -- #
         test_data = {"log_dir": "/test/test_file",
-                     "procs"  : [{"proc_name": "UnitTest", "server_ip": "224.1.1.1",
-                                  "server_p": 1000, "client_ip": "224.1.2.3", "client_p": 2000}],
                      "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False, 
                              "hw_interfaces":[{"pin_name": "p1", "pin_no": 1}]}]} 
 
@@ -162,8 +152,6 @@ class NMT_RSXA_test(unittest.TestCase):
 
         # -- Prepare Test -- #
         test_data = {"log_dir": "/test/test_file",
-                     "procs"  : [{"proc_name": "UnitTest", "server_ip": "224.1.1.1",
-                                  "server_p": 1000, "client_ip": "224.1.2.3", "client_p": 2000}],
                      "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False, 
                              "hw_interface":[{"pin_names": "p1", "pin_no": 1}]}]} 
 
@@ -181,122 +169,6 @@ class NMT_RSXA_test(unittest.TestCase):
 
         # -- Prepare Test -- #
         test_data = {"log_dir": "/test/test_file",
-                     "procs"  : [{"proc_name": "UnitTest", "server_ip": "224.1.1.1",
-                                  "server_p": 1000, "client_ip": "224.1.2.3", "client_p": 2000}],
-                     "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False, 
-                             "hw_interface":[{"pin_name": "p1", "pin_nos": 1}]}]} 
-
-        with open(RS_PATH, "w") as n_rsxa_file:
-            json.dump(test_data, n_rsxa_file)
-
-        result = rsxa.RSXA_init(byref(RSXA_Object))
-        self.assertEqual(result, NMT_result.NOK)
-
-    def test_RSXA_init_BW_6(self):
-        #Description - Verify result is NOK if procs has bad values
-
-        #Initialize Variables
-        RSXA_Object = RSXA()
-
-        # -- Prepare Test -- #
-        test_data = {"log_dir": "/test/test_file",
-                     "procss"  : [{"proc_name": "UnitTest", "server_ip": "224.1.1.1",
-                                  "server_p": 1000, "client_ip": "224.1.2.3", "client_p": 2000}],
-                     "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False, 
-                             "hw_interface":[{"pin_name": "p1", "pin_nos": 1}]}]} 
-
-        with open(RS_PATH, "w") as n_rsxa_file:
-            json.dump(test_data, n_rsxa_file)
-
-        result = rsxa.RSXA_init(byref(RSXA_Object))
-        self.assertEqual(result, NMT_result.NOK)
-
-    def test_RSXA_init_BW_7(self):
-        #Description - Verify result is NOK if proc_name has bad values
-
-        #Initialize Variables
-        RSXA_Object = RSXA()
-
-        # -- Prepare Test -- #
-        test_data = {"log_dir": "/test/test_file",
-                     "procs"  : [{"proc_names": "UnitTest", "server_ip": "224.1.1.1",
-                                  "server_p": 1000, "client_ip": "224.1.2.3", "client_p": 2000}],
-                     "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False, 
-                             "hw_interface":[{"pin_name": "p1", "pin_nos": 1}]}]} 
-
-        with open(RS_PATH, "w") as n_rsxa_file:
-            json.dump(test_data, n_rsxa_file)
-
-        result = rsxa.RSXA_init(byref(RSXA_Object))
-        self.assertEqual(result, NMT_result.NOK)
-
-    def test_RSXA_init_BW_8(self):
-        #Description - Verify result is NOK if server_ip has bad values
-
-        #Initialize Variables
-        RSXA_Object = RSXA()
-
-        # -- Prepare Test -- #
-        test_data = {"log_dir": "/test/test_file",
-                     "procs"  : [{"proc_name": "UnitTest", "server_ips": "224.1.1.1",
-                                  "server_p": 1000, "client_ip": "224.1.2.3", "client_p": 2000}],
-                     "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False, 
-                             "hw_interface":[{"pin_name": "p1", "pin_nos": 1}]}]} 
-
-        with open(RS_PATH, "w") as n_rsxa_file:
-            json.dump(test_data, n_rsxa_file)
-
-        result = rsxa.RSXA_init(byref(RSXA_Object))
-        self.assertEqual(result, NMT_result.NOK)
-
-    def test_RSXA_init_BW_9(self):
-        #Description - Verify result is NOK if server_p has bad values
-
-        #Initialize Variables
-        RSXA_Object = RSXA()
-
-        # -- Prepare Test -- #
-        test_data = {"log_dir": "/test/test_file",
-                     "procs"  : [{"proc_name": "UnitTest", "server_ip": "224.1.1.1",
-                                  "server_ps": 1000, "client_ip": "224.1.2.3", "client_p": 2000}],
-                     "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False, 
-                             "hw_interface":[{"pin_name": "p1", "pin_nos": 1}]}]} 
-
-        with open(RS_PATH, "w") as n_rsxa_file:
-            json.dump(test_data, n_rsxa_file)
-
-        result = rsxa.RSXA_init(byref(RSXA_Object))
-        self.assertEqual(result, NMT_result.NOK)
-
-    def test_RSXA_init_BW_10(self):
-        #Description - Verify result is NOK if client_ip has bad values
-
-        #Initialize Variables
-        RSXA_Object = RSXA()
-
-        # -- Prepare Test -- #
-        test_data = {"log_dir": "/test/test_file",
-                     "procs"  : [{"proc_name": "UnitTest", "server_ip": "224.1.1.1",
-                                  "server_p": 1000, "client_ips": "224.1.2.3", "client_p": 2000}],
-                     "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False, 
-                             "hw_interface":[{"pin_name": "p1", "pin_nos": 1}]}]} 
-
-        with open(RS_PATH, "w") as n_rsxa_file:
-            json.dump(test_data, n_rsxa_file)
-
-        result = rsxa.RSXA_init(byref(RSXA_Object))
-        self.assertEqual(result, NMT_result.NOK)
-
-    def test_RSXA_init_BW_11(self):
-        #Description - Verify result is NOK if client_p has bad values
-
-        #Initialize Variables
-        RSXA_Object = RSXA()
-
-        # -- Prepare Test -- #
-        test_data = {"log_dir": "/test/test_file",
-                     "procs"  : [{"proc_name": "UnitTest", "server_ip": "224.1.1.1",
-                                  "server_p": 1000, "client_ip": "224.1.2.3", "client_ps": 2000}],
                      "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False, 
                              "hw_interface":[{"pin_name": "p1", "pin_nos": 1}]}]} 
 

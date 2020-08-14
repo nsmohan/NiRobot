@@ -19,8 +19,89 @@
 #ifdef __cplusplus
     extern "C" 
     {
+        /** @def PCA9685_HW_NAME
+         * Name of PCA9685 Driver */
+        #define PCA9685_HW_NAME "PCA9685_PWM_DRIVER"
 
-#endif
+        /** @enum PCA9685_PWM_CHANNEL
+         * Enumatation of PWM Channels */
+        typedef enum {CHANNEL_0,
+                      CHANNEL_1,
+                      CHANNEL_2,
+                      CHANNEL_3,
+                      CHANNEL_4,
+                      CHANNEL_5,
+                      CHANNEL_6,
+                      CHANNEL_7,
+                      CHANNEL_8,
+                      CHANNEL_9,
+                      CHANNEL_10,
+                      CHANNEL_11,
+                      CHANNEL_12,
+                      CHANNEL_13,
+                      CHANNEL_14,
+                      CHANNEL_15} PCA9685_PWM_CHANNEL;
+
+        /** @var PCA9685_PWM_CHANNEL_e2s
+         * Convert Enum to string var */
+        const char* PCA9685_PWM_CHANNEL_e2s[] = {"CHANNEL_0",
+                                                 "CHANNEL_1",
+                                                 "CHANNEL_2",
+                                                 "CHANNEL_3",
+                                                 "CHANNEL_4",
+                                                 "CHANNEL_5",
+                                                 "CHANNEL_6",
+                                                 "CHANNEL_7",
+                                                 "CHANNEL_8",
+                                                 "CHANNEL_9",
+                                                 "CHANNEL_10",
+                                                 "CHANNEL_11",
+                                                 "CHANNEL_12",
+                                                 "CHANNEL_13",
+                                                 "CHANNEL_14",
+                                                 "CHANNEL_15"};
+        /** @typedef PCA9685_settings
+         *  PCA9685 Settings Sturucture */
+        typedef struct PCA9685_settings
+        {
+            /** @var fd
+             * WiringPi File Data pointer */
+            int    fd;
+
+            /**@var freq
+             * PCA9685 PWM frequency */
+            float  freq;
+
+            /**@var duty_cycle
+             * PCA9685 duty cycle */
+            double duty_cycle;
+
+            /**@var delay_time
+             * Amount of delay needed in (ms) prior to starting PWM */
+            double delay_time;
+
+        }PCA9685_settings;
+
+        //------------------Prototypes----------------------//
+        extern NMT_result PCA9685_init(PCA9685_settings *settings,
+                                       bool sim_mode);
+
+        extern NMT_result PCA9685_chgFreq(PCA9685_settings *settings,
+                                          bool sim_mode);
+
+        extern NMT_result PCA9685_setPWM(PCA9685_settings *settings,
+                                         PCA9685_PWM_CHANNEL channel,
+                                         bool sim_mode);
+
+        extern NMT_result PCA9685_getPWM(PCA9685_settings *settings,
+                                         PCA9685_PWM_CHANNEL channel,
+                                         bool sim_mode);
+
+        extern NMT_result PCA9685_get_init_status(PCA9685_settings *settings,
+                                                  bool *initialized,
+                                                  bool sim_mode);
+    }
+#else
     /** @def PCA9685_HW_NAME
      * Name of PCA9685 Driver */
     #define PCA9685_HW_NAME "PCA9685_PWM_DRIVER"
@@ -46,52 +127,61 @@
 
     /** @var PCA9685_PWM_CHANNEL_e2s
      * Convert Enum to string var */
-    const char* const PCA9685_PWM_CHANNEL_e2s[] = {"CHANNEL_0",
-                                                   "CHANNEL_1",
-                                                   "CHANNEL_2",
-                                                   "CHANNEL_3",
-                                                   "CHANNEL_4",
-                                                   "CHANNEL_5",
-                                                   "CHANNEL_6",
-                                                   "CHANNEL_7",
-                                                   "CHANNEL_8",
-                                                   "CHANNEL_9",
-                                                   "CHANNEL_10",
-                                                   "CHANNEL_11",
-                                                   "CHANNEL_12",
-                                                   "CHANNEL_13",
-                                                   "CHANNEL_14",
-                                                   "CHANNEL_15"};
+    const char* PCA9685_PWM_CHANNEL_e2s[] = {"CHANNEL_0",
+                                             "CHANNEL_1",
+                                             "CHANNEL_2",
+                                             "CHANNEL_3",
+                                             "CHANNEL_4",
+                                             "CHANNEL_5",
+                                             "CHANNEL_6",
+                                             "CHANNEL_7",
+                                             "CHANNEL_8",
+                                             "CHANNEL_9",
+                                             "CHANNEL_10",
+                                             "CHANNEL_11",
+                                             "CHANNEL_12",
+                                             "CHANNEL_13",
+                                             "CHANNEL_14",
+                                             "CHANNEL_15"};
     /** @typedef PCA9685_settings
      *  PCA9685 Settings Sturucture */
     typedef struct PCA9685_settings
     {
+        /** @var fd
+         * WiringPi File Data pointer */
+        int    fd;
+
         /**@var freq
          * PCA9685 PWM frequency */
         float  freq;
 
-        /**var sim_mode
-         * Simulation Mode for PCA9685 Driver */
-        bool sim_mode;
+        /**@var duty_cycle
+         * PCA9685 duty cycle */
+        double duty_cycle;
+
+        /**@var delay_time
+         * Amount of delay needed in (ms) prior to starting PWM */
+        double delay_time;
 
     }PCA9685_settings;
 
     //------------------Prototypes----------------------//
-    extern NMT_result PCA9685_init(PCA9685_settings settings);
+    extern NMT_result PCA9685_init(PCA9685_settings *settings,
+                                   bool sim_mode);
 
-    extern NMT_result PCA9685_chgFreq(float freq);
+    extern NMT_result PCA9685_chgFreq(PCA9685_settings *settings,
+                                      bool sim_mode);
 
-    extern NMT_result PCA9685_setPWM(double duty_cycle, double delay_time,
-                                     PCA9685_PWM_CHANNEL channel);
+    extern NMT_result PCA9685_setPWM(PCA9685_settings *settings,
+                                     PCA9685_PWM_CHANNEL channel,
+                                     bool sim_mode);
 
-    extern NMT_result PCA9685_getPWM(double *duty_cycle,
-                                     PCA9685_PWM_CHANNEL channel);
+    extern NMT_result PCA9685_getPWM(PCA9685_settings *settings,
+                                     PCA9685_PWM_CHANNEL channel,
+                                     bool sim_mode);
 
-    extern NMT_result PCA9685_get_init_status(bool *initialized);
-
-    extern float PCA9685_get_curret_freq();
-
-#ifdef __cplusplus
-}
+    extern NMT_result PCA9685_get_init_status(PCA9685_settings *settings,
+                                              bool *initialized,
+                                              bool sim_mode);
 #endif
 #endif

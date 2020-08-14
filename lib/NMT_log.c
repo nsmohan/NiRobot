@@ -24,33 +24,6 @@
 /--------------------------------------------------*/
 #include "NMT_log.h"
 
-/*--------------------------------------------------/
-/                   Structs                         /
-/--------------------------------------------------*/
-/** @struct NMT_log_settings
- *  Struct which holds log settings */
-struct NMT_log_settings 
-{
-    /** @var log_level
-     *  level for logging */
-    log_level log_level;
-
-    /** @var log_dir
-     *  logging Directory */
-    char      *log_dir;
-
-    /** @var file_name
-     *  Name of the log file */
-    char      *file_name;
-};
-
-/*--------------------------------------------------/
-/                   Global Variables                /
-/--------------------------------------------------*/
-/** @struct log_settings
- *  log_settings global decleration */
-struct NMT_log_settings log_settings;
-
 NMT_result NMT_log_init_m(char *fname, char *log_dir, bool verbosity)
 {
     /*!

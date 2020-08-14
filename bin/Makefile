@@ -8,7 +8,7 @@
 #                                       #
 #---------------------------------------#
 BLDS = regdump \
-       RMCT \
+       camctrl \
        get_distance
 #---------------------------------------#
 #                                       #
@@ -21,14 +21,9 @@ regdump_LIBS = -lNMT_stdlib \
                -lm \
                -lrt
 
-RMCT_LIBS     = -lNMT_stdlib \
-                -lNMT_log \
+camctrl_LIBS  = -lNMT_log \
                 -lRSXA \
-                -lNMT_sock_base \
-                -lNMT_sock_tcp \
-                -ljsoncpp \
-                -lRMCT_lib \
-                -lL9110
+                -lCAM_MOTOR_CTRL
 
 get_distance_LIBS  = -lNMT_log \
 					 -lultrasonicController \
@@ -36,6 +31,7 @@ get_distance_LIBS  = -lNMT_log \
 					 -lHCxSR04 \
 					 -lwiringPi \
 					 -lRSXA
+
 # -------Update output file name ---------#
 TARGET_BLDS := $(foreach BLD,$(BLDS),$(BLD_DIR)/$(BLD))
 

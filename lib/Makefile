@@ -11,13 +11,10 @@ OBJS        = NMT_stdlib.so \
               NMT_log.so \
               RSXA.so \
               PCA9685.so \
-              LD27MG.so \
+              MTDR.so \
+              CAM_MOTOR_CTRL.so \
               HCxSR04.so \
-              NMT_sock_base.so \
-              NMT_sock_multi.so \
-              NMT_sock_tcp.so \
-              L9110.so \
-              RMCT_lib.so
+              ultrasonicController.so
 
 #---------------------------------------#
 #                                       #
@@ -30,6 +27,7 @@ NMT_log_LIBS        = -lNMT_stdlib \
                       -lc
 
 RSXA_LIBS           = -lNMT_stdlib \
+                      -lNMT_log \
                       -ljson-c \
                       -lc
 
@@ -42,10 +40,25 @@ PCA9685_LIBS        = -lNMT_stdlib \
                       -lrt \
                       -lRSXA
 
-LD27MG_LIBS         = -lNMT_stdlib \
+MTDR_LIBS           = -lNMT_stdlib \
                       -lNMT_log \
+                      -lwiringPi \
                       -lPCA9685 \
+                      -lcrypt \
+                      -lm \
+                      -lrt \
                       -lRSXA
+
+CAM_MOTOR_CTRL_LIBS = -lNMT_stdlib \
+                      -lNMT_log \
+                      -lwiringPi \
+                      -lMTDR \
+                      -lPCA9685 \
+                      -lcrypt \
+                      -lm \
+                      -lrt \
+                      -lRSXA
+
 
 HCxSR04_LIBS        = -lNMT_log \
                       -lNMT_stdlib \
@@ -54,34 +67,14 @@ HCxSR04_LIBS        = -lNMT_log \
                       -lcrypt \
                       -lm \
                       -lrt
-
-NMT_sock_base_LIBS   = -lNMT_stdlib \
-                       -lNMT_log
-
-NMT_sock_multi_LIBS  = -lNMT_stdlib \
-                       -lNMT_log \
-                       -lNMT_sock_base
-
-NMT_sock_tcp_LIBS    = -lNMT_stdlib \
-                       -lNMT_log \
-                       -lNMT_sock_base
-
-
-L9110_LIBS         =  -lNMT_stdlib \
-                      -lNMT_log \
-                      -lRSXA \
-                      -lPCA9685
-
-RMCT_lib_LIBS      = -lNMT_stdlib \
-                     -lNMT_log \
-                     -lRSXA \
-                     -lL9110 \
-                     -lPCA9685 \
-                     -lLD27MG
-
+                
+ultrasonicController_LIBS 		= -lNMT_log \
+								  -lNMT_stdlib \
+								  -lHCxSR04 \
+								  -lRSXA 
+								  
 # -------Update output file name ---------#
 TARGET_OBJS := $(foreach OBJ,$(OBJS),$(OBJ_DIR)/lib$(OBJ))
-TARGET_OBJS += $(foreach OBJ,$(PY_OBJS),$(OBJ_DIR)/$(OBJ))
 
 all: $(TARGET_OBJS)
 .PHONY: all
@@ -93,10 +86,6 @@ $(OBJ_DIR)/lib%.so: $(LIB_DIR)/%.c $(INC_DIR)/%.h
 # -----Build C++ Files ---------#
 $(OBJ_DIR)/lib%.so: $(LIB_DIR)/%.cpp $(INC_DIR)/%.hpp
 	g++ $(CFLAGS) $(SFLAGS) $(RPATH) -o  $@ $< $($(*)_LIBS)
-
-# -----Build C++ Files ---------#
-$(OBJ_DIR)/%.so: $(LIB_DIR)/%_py.cpp $(INC_DIR)/%.hpp
-	g++ $(CFLAGS) $(SFLAGS) $(RPATH) -o  $@ $<  $($(*)_py_LIBS) -lboost_python
 
 clean:
 	rm -rf $(OBJ_DIR)/*.so

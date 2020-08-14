@@ -1,5 +1,4 @@
 Obj
-<<<<<<< HEAD
 figures
 designDocs
 test/lib_py
@@ -7,11 +6,3 @@ html
 latex
 bld
 
-=======
-bld
-tst/lib_py
-tools/lib_py
-rui/lib_py
-html
-latex
->>>>>>> dev
