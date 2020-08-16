@@ -1,10 +1,17 @@
 #ifndef DEF_HCxSR04_Driver
 #define DEF_HCxSR04_Driver
 
-/*HCxSR04.hpp: Header File for HCxSR04.cpp
-
-__author__      = "Nitin Mohan
-__copyright__   = "Copy Right 2019. NM Technologies" */
+/** 
+ *  @file      HCxSR04.hpp
+ *  @brief     Header file for HCxSR04.cpp
+ *  @details   Class Definition for HCxSR04
+ *  @author    Nitin Mohan
+ *  @date      August 13, 2020
+ *  @copyright 2020 - NM Technologies
+ *
+ *  @History DD/MM/YY Author Description
+ *           13/08/20 NITM   Add Doxygen and getter functions for private Variables
+ */
 
 /*--------------------------------------------------/
 /                   System Imports                  /
@@ -16,26 +23,54 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 /--------------------------------------------------*/
 #include "NMT_stdlib.h"
 
-/*--------------------------------------------------/
-/                   Globals                         /
-/--------------------------------------------------*/
-
 class HCxSR04
 {
   public:
-    HCxSR04(std::string hw_name, int trigger, int echo, bool sim_mode);
-    double distanceMeters;
+    /* Constructor */
+    HCxSR04(std::string hw_name, int trigger, int echo, bool sim_mode)
+        : hw_name(hw_name), trigger(trigger), echo(echo), sim_mode(sim_mode) {init_hw();}
+
+    /* Destructor */
+    ~HCxSR04() {};
+
+    /* Prototypes */
     double distance();
 
+    /* @var distanceMeters
+     * Name of the Motor */
+    double distanceMeters;
+
   private:
-    void init_hw();
-    int trigger;
-    int echo;
+    /*@var hw_name
+     *  Name of the hardware */
     std::string hw_name;
+
+    /* @var trigger
+     * trigger pin */
+    int trigger;
+
+    /* @var echo
+     * echo pin */
+    int echo;
+
+    /* @var sim_mode
+     *  Simulation Mode */
     bool sim_mode;
+    
+    /* @var startTimeUsec
+     *  Start time */
     volatile long startTimeUsec;
+    
+    /* @var endTimeUsec
+     *  End Time */
     volatile long endTimeUsec;
+
+    /* @var travelTimeUsec
+     *  Time Traveled*/
     long travelTimeUsec;
+
+    /* Prototypes */
+    void init_hw();
 };
 
 #endif
