@@ -1,7 +1,15 @@
-/*HCxSR04_Driver.cpp: Driver for the Ultransonic Sensors (HC-SR04)
-
-__author__      = "Nitin Mohan
-__copyright__   = "Copy Right 2019. NM Technologies" */
+/** 
+ *  @file      HCxSR04.cpp
+ *  @brief     Library to interface with Ultrasonic Sensors
+ *  @details   This library provides interfcaes to interact with 
+ *             HCxSR04 Ultrasonic Sensors
+ *  @author    Nitin Mohan
+ *  @date      August 13, 2020
+ *  @copyright 2020 - NM Technologies
+ *
+ *  @History DD/MM/YY Author Description
+ *           13/08/20 NITM   Add Doxygen and getter functions for private Variables
+ */
 
 /*--------------------------------------------------/
 /                   System Imports                  /
@@ -17,35 +25,22 @@ __copyright__   = "Copy Right 2019. NM Technologies" */
 #include "NMT_log.h"
 #include "RSXA.h"
 
-//---------------------Macros----------------------//
-
 /*--------------------------------------------------/
-/                   Structures                      /
+/                   Start of Program                /
 /--------------------------------------------------*/
-
-//------------------Prototypes-------------------//
-
-
 using namespace std;
-HCxSR04::HCxSR04(string hw_name, int trigger, int echo, bool sim_mode)
-{
-    /* Constructor */
-    this->trigger = trigger;
-    this->echo = echo;
-    this->hw_name = hw_name;
-    this->sim_mode = sim_mode;
-    this->init_hw();
-} 
-
 void HCxSR04::init_hw()
 {
-    //Input     : N/A
-    //Output    : N/A
-    //Function  : Check simulation mode and init the hardware
+    /*!
+     *  @brief     Initialize the hardware based on SIM mode
+     *  @param[in] N/A
+     *  @return    void
+     */
 
     /* Initialize Hardware if not in sim mode */
     if (!(this->sim_mode))
     {
+        wiringPiSetup();
         pinMode(this->trigger, OUTPUT);
         pinMode(this->echo, INPUT);
         digitalWrite(this->trigger, LOW);
@@ -55,10 +50,11 @@ void HCxSR04::init_hw()
 
 double HCxSR04::distance()
 {
-    //Input     : N/A
-    //Output    : distance to object
-    //Function  : Ping HCxSR04 sonar and return the distance to 
-    //            object
+    /*!
+     *  @brief     Ping HCxSR04 sonar and Calculate and return the distance
+     *  @param[in] N/A
+     *  @return    distanceMeters (meters)
+     */
 
     NMT_log_write(DEBUG, (char *)"> Sonar=%s", this->hw_name.c_str());
 
@@ -95,9 +91,9 @@ double HCxSR04::distance()
     /* distance = Velocity * (Time/2)
      * Speed of sound  = 342 m/s = Velocity */
     /* Calculate the distance */
-    distanceMeters = 100 * 171.5 * (this->travelTimeUsec/1000000.00);
+    distancecm = 100 * 171.5 * (this->travelTimeUsec/1000000.00);
 
     /*Exit the function */
-    NMT_log_write(DEBUG, (char *)"> distance=%.6f", distanceMeters);
-    return distanceMeters;
+    NMT_log_write(DEBUG, (char *)"> distance=%.6fcm", distancecm);
+    return distancecm;
 }

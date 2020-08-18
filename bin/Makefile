@@ -8,7 +8,8 @@
 #                                       #
 #---------------------------------------#
 BLDS = regdump \
-       RMCT
+       RMCT \
+	   ultrasonic_test
 #---------------------------------------#
 #                                       #
 #              Sources/Libs             #
@@ -28,6 +29,11 @@ RMCT_LIBS     = -lNMT_stdlib \
                 -ljsoncpp \
                 -lRMCT_lib \
                 -lL9110
+
+ultrasonic_test_LIBS = -lNMT_stdlib \
+                       -lNMT_log \
+                       -lRSXA \
+                       -lHCxSR04
 
 # -------Update output file name ---------#
 TARGET_BLDS := $(foreach BLD,$(BLDS),$(BLD_DIR)/$(BLD))
