@@ -39,6 +39,7 @@
 /--------------------------------------------------*/
 static std::map<std::string, HCxSR04*> get_sonar_sensors(RSXA hw_settings);
 static void output_sensor_data(int timeout, std::map<std::string, HCxSR04*> sonar_sensors);
+static void clean_up(std::map<std::string, HCxSR04*> sonar_sensors);
 static void print_usage(int es);
 
 /*--------------------------------------------------/
@@ -91,17 +92,21 @@ int main(int argc, char *argv[])
         /* 4. Get Sensor Objects */
         map<string, HCxSR04*> sonar_sensors = get_sonar_sensors(hw_settings);
 
+        /* Free RSXA Memory - No longer needed */
+        RSXA_free_mem(&hw_settings);
+
         /* 5. Output Sensor Data */
         output_sensor_data(timeout, sonar_sensors);
+
+        /* Clean Up */
+        clean_up(sonar_sensors);
      }
     else
     {
         cout << "Error! Failed to get RSXA Settings" << endl;
     }
 
-    /* Close logger */
-    NMT_log_finish();
-
+    /* Exit */
     return 0;
 }
 
@@ -130,6 +135,24 @@ void output_sensor_data(int timeout, map<string, HCxSR04*> sonar_sensors)
         if(!timeout) {break;}
         usleep(delay);
     }
+}
+
+static void clean_up(map<string, HCxSR04*> sonar_sensors)
+{
+    /*!
+     *  @brief     Clean Up All used memory
+     *  @param[in] sonar_sensors
+     *  @return    void
+     */
+
+    /* Lopp Over Sonar Sensors and delete object */
+    for (auto const &sonar : sonar_sensors)
+    {
+        delete(sonar.second);
+    }
+
+    /* Close Logger */
+    NMT_log_finish();
 }
 
 map<string, HCxSR04*> get_sonar_sensors(RSXA hw_settings)
