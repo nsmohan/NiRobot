@@ -36,9 +36,9 @@ class HCxSR04
     /* Prototypes */
     double distance();
 
-    /* @var distanceMeters
+    /* @var distancecm
      * Name of the Motor */
-    double distanceMeters;
+    double distancecm;
 
   private:
     /*@var hw_name

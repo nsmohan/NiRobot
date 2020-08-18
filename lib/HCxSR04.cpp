@@ -91,9 +91,9 @@ double HCxSR04::distance()
     /* distance = Velocity * (Time/2)
      * Speed of sound  = 342 m/s = Velocity */
     /* Calculate the distance */
-    distanceMeters = 100 * 171.5 * (this->travelTimeUsec/1000000.00);
+    distancecm = 100 * 171.5 * (this->travelTimeUsec/1000000.00);
 
     /*Exit the function */
-    NMT_log_write(DEBUG, (char *)"> distance=%.6f", distanceMeters);
-    return distanceMeters;
+    NMT_log_write(DEBUG, (char *)"> distance=%.6fcm", distancecm);
+    return distancecm;
 }
