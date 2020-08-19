@@ -9,7 +9,7 @@
 #---------------------------------------#
 BLDS = regdump \
        RMCT \
-	   ultrasonic_test
+       ultrasonic_test
 #---------------------------------------#
 #                                       #
 #              Sources/Libs             #
