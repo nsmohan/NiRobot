@@ -36,31 +36,32 @@ NMT_result NMT_stdlib_read_file(char *filepath, char **file_content)
     FILE *fp;
     NMT_result result = OK;
 
-    /* Get the file Size */
-    file_size = NMT_stdlib_get_file_size(filepath);
-
-    /* Store contents in a temp location */
-    char temp_file_content[file_size + 1];
-
-
-    //Main Part of Function
     if (access(filepath, F_OK) != -1)
     {
+        /* Get the file Size */
+        file_size = NMT_stdlib_get_file_size(filepath);
+
+        /* Store contents in a temp location */
+        char temp_file_content[file_size + 1];
+
+        //Main Part of Function
         fp = fopen(filepath, "r");
         index = fread(temp_file_content, sizeof(char), file_size, fp);
         temp_file_content[index] = '\0';
+
+        //Allocate Memory and store to contents to actual location
+        *file_content = (char *)malloc((sizeof(char) * strlen(temp_file_content)) + 1);
+        strcpy(*file_content, temp_file_content);
+
+        //Close the file and Exit the Function
+        fclose(fp);
     }
     else
     {
         result = NOK;
+        printf("NMT_stdlib Error!, File not found %s\n", filepath);
     }
 
-    //Allocate Memory and store to contents to actual location
-    *file_content = (char *)malloc((sizeof(char) * strlen(temp_file_content)) + 1);
-    strcpy(*file_content, temp_file_content);
-
-    //Close the file and Exit the Function
-    fclose(fp);
     return result;
 }
 
