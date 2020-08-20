@@ -306,6 +306,18 @@ class NMT_RSXA_test(unittest.TestCase):
         result = rsxa.RSXA_init(byref(RSXA_Object))
         self.assertEqual(result, NMT_result.NOK)
 
+    def test_RSXA_init_BW_Bad_File(self):
+        #Description - Verify RSXA Init fails if Settings file is incorrect
+
+        #Initialize Variables
+        RSXA_Object = RSXA()
+
+        #-- Remove RSXA Json File --#
+        os.system("rm -rf %s"%RS_PATH)
+
+        result = rsxa.RSXA_init(byref(RSXA_Object))
+        self.assertEqual(result, NMT_result.NOK)
+
     def tearDown(self):
         os.system("cp %s %s"%(self.backup_file, RS_PATH))
         os.system("rm -rf %s"%self.backup_file)
