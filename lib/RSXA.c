@@ -107,14 +107,16 @@ NMT_result RSXA_init(RSXA *RSXA_Object)
     result = NMT_stdlib_read_file(RS_SETTINGS_PATH, &file_content);
 
     if (result == OK)
+    {
         result = RSXA_parse_json(file_content, RSXA_Object);
 
-    /* Free Used Memory */
-    free(file_content);
+        /* Free Used Memory */
+        free(file_content);
 
-    /* Exit the Function */
-    printf("Parsed: %s and the result=%s \n", RS_SETTINGS_PATH, 
-                                              result_e2s[result]);
+        /* Exit the Function */
+        printf("Parsed: %s and the result=%s \n", RS_SETTINGS_PATH, 
+                                                  result_e2s[result]);
+    }
     return result;
 }
 

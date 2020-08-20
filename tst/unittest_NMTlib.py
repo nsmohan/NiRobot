@@ -27,6 +27,7 @@ from datetime import datetime
 #---------------------------------------------------#
 from lib_py import NMT_stdlib_py
 from lib_py.NMT_stdlib_py import NMT_stdlib
+from lib_py.NMT_stdlib_py import NMT_result
 from lib_py.NMT_log import logger
 
 class NMT_stdlib_test(unittest.TestCase):
@@ -128,14 +129,29 @@ class NMT_stdlib_test(unittest.TestCase):
         f.close()
 
         #Test Execution
-        NMT_stdlib.NMT_stdlib_read_file(file_name, byref(file_content))
+        result =NMT_stdlib.NMT_stdlib_read_file(file_name, byref(file_content))
         for i in range(0, len(test_string)):
             c_string += file_content[i]
 
+        self.assertEqual(result, NMT_result.OK)
         self.assertEqual(c_string, test_string)
 
         #Clean-up
         os.system("rm -rf %s"%file_name)
+
+    def test_NMT_stdlib_read_file_BW(self):
+
+        #Description - Pass incorrect file_name and ensure 
+        #              read_file returns NOK
+
+        #Initialize Variables
+        file_name    = "/tmp/NMT_read_file_unittest.test"
+        file_content = POINTER(c_char)()
+
+        #Test Execution
+        result = NMT_stdlib.NMT_stdlib_read_file(file_name, byref(file_content))
+
+        self.assertEqual(result, NMT_result.NOK)
 
     def test_NMT_stdlib_write_file(self):
         #Description - Write to a file and verify the contents
