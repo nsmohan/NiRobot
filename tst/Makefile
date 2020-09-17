@@ -4,12 +4,10 @@
  
 # --- Global Variables ------#
 CMOCK     = /usr/local
-GMOCK     = /usr/src/gmock
-GTEST     = /usr/src/gtest
 STUB_DIR  = $(TST_DIR)/stubs
 TBLD_DIR  = $(TST_DIR)/bld
 CFLAGS_T  = $(shell $(CMOCK)/bin/cmock-config --cflags)
-LDFLAGS_T = $(shell $(CMOCK)/bin/cmock-config --libs $(GMOCK) $(GTEST))
+LDFLAGS_T = $(shell $(CMOCK)/bin/cmock-config --libs $(GTEST_DIR))
 
 ACTIONS   = mkdirs
 

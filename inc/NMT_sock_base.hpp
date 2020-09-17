@@ -65,7 +65,7 @@ class NMT_sock
         
         /** @var adder_len
          *  Address Length */
-        socklen_t adder_len;
+        socklen_t adder_len = 0;
 
         /** @var sock
          *  Socket object */
