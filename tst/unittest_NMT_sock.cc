@@ -155,70 +155,67 @@ TEST_F(NMT_sock_Test_Fixture_multi, BW_PortMisMatch)
     ASSERT_EQ(out_message1, "");
 }
 
+TEST_F(NMT_sock_Test_Fixture_tcp, GW_Test_tx_to_client)
+{
+   /**
+    * @test Test that the server is able to send messages to the client
+    * @step 1. Create 3 instances of the socket object (Server and 2 Clients)
+    * @step 2. Server sends messages on socket
+    * @step 3. Client is able to recieve the message that was sent by the server
+    */
+   
+    /* Initialize Varibles */
+    std::string out_message;
+    std::string client_message1 = "Client Message1";
+    std::string client_message2 = "Client Message2";
+    std::string test_message1 = "This is a test message1";
+    std::string test_message2 = "This is a test message2";
+    int client_id1;
+    int client_id2;
+    int server_id;
+    int port = 5501;
 
-// Commenting out because test fails intermittently. This is covered by the RMCT functional
-// test as it uses TCP sockets.
-//TEST_F(NMT_sock_Test_Fixture_tcp, GW_Test_tx_to_client)
-//{
-//   /**
-//    * @test Test that the server is able to send messages to the client
-//    * @step 1. Create 3 instances of the socket object (Server and 2 Clients)
-//    * @step 2. Server sends messages on socket
-//    * @step 3. Client is able to recieve the message that was sent by the server
-//    */
-//   
-//    /* Initialize Varibles */
-//    std::string out_message;
-//    std::string client_message1 = "Client Message1";
-//    std::string client_message2 = "Client Message2";
-//    std::string test_message1 = "This is a test message1";
-//    std::string test_message2 = "This is a test message2";
-//    int client_id1;
-//    int client_id2;
-//    int server_id;
-//    int port = 5501;
-//
-//    /* Setup Client/Server Objects */
-//    NMT_sock_tcp tcp_server(port,  ip_address, SOCK_SERVER, time_out);
-//    NMT_sock_tcp tcp_client1(port, ip_address, SOCK_CLIENT);
-//    NMT_sock_tcp tcp_client2(port, ip_address, SOCK_CLIENT);
-//
-//    /* Client1 Writes to Socket */
-//    result = tcp_client1.NMT_write_socket(client_message1);
-//    ASSERT_EQ(result, OK);
-//
-//    /* Read from Socket */
-//    tie(result, out_message, client_id1) = tcp_server.NMT_read_socket();
-//    ASSERT_EQ(result, OK);
-//    ASSERT_EQ(out_message, client_message1);
-//
-//    /* Client2 Writes to Socket */
-//    result = tcp_client2.NMT_write_socket(client_message2);
-//    ASSERT_EQ(result, OK);
-//
-//    /* Read from Socket */
-//    tie(result, out_message, client_id2) = tcp_server.NMT_read_socket();
-//    ASSERT_EQ(result, OK);
-//    ASSERT_EQ(out_message, client_message2);
-//
-//    /* Write to Client 1 */
-//    result = tcp_server.NMT_write_socket(test_message1, client_id1);
-//    ASSERT_EQ(result, OK);
-//
-//    /* Write to Client 2 */
-//    result = tcp_server.NMT_write_socket(test_message2, client_id2);
-//    ASSERT_EQ(result, OK);
-//
-//    /* Read on First Client */
-//    tie(result, out_message, server_id) = tcp_client1.NMT_read_socket();
-//    ASSERT_EQ(result, OK);
-//    ASSERT_EQ(out_message, test_message1);
-//
-//    /* Read on Second Client */
-//    tie(result, out_message, server_id) = tcp_client2.NMT_read_socket();
-//    ASSERT_EQ(result, OK);
-//    ASSERT_EQ(out_message, test_message2);
-//}
+    /* Setup Client/Server Objects */
+    NMT_sock_tcp tcp_server(port,  ip_address, SOCK_SERVER, time_out);
+    NMT_sock_tcp tcp_client1(port, ip_address, SOCK_CLIENT);
+    NMT_sock_tcp tcp_client2(port, ip_address, SOCK_CLIENT);
+
+    /* Client1 Writes to Socket */
+    result = tcp_client1.NMT_write_socket(client_message1);
+    ASSERT_EQ(result, OK);
+
+    /* Read from Socket */
+    tie(result, out_message, client_id1) = tcp_server.NMT_read_socket();
+    ASSERT_EQ(result, OK);
+    ASSERT_EQ(out_message, client_message1);
+
+    /* Client2 Writes to Socket */
+    result = tcp_client2.NMT_write_socket(client_message2);
+    ASSERT_EQ(result, OK);
+
+    /* Read from Socket */
+    tie(result, out_message, client_id2) = tcp_server.NMT_read_socket();
+    ASSERT_EQ(result, OK);
+    ASSERT_EQ(out_message, client_message2);
+
+    /* Write to Client 1 */
+    result = tcp_server.NMT_write_socket(test_message1, client_id1);
+    ASSERT_EQ(result, OK);
+
+    /* Write to Client 2 */
+    result = tcp_server.NMT_write_socket(test_message2, client_id2);
+    ASSERT_EQ(result, OK);
+
+    /* Read on First Client */
+    tie(result, out_message, server_id) = tcp_client1.NMT_read_socket();
+    ASSERT_EQ(result, OK);
+    ASSERT_EQ(out_message, test_message1);
+
+    /* Read on Second Client */
+    tie(result, out_message, server_id) = tcp_client2.NMT_read_socket();
+    ASSERT_EQ(result, OK);
+    ASSERT_EQ(out_message, test_message2);
+}
 
 int main(int argc, char **argv) 
 {
