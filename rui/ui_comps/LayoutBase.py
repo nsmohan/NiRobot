@@ -18,22 +18,13 @@ import tkinter.ttk as ttk
 #---------------------------------------------------#
 #                   Constants                       #
 #---------------------------------------------------#
-WIDTH  = "1600"
-HEIGHT = "900"
-MAX_WIDTH = 1580
-MAX_HEIGHT = 880
-HEADER_HEIGHT = 200
-BODY_HEIGHT = 600
-MIN_X = 10
-MIN_Y = 10
 
 #---------------------------------------------------#
 #                 Start of Program                  #
 #---------------------------------------------------#
-
 """ 
 "  @class  LayoutBase
-"          Skeleon Object for Layout
+"          Skeleton Object for Layout
 """
 class LayoutBase(object):
 
@@ -48,7 +39,7 @@ class LayoutBase(object):
         self.nibot_ap = nibot_ap
 
         # -- Initialize Variables --#
-        self.style = ttk.Style()
+        self.style             = ttk.Style()
         self.std_button_width  = 150
         self.std_button_height = 30
         self.L_button_width    = 300
@@ -150,3 +141,4 @@ class LayoutBase(object):
         """
 
         tk.messagebox.showerror(title="NiBot", message=error)
+

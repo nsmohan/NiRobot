@@ -21,6 +21,7 @@ import json
 #                   Local Imports                   #
 #---------------------------------------------------#
 from ui_comps.LayoutBase import *
+from lib.global_var import *
 
 """ 
 "  @class  ConnectBox
