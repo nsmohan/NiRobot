@@ -30,6 +30,7 @@ from ui_comps.CameraControlBox import CameraControlBox
 from ui_comps.DriveMotorControlBox import DriveMotorControlBox 
 from lib.gui_application import GUI_Application 
 from lib.global_var import *
+from lib import global_var
 
 #---------------------------------------------------#
 #                   Constants                       #
@@ -38,8 +39,6 @@ WINDOW_TITLE = "NiBot"
 MY_DIR = os.path.join(os.getcwd().split("NiRobot")[0], "NiRobot")
 RUI_DIR = os.path.join(MY_DIR, "rui")
 IMG_DIR = os.path.join(RUI_DIR, "imgs")
-MIN_FRAME = 20
-
 
 class LayoutHeader(LayoutBase):
 
@@ -76,7 +75,8 @@ class LayoutBody(LayoutBase):
         self.bodytab.add(self.settings_tab, text="Settings")
 
     def _layout(self):
-        self.bodytab.place(x=0, y=0, height=BODY_HEIGHT, width=MAX_WIDTH - 10)
+
+        self.bodytab.place(x=0, y=0, height=BODY_HEIGHT, width=global_var.MaxWidth - 10)
         self.cam_ctrl.camctrl_gb.place(x=MIN_X, y=MIN_Y)
         self.rsxa_settings_box.place(x=MIN_X, y=MIN_Y)
         self.drive_ctrl.drive_ctrl_gb.place(x=MIN_X, y=MIN_Y + 200)
@@ -94,7 +94,6 @@ class GUIController(LayoutBase):
 
     def _class_comps_init(self):
         self.window.configure(bg=self.std_bg_color)
-        self._update_screen_resolution()
         self.header = LayoutHeader(self.header_box, self.nibot_ap)
         self.body = LayoutBody(self.body_box, self.nibot_ap)
         zope.event.subscribers.append(self.__handle_button_states)
@@ -102,16 +101,18 @@ class GUIController(LayoutBase):
         self.window.protocol("WM_DELETE_WINDOW", self.__handle_exit)
 
     def _frames(self):
-        self.border_box = tk.Frame(self.window, height=MAX_HEIGHT, width=MAX_WIDTH, bg=self.std_bg_color)
-        self.header_box = tk.Frame(self.border_box, height=HEADER_HEIGHT, width = MAX_WIDTH, bg=self.std_bg_color)
-        self.body_box = tk.Frame(self.border_box, height=BODY_HEIGHT, width = MAX_WIDTH, bg=self.std_bg_color)
+
+        self.border_box = tk.Frame(self.window, height=global_var.MaxHeight, width=global_var.MaxWidth, bg=self.std_bg_color)
+        self.header_box = tk.Frame(self.border_box, height=HEADER_HEIGHT, width = global_var.MaxWidth, bg=self.std_bg_color)
+        self.body_box = tk.Frame(self.border_box, height=BODY_HEIGHT, width = global_var.MaxWidth, bg=self.std_bg_color)
 
     def _layout(self):
-        self.border_box.place(x=(int(HEIGHT)-MAX_HEIGHT)/2, y=(int(WIDTH)-MAX_WIDTH)/2)
+        self.border_box.place(x=(int(global_var.ScreenHeight)-global_var.MaxHeight)/2,
+                              y=(int(global_var.ScreenWidth)-global_var.MaxWidth)/2)
         self.header_box.place(x=0, y=0)
         self.body_box.place(x=0, y=HEADER_HEIGHT + 1)
         self.window.title(WINDOW_TITLE)
-        self.window.geometry(f"{WIDTH}x{HEIGHT}")
+        self.window.geometry(f"{global_var.ScreenWidth}x{global_var.ScreenHeight}")
 
     def __handle_button_states(self, event):
 
@@ -143,5 +144,6 @@ class GUIController(LayoutBase):
 if __name__ == '__main__':
     window = tk.Tk()
     nibot_ap = GUI_Application()
+    update_screen_resolution_vars(window)
     GUIController(window, nibot_ap)
     window.mainloop()
