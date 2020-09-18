@@ -29,6 +29,7 @@ from ui_comps.ConnectBox import ConnectBox
 from ui_comps.CameraControlBox import CameraControlBox 
 from ui_comps.DriveMotorControlBox import DriveMotorControlBox 
 from lib.gui_application import GUI_Application 
+from lib.global_var import *
 
 #---------------------------------------------------#
 #                   Constants                       #
@@ -37,6 +38,7 @@ WINDOW_TITLE = "NiBot"
 MY_DIR = os.path.join(os.getcwd().split("NiRobot")[0], "NiRobot")
 RUI_DIR = os.path.join(MY_DIR, "rui")
 IMG_DIR = os.path.join(RUI_DIR, "imgs")
+MIN_FRAME = 20
 
 
 class LayoutHeader(LayoutBase):
@@ -52,7 +54,6 @@ class LayoutHeader(LayoutBase):
 
     def _layout(self):
         self.logo.place(x=0, y=0)
-
 
 class LayoutBody(LayoutBase):
 
@@ -93,6 +94,7 @@ class GUIController(LayoutBase):
 
     def _class_comps_init(self):
         self.window.configure(bg=self.std_bg_color)
+        self._update_screen_resolution()
         self.header = LayoutHeader(self.header_box, self.nibot_ap)
         self.body = LayoutBody(self.body_box, self.nibot_ap)
         zope.event.subscribers.append(self.__handle_button_states)
@@ -100,8 +102,8 @@ class GUIController(LayoutBase):
 
     def _frames(self):
         self.border_box = tk.Frame(self.window, height=MAX_HEIGHT, width=MAX_WIDTH, bg=self.std_bg_color)
-        self.header_box = tk.Frame(self.border_box, height = HEADER_HEIGHT, width = MAX_WIDTH, bg=self.std_bg_color)
-        self.body_box = tk.Frame(self.border_box, height = BODY_HEIGHT, width = MAX_WIDTH, bg=self.std_bg_color)
+        self.header_box = tk.Frame(self.border_box, height=HEADER_HEIGHT, width = MAX_WIDTH, bg=self.std_bg_color)
+        self.body_box = tk.Frame(self.border_box, height=BODY_HEIGHT, width = MAX_WIDTH, bg=self.std_bg_color)
 
     def _layout(self):
         self.border_box.place(x=(int(HEIGHT)-MAX_HEIGHT)/2, y=(int(WIDTH)-MAX_WIDTH)/2)
@@ -116,6 +118,18 @@ class GUIController(LayoutBase):
             self.body.enable_body_tabs()
         elif event == "disconnected":
             self.body.disable_body_tabs()
+
+    def _update_screen_resolution(self):
+        """ 
+        "  @brief Get Current Screen Resolutions
+        """
+
+        print("I am here")
+
+        WIDTH      = self.window.winfo_screenwidth() 
+        HEIGHT     = self.window.winfo_screenheight()
+        MAX_HEIGHT = HEIGHT - MIN_FRAME
+        MAX_WIDTH  = WIDTH - MIN_FRAME
 
 if __name__ == '__main__':
     window = tk.Tk()

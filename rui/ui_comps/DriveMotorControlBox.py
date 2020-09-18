@@ -20,6 +20,7 @@ import tkinter.ttk as ttk
 #---------------------------------------------------#
 from ui_comps.handle_motor_rq import MotorControlHandle
 from ui_comps.LayoutBase import *
+from lib.global_var import *
 
 """ 
 "  @class  DriveMotorControlBox

@@ -22,6 +22,7 @@ import zope.event
 #                   Local Imports                   #
 #---------------------------------------------------#
 from ui_comps.LayoutBase import *
+from lib.global_var import *
 
 #---------------------------------------------------#
 #                   Constants                       #
