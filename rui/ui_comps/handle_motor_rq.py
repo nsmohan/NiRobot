@@ -90,15 +90,19 @@ class MotorControlHandle(LayoutBase):
         #-- Perform Action --#
         self.__move_motor(action)
 
-    def drive_left(self):
+    def drive_left(self, speed=None):
 
         """ 
         "  @brief Drive the Robot Left
         """
 
+        # -- Check Speed --#
+        if not speed:
+            speed = DEFAULT_SPEED
+
         #-- Construct Actions --#
-        action = [("LEFT_DRV_MTR", "REVERSE", -1, DEFAULT_SPEED),
-                 ("RIGHT_DRV_MTR", "FORWARD", -1, DEFAULT_SPEED)]
+        action = [("LEFT_DRV_MTR", "REVERSE", -1, speed),
+                 ("RIGHT_DRV_MTR", "FORWARD", -1, speed)]
 
         #-- Perform Action --#
         self.__move_motor(action)
@@ -110,9 +114,13 @@ class MotorControlHandle(LayoutBase):
         "  @brief Drive the Robot Right
         """
 
+        # -- Check Speed --#
+        if not speed:
+            speed = DEFAULT_SPEED
+
         #-- Construct Actions --#
-        action = [("LEFT_DRV_MTR", "FORWARD", -1, DEFAULT_SPEED),
-                 ("RIGHT_DRV_MTR", "REVERSE", -1, DEFAULT_SPEED)]
+        action = [("LEFT_DRV_MTR", "FORWARD", -1, speed),
+                 ("RIGHT_DRV_MTR", "REVERSE", -1, speed)]
 
         #-- Perform Action --#
         self.__move_motor(action)

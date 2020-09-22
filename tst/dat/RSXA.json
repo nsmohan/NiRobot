@@ -1,6 +1,9 @@
 {
     "_comment" : "Robot Operation Settings",
     "log_dir"  : "/var/log/NiBot",
+    "settings" : {
+                   "camera_motor_sensitivity": 10
+                 },
     "procs"    : [{ 
                     "proc_name" : "RMCT",
                     "server_ip" : "127.0.0.1",
