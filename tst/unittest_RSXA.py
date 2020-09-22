@@ -47,6 +47,7 @@ class NMT_RSXA_test(unittest.TestCase):
         test_data = {"log_dir": "/test/test_file",
                      "procs"  : [{"proc_name": "UnitTest", "server_ip": "224.1.1.1",
                                   "server_p": 1000, "client_ip": "224.1.2.3", "client_p": 2000}],
+                     "settings" : {"camera_motor_sensitivity": 10},
                      "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False, 
                              "hw_interface":[{"pin_name": "p1", "pin_no": 1}, 
                                              {"pin_name": "p2", "pin_no": 2}]},
@@ -88,6 +89,7 @@ class NMT_RSXA_test(unittest.TestCase):
         test_data = {"log_dirs": "/test/test_file",
                      "procs"  : [{"proc_name": "UnitTest", "server_ip": "224.1.1.1",
                                   "server_p": 1000, "client_ip": "224.1.2.3", "client_p": 2000}],
+                     "settings" : {"camera_motor_sensitivity": 10},
                      "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False, 
                              "hw_interface":[{"pin_name": "p1", "pin_no": 1}]}]}
 
@@ -107,6 +109,7 @@ class NMT_RSXA_test(unittest.TestCase):
         test_data = {"log_dir": "/test/test_file",
                      "procs"  : [{"proc_name": "UnitTest", "server_ip": "224.1.1.1",
                                   "server_p": 1000, "client_ip": "224.1.2.3", "client_p": 2000}],
+                     "settings" : {"camera_motor_sensitivity": 10},
                      "hw": [{"hw_names": "UnitTest_HW1", "hw_sim_mode": False, 
                              "hw_interface":[{"pin_name": "p1", "pin_no": 1}]}]} 
 
@@ -126,6 +129,7 @@ class NMT_RSXA_test(unittest.TestCase):
         test_data = {"log_dir": "/test/test_file",
                      "procs"  : [{"proc_name": "UnitTest", "server_ip": "224.1.1.1",
                                   "server_p": 1000, "client_ip": "224.1.2.3", "client_p": 2000}],
+                     "settings" : {"camera_motor_sensitivity": 10},
                      "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_modes": False, 
                              "hw_interface":[{"pin_name": "p1", "pin_no": 1}]}]} 
 
@@ -145,6 +149,7 @@ class NMT_RSXA_test(unittest.TestCase):
         test_data = {"log_dir": "/test/test_file",
                      "procs"  : [{"proc_name": "UnitTest", "server_ip": "224.1.1.1",
                                   "server_p": 1000, "client_ip": "224.1.2.3", "client_p": 2000}],
+                     "settings" : {"camera_motor_sensitivity": 10},
                      "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False, 
                              "hw_interfaces":[{"pin_name": "p1", "pin_no": 1}]}]} 
 
@@ -164,6 +169,7 @@ class NMT_RSXA_test(unittest.TestCase):
         test_data = {"log_dir": "/test/test_file",
                      "procs"  : [{"proc_name": "UnitTest", "server_ip": "224.1.1.1",
                                   "server_p": 1000, "client_ip": "224.1.2.3", "client_p": 2000}],
+                     "settings" : {"camera_motor_sensitivity": 10},
                      "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False, 
                              "hw_interface":[{"pin_names": "p1", "pin_no": 1}]}]} 
 
@@ -183,6 +189,7 @@ class NMT_RSXA_test(unittest.TestCase):
         test_data = {"log_dir": "/test/test_file",
                      "procs"  : [{"proc_name": "UnitTest", "server_ip": "224.1.1.1",
                                   "server_p": 1000, "client_ip": "224.1.2.3", "client_p": 2000}],
+                     "settings" : {"camera_motor_sensitivity": 10},
                      "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False, 
                              "hw_interface":[{"pin_name": "p1", "pin_nos": 1}]}]} 
 
@@ -202,6 +209,7 @@ class NMT_RSXA_test(unittest.TestCase):
         test_data = {"log_dir": "/test/test_file",
                      "procss"  : [{"proc_name": "UnitTest", "server_ip": "224.1.1.1",
                                   "server_p": 1000, "client_ip": "224.1.2.3", "client_p": 2000}],
+                     "settings" : {"camera_motor_sensitivity": 10},
                      "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False, 
                              "hw_interface":[{"pin_name": "p1", "pin_nos": 1}]}]} 
 
@@ -221,6 +229,7 @@ class NMT_RSXA_test(unittest.TestCase):
         test_data = {"log_dir": "/test/test_file",
                      "procs"  : [{"proc_names": "UnitTest", "server_ip": "224.1.1.1",
                                   "server_p": 1000, "client_ip": "224.1.2.3", "client_p": 2000}],
+                     "settings" : {"camera_motor_sensitivity": 10},
                      "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False, 
                              "hw_interface":[{"pin_name": "p1", "pin_nos": 1}]}]} 
 
@@ -240,6 +249,7 @@ class NMT_RSXA_test(unittest.TestCase):
         test_data = {"log_dir": "/test/test_file",
                      "procs"  : [{"proc_name": "UnitTest", "server_ips": "224.1.1.1",
                                   "server_p": 1000, "client_ip": "224.1.2.3", "client_p": 2000}],
+                     "settings" : {"camera_motor_sensitivity": 10},
                      "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False, 
                              "hw_interface":[{"pin_name": "p1", "pin_nos": 1}]}]} 
 
@@ -259,6 +269,7 @@ class NMT_RSXA_test(unittest.TestCase):
         test_data = {"log_dir": "/test/test_file",
                      "procs"  : [{"proc_name": "UnitTest", "server_ip": "224.1.1.1",
                                   "server_ps": 1000, "client_ip": "224.1.2.3", "client_p": 2000}],
+                     "settings" : {"camera_motor_sensitivity": 10},
                      "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False, 
                              "hw_interface":[{"pin_name": "p1", "pin_nos": 1}]}]} 
 
@@ -278,6 +289,7 @@ class NMT_RSXA_test(unittest.TestCase):
         test_data = {"log_dir": "/test/test_file",
                      "procs"  : [{"proc_name": "UnitTest", "server_ip": "224.1.1.1",
                                   "server_p": 1000, "client_ips": "224.1.2.3", "client_p": 2000}],
+                     "settings" : {"camera_motor_sensitivity": 10},
                      "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False, 
                              "hw_interface":[{"pin_name": "p1", "pin_nos": 1}]}]} 
 
@@ -297,6 +309,7 @@ class NMT_RSXA_test(unittest.TestCase):
         test_data = {"log_dir": "/test/test_file",
                      "procs"  : [{"proc_name": "UnitTest", "server_ip": "224.1.1.1",
                                   "server_p": 1000, "client_ip": "224.1.2.3", "client_ps": 2000}],
+                     "settings" : {"camera_motor_sensitivity": 10},
                      "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False, 
                              "hw_interface":[{"pin_name": "p1", "pin_nos": 1}]}]} 
 

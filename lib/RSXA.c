@@ -84,9 +84,19 @@ const char *PIN_NAME    = "pin_name";
  *  pin_no key */
 const char *PIN_NO      = "pin_no";
 
+/**@var CAMERA_MOTOR_SENSITIVITY
+ *  camera_motor_sensitivity key */
+const char *CAMERA_MOTOR_SENSITIVITY = "camera_motor_sensitivity";
+
+/**@var SETTINGS
+ *  general_settings key */
+const char *SETTINGS = "settings";
+
 /*------------------Prototypes----------------------*/
 static NMT_result RSXA_parse_json(char *data_to_parse, RSXA *RSXA_Object);
 static NMT_result RSXA_find_key(json_object *in_obj, const char *key, json_object **out_obj);
+static NMT_result fill_rsxa_hw(RSXA *RSXA_Object, json_object *jobj_hw);
+static NMT_result fill_rsxa_procs(RSXA *RSXA_Object, json_object *jobj_procs);
 
 NMT_result RSXA_init(RSXA *RSXA_Object)
 {
@@ -158,12 +168,9 @@ static NMT_result RSXA_parse_json(char *data_to_parse, RSXA *RSXA_Object)
     /* Create json-c objects that will be needed */
     struct json_object *rsxa_root_obj = {0};
     struct json_object *jobj_hw = {0};
-    struct json_object *jobj_hw_v = {0};
-    struct json_object *jobj_hw_gpio = {0};
-    struct json_object *jobj_hw_gpio_v = {0};
     struct json_object *jobj_procs = {0};
-    struct json_object *jobj_procs_v = {0};
     struct json_object *jvalues = {0};
+    struct json_object *jobj_settings = {0};
     
     /* Parse the file */
     rsxa_root_obj = json_tokener_parse(data_to_parse);
@@ -173,6 +180,15 @@ static NMT_result RSXA_parse_json(char *data_to_parse, RSXA *RSXA_Object)
 
     /* Copy log directory to struct */
     if (result == OK) {strcpy(RSXA_Object->log_dir, json_object_get_string(jvalues));}
+
+    /* Get the General Settings Object */
+    if (result == OK) {result = RSXA_find_key(rsxa_root_obj, SETTINGS, &jobj_settings);}
+
+    /* Find Camera Motor Settings */
+    if (result == OK) {result = RSXA_find_key(jobj_settings, CAMERA_MOTOR_SENSITIVITY, &jvalues);}
+
+    /* Copy camera motor sensitivity value */
+    if (result == OK) {RSXA_Object->general_settings.camera_motor_sensitivity = json_object_get_int(jvalues);}
 
     /* Get the procs object */
     if (result == OK) {result = RSXA_find_key(rsxa_root_obj, PROCS, &jobj_procs);}
@@ -186,96 +202,138 @@ static NMT_result RSXA_parse_json(char *data_to_parse, RSXA *RSXA_Object)
     /* Get number of hw elements */
     if (result == OK) {RSXA_Object->array_len_hw = json_object_array_length(jobj_hw);}
 
+    /* Fill Procs */
     if ((result == OK) && (RSXA_Object->array_len_procs > 0))
     {
-        /* Allocate Memory for RSXA_procs */
-        RSXA_Object->procs = (RSXA_procs *)malloc(sizeof(RSXA_procs) * RSXA_Object->array_len_procs);
-
-        for (int i = 0; i < RSXA_Object->array_len_procs; i++)
-        {
-            jobj_procs_v = json_object_array_get_idx(jobj_procs, i);
-
-            /* Get and populate the hardware name */
-            result = RSXA_find_key(jobj_procs_v, PROC_NAME, &jvalues);
-            if (result == OK) {strcpy(RSXA_Object->procs[i].proc_name, json_object_get_string(jvalues));}
-
-            /* Get and server ip address*/
-            result = RSXA_find_key(jobj_procs_v, SERVER_IP, &jvalues);
-            if (result == OK) {strcpy(RSXA_Object->procs[i].server_ip, json_object_get_string(jvalues));}
-
-            /* Get and populate the hardware name */
-            result = RSXA_find_key(jobj_procs_v, SERVER_P, &jvalues);
-            if (result == OK) {RSXA_Object->procs[i].server_p  = json_object_get_int(jvalues);}
-
-            /* Get and populate the hardware name */
-            result = RSXA_find_key(jobj_procs_v, CLIENT_IP, &jvalues);
-            if (result == OK) {strcpy(RSXA_Object->procs[i].client_ip, json_object_get_string(jvalues));}
-
-            /* Get and populate the hardware name */
-            result = RSXA_find_key(jobj_procs_v, CLIENT_P, &jvalues);
-            if (result == OK) {RSXA_Object->procs[i].client_p  = json_object_get_int(jvalues);}
-        }
+        result = fill_rsxa_procs(RSXA_Object, jobj_procs);
     }
 
+    /* Fill HW */
     if ((result == OK) && (RSXA_Object->array_len_hw > 0))
     {
-        /* Allocate Memory for RSXA_hw */
-        RSXA_Object->hw = (RSXA_hw *)malloc(sizeof(RSXA_hw) * RSXA_Object->array_len_hw);
-
-        for (int i = 0; i < RSXA_Object->array_len_hw; i++)
-        {
-            jobj_hw_v = json_object_array_get_idx(jobj_hw, i);
-
-            /* Get and populate hw_name */
-            result = RSXA_find_key(jobj_hw_v, HW_NAME, &jvalues);
-
-            /* Copy hardware name to struct */
-            if (result == OK) {strcpy(RSXA_Object->hw[i].hw_name, json_object_get_string(jvalues));}
-
-            /* Get and populate hw_sim_mode */
-            if (result == OK) {result = RSXA_find_key(jobj_hw_v, HW_SIM_MODE, &jvalues);}
-
-            /* Copy the sim_mode to struct */
-            if (result == OK) {RSXA_Object->hw[i].hw_sim_mode = json_object_get_boolean(jvalues);}
-
-            /* Get hw_gpio elements */
-            if (result == OK) {result = RSXA_find_key(jobj_hw_v, HW_GPIO_PIN, &jobj_hw_gpio);}
-
-            /* Get number of hw_gpio elements */
-            if (result == OK) {RSXA_Object->hw[i].array_len_hw_int = json_object_array_length(jobj_hw_gpio);}
-
-            /* Proceed if array_len_hw_int has elements */
-            if ((result == OK) && (RSXA_Object->hw[i].array_len_hw_int > 0))
-            {
-                /* Allocate Memory for RSXA_pins struct */
-                RSXA_Object->hw[i].hw_interface = 
-                    (RSXA_pins *)malloc(sizeof(RSXA_pins) * RSXA_Object->hw[i].array_len_hw_int);
-
-                for (int j = 0; j < RSXA_Object->hw[i].array_len_hw_int; j++)
-                {
-                    jobj_hw_gpio_v = json_object_array_get_idx(jobj_hw_gpio, j);
-
-                    /* Get the pin number */
-                    result = RSXA_find_key(jobj_hw_gpio_v, PIN_NO, &jvalues);
-
-                    /* Copy Pin number */
-                    if (result == OK)
-                        RSXA_Object->hw[i].hw_interface[j].pin_no = json_object_get_int(jvalues);
-
-                    if (result == OK) {result = RSXA_find_key(jobj_hw_gpio_v, PIN_NAME, &jvalues);} 
-
-                    /* Get the pin name */
-                    if (result == OK) 
-                        strcpy(RSXA_Object->hw[i].hw_interface[j].pin_name, json_object_get_string(jvalues));
-                   }
-                }
-             }
+        result = fill_rsxa_hw(RSXA_Object, jobj_hw);
     }
 
     /* Free Memory */
     json_object_put(rsxa_root_obj);
 
     /* Exit the function */
+    return result;
+}
+
+static NMT_result fill_rsxa_hw(RSXA *RSXA_Object, json_object *jobj_hw)
+{
+    /*!
+     *  @brief     Fill RSXA_hw Structure
+     *  @param[in] RSXA_Object, jobj_hw
+     *  @return    OK/!NOK
+     */
+
+    /* Initialize Variables */
+    NMT_result result = OK;
+    struct json_object *jobj_hw_v = {0};
+    struct json_object *jvalues = {0};
+    struct json_object *jobj_hw_gpio = {0};
+    struct json_object *jobj_hw_gpio_v = {0};
+
+    /* Allocate Memory for RSXA_hw */
+    RSXA_Object->hw = (RSXA_hw *)malloc(sizeof(RSXA_hw) * RSXA_Object->array_len_hw);
+
+    for (int i = 0; i < RSXA_Object->array_len_hw; i++)
+    {
+        jobj_hw_v = json_object_array_get_idx(jobj_hw, i);
+
+        /* Get and populate hw_name */
+        result = RSXA_find_key(jobj_hw_v, HW_NAME, &jvalues);
+
+        /* Copy hardware name to struct */
+        if (result == OK) {strcpy(RSXA_Object->hw[i].hw_name, json_object_get_string(jvalues));}
+
+        /* Get and populate hw_sim_mode */
+        if (result == OK) {result = RSXA_find_key(jobj_hw_v, HW_SIM_MODE, &jvalues);}
+
+        /* Copy the sim_mode to struct */
+        if (result == OK) {RSXA_Object->hw[i].hw_sim_mode = json_object_get_boolean(jvalues);}
+
+        /* Get hw_gpio elements */
+        if (result == OK) {result = RSXA_find_key(jobj_hw_v, HW_GPIO_PIN, &jobj_hw_gpio);}
+
+        /* Get number of hw_gpio elements */
+        if (result == OK) {RSXA_Object->hw[i].array_len_hw_int = json_object_array_length(jobj_hw_gpio);}
+
+        /* Proceed if array_len_hw_int has elements */
+        if ((result == OK) && (RSXA_Object->hw[i].array_len_hw_int > 0))
+        {
+            /* Allocate Memory for RSXA_pins struct */
+            RSXA_Object->hw[i].hw_interface = 
+                (RSXA_pins *)malloc(sizeof(RSXA_pins) * RSXA_Object->hw[i].array_len_hw_int);
+
+            for (int j = 0; j < RSXA_Object->hw[i].array_len_hw_int; j++)
+            {
+                jobj_hw_gpio_v = json_object_array_get_idx(jobj_hw_gpio, j);
+
+                /* Get the pin number */
+                result = RSXA_find_key(jobj_hw_gpio_v, PIN_NO, &jvalues);
+
+                /* Copy Pin number */
+                if (result == OK)
+                    RSXA_Object->hw[i].hw_interface[j].pin_no = json_object_get_int(jvalues);
+
+                if (result == OK) {result = RSXA_find_key(jobj_hw_gpio_v, PIN_NAME, &jvalues);} 
+
+                /* Get the pin name */
+                if (result == OK) 
+                    strcpy(RSXA_Object->hw[i].hw_interface[j].pin_name, json_object_get_string(jvalues));
+               }
+            }
+         }
+
+    /* Exit the Function */
+    return result;
+}
+
+static NMT_result fill_rsxa_procs(RSXA *RSXA_Object, json_object *jobj_procs)
+{
+    /*!
+     *  @brief     Fill RSXA Procs Structure
+     *  @param[in] RSXA_Object, jobj_procs
+     *  @return    OK/!OK
+     */
+
+    /* Initialize Variables */
+    NMT_result result = OK;
+    struct json_object *jobj_procs_v = {0};
+    struct json_object *jvalues = {0};
+
+    /* Allocate Memory for RSXA_procs */
+    RSXA_Object->procs = (RSXA_procs *)malloc(sizeof(RSXA_procs) * RSXA_Object->array_len_procs);
+
+    for (int i = 0; i < RSXA_Object->array_len_procs; i++)
+    {
+        jobj_procs_v = json_object_array_get_idx(jobj_procs, i);
+
+        /* Get and populate the hardware name */
+        result = RSXA_find_key(jobj_procs_v, PROC_NAME, &jvalues);
+        if (result == OK) {strcpy(RSXA_Object->procs[i].proc_name, json_object_get_string(jvalues));}
+
+        /* Get and server ip address*/
+        result = RSXA_find_key(jobj_procs_v, SERVER_IP, &jvalues);
+        if (result == OK) {strcpy(RSXA_Object->procs[i].server_ip, json_object_get_string(jvalues));}
+
+        /* Get and populate the hardware name */
+        result = RSXA_find_key(jobj_procs_v, SERVER_P, &jvalues);
+        if (result == OK) {RSXA_Object->procs[i].server_p  = json_object_get_int(jvalues);}
+
+        /* Get and populate the hardware name */
+        result = RSXA_find_key(jobj_procs_v, CLIENT_IP, &jvalues);
+        if (result == OK) {strcpy(RSXA_Object->procs[i].client_ip, json_object_get_string(jvalues));}
+
+        /* Get and populate the hardware name */
+        result = RSXA_find_key(jobj_procs_v, CLIENT_P, &jvalues);
+        if (result == OK) {RSXA_Object->procs[i].client_p  = json_object_get_int(jvalues);}
+    }
+
+    /* Exit the Function */
     return result;
 }
 

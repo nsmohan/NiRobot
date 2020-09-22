@@ -66,6 +66,10 @@ typedef struct RMDR_hw_settings
     /** @var rmct_hw_settings
      *  RMCT Task Settings */
     RSXA_procs rmct_task_config;
+
+    /** @var camera_motor_sensitivity
+     *  Default amount camera should mvoe */
+    int camera_motor_sensitivity;
 } RMCT_hw_settings;
 
 /*--------------------------------------------------/
@@ -133,7 +137,8 @@ int main(int argc, char *argv[])
         RobotMotorController rmct_obj(rmct_hw_settings.pca9685_hw_config,
                                       rmct_hw_settings.cam_motor_hw_config,
                                       rmct_hw_settings.left_motor_hw_config,
-                                      rmct_hw_settings.right_motor_hw_config);
+                                      rmct_hw_settings.right_motor_hw_config,
+                                      rmct_hw_settings.camera_motor_sensitivity);
 
         /** Free RSXA Memory (Everything is initialized) */
         if (result == OK) {RSXA_free_mem(&hw_settings);}
@@ -265,6 +270,9 @@ static NMT_result rmct_get_robot_settings(RSXA &hw_settings, RMCT_hw_settings &r
     /** Main Operation */
     if (result == OK)
     {
+        /* Camera Motor Sensitivity */
+        rmct_hw_settings.camera_motor_sensitivity = hw_settings.general_settings.camera_motor_sensitivity;
+
         for (int i = 0; i < hw_settings.array_len_hw; i++)
         {
             if (strcmp(hw_settings.hw[i].hw_name, PCA9685_HW_NAME) == 0)

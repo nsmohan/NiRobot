@@ -96,7 +96,7 @@ TEST_F(RMCT_lib_Test_Fixture, VerifyConstructorGW)
     EXPECT_CALL(pca9685mock, PCA9685_init(_)).Times(1);
 
     /* Perform Action */
-    RobotMotorController  obj(pca9685_config, cam_config, left_motor_config, right_motor_config);   
+    RobotMotorController  obj(pca9685_config, cam_config, left_motor_config, right_motor_config, angle_sensitivity);   
 }
 
 TEST_F(RMCT_lib_Test_Fixture, VerifyConstructorBW1)
@@ -116,7 +116,7 @@ TEST_F(RMCT_lib_Test_Fixture, VerifyConstructorBW1)
     /* Perform Action */
     try
     {
-        RobotMotorController  obj(pca9685_config, cam_config, left_motor_config, right_motor_config);   
+        RobotMotorController  obj(pca9685_config, cam_config, left_motor_config, right_motor_config, angle_sensitivity);   
     }
     catch (std::exception &e)
     {
@@ -141,7 +141,7 @@ TEST_F(RMCT_lib_Test_Fixture, VerifyConstructorBW2)
     /* Perform Action */
     try
     {
-        RobotMotorController  obj(pca9685_config, cam_config, left_motor_config, right_motor_config);   
+        RobotMotorController  obj(pca9685_config, cam_config, left_motor_config, right_motor_config, angle_sensitivity);   
     }
     catch (std::exception &e)
     {
@@ -170,7 +170,7 @@ TEST_F(RMCT_lib_Test_Fixture, VerifyMoveCameraGW1)
     EXPECT_CALL(ld27mgmock, LD27MG_move_motor(CAM_VERT_MTR, angle_to_move)).Times(1);
 
     /* Initialize */
-    RobotMotorController  obj(pca9685_config, cam_config, left_motor_config, right_motor_config);   
+    RobotMotorController  obj(pca9685_config, cam_config, left_motor_config, right_motor_config, angle_sensitivity);   
 
     /* Perform Action */
     obj.process_motor_action("CAMERA", "UP", 0, 0);
@@ -197,7 +197,7 @@ TEST_F(RMCT_lib_Test_Fixture, VerifyMoveCameraGW2)
     EXPECT_CALL(ld27mgmock, LD27MG_move_motor(CAM_VERT_MTR, angle_to_move)).Times(1);
 
     /* Initialize */
-    RobotMotorController  obj(pca9685_config, cam_config, left_motor_config, right_motor_config);   
+    RobotMotorController  obj(pca9685_config, cam_config, left_motor_config, right_motor_config, angle_sensitivity);   
 
     /* Perform Action */
     obj.process_motor_action("CAMERA", "DOWN", 0, 0);
@@ -224,7 +224,7 @@ TEST_F(RMCT_lib_Test_Fixture, VerifyMoveCameraGW3)
     EXPECT_CALL(ld27mgmock, LD27MG_move_motor(CAM_HRZN_MTR, angle_to_move)).Times(1);
 
     /* Initialize */
-    RobotMotorController  obj(pca9685_config, cam_config, left_motor_config, right_motor_config);   
+    RobotMotorController  obj(pca9685_config, cam_config, left_motor_config, right_motor_config, angle_sensitivity);   
 
     /* Perform Action */
     obj.process_motor_action("CAMERA", "LEFT", 0, 0);
@@ -251,7 +251,7 @@ TEST_F(RMCT_lib_Test_Fixture, VerifyMoveCameraGW4)
     EXPECT_CALL(ld27mgmock, LD27MG_move_motor(CAM_HRZN_MTR, angle_to_move)).Times(1);
 
     /* Initialize */
-    RobotMotorController  obj(pca9685_config, cam_config, left_motor_config, right_motor_config);   
+    RobotMotorController  obj(pca9685_config, cam_config, left_motor_config, right_motor_config, angle_sensitivity);   
 
     /* Perform Action */
     obj.process_motor_action("CAMERA", "RIGHT", 0, 0);
@@ -275,7 +275,7 @@ TEST_F(RMCT_lib_Test_Fixture, VerifyMoveCameraGW5)
     EXPECT_CALL(ld27mgmock, LD27MG_move_motor(CAM_HRZN_MTR, angle_to_move)).Times(1);
 
     /* Initialize */
-    RobotMotorController  obj(pca9685_config, cam_config, left_motor_config, right_motor_config);   
+    RobotMotorController  obj(pca9685_config, cam_config, left_motor_config, right_motor_config, angle_sensitivity);   
 
     /* Perform Action */
     obj.process_motor_action("CAM_HRZN_MTR", "", angle_to_move, 0);
@@ -299,7 +299,7 @@ TEST_F(RMCT_lib_Test_Fixture, VerifyMoveCameraGW6)
     EXPECT_CALL(ld27mgmock, LD27MG_move_motor(CAM_VERT_MTR, angle_to_move)).Times(1);
 
     /* Initialize */
-    RobotMotorController  obj(pca9685_config, cam_config, left_motor_config, right_motor_config);   
+    RobotMotorController  obj(pca9685_config, cam_config, left_motor_config, right_motor_config, angle_sensitivity);   
 
     /* Perform Action */
     obj.process_motor_action("CAM_VERT_MTR", "", angle_to_move, 0);
@@ -326,7 +326,7 @@ TEST_F(RMCT_lib_Test_Fixture, VerifyMoveCameraGW7)
     EXPECT_CALL(ld27mgmock, LD27MG_move_motor(CAM_VERT_MTR, angle_to_move)).Times(1);
 
     /* Initialize */
-    RobotMotorController  obj(pca9685_config, cam_config, left_motor_config, right_motor_config);   
+    RobotMotorController  obj(pca9685_config, cam_config, left_motor_config, right_motor_config, angle_sensitivity);   
 
     /* Perform Action */
     obj.process_motor_action("CAM_VERT_MTR", "UP", 20.00, 0);
@@ -356,7 +356,7 @@ TEST_F(RMCT_lib_Test_Fixture, VerifyMoveCameraGW8)
     EXPECT_CALL(pwmstub, PCA9685_setPWM(_, _, _)).Times(AtLeast(1));
 
     /* Initialize */
-    RobotMotorController obj(pca9685_config, cam_config, left_motor_config, right_motor_config);   
+    RobotMotorController obj(pca9685_config, cam_config, left_motor_config, right_motor_config, angle_sensitivity);   
     
     EXPECT_CALL(pwmstub, PCA9685_setPWM(_, _, _)).Times(2);
     obj.process_motor_action("LEFT_DRV_MTR", "FORWARD", 0, 0);
@@ -386,7 +386,7 @@ TEST_F(RMCT_lib_Test_Fixture, VerifyMoveCameraGW9)
     EXPECT_CALL(pwmstub, PCA9685_setPWM(_, _, _)).Times(AtLeast(1));
 
     /* Initialize */
-    RobotMotorController obj(pca9685_config, cam_config, left_motor_config, right_motor_config);   
+    RobotMotorController obj(pca9685_config, cam_config, left_motor_config, right_motor_config, angle_sensitivity);   
     
     EXPECT_CALL(pwmstub, PCA9685_setPWM(_, _, _)).Times(2);
     obj.process_motor_action("RIGHT_DRV_MTR", "REVERSE", 0, 80);

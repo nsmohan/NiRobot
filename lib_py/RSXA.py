@@ -20,6 +20,10 @@ MAX_LEN_2 = 100
 #Create RSXA Object
 rsxa = CDLL("Obj/libRSXA.so")
 
+#RSXA General Settings Struct
+class RSXA_general_settings(Structure):
+    _fields_ = [('camera_motor_sensitivity', c_int)]
+
 #RSXA Pins Struct
 class RSXA_pins(Structure):
     _fields_ = [('pin_name', c_char * MAX_LEN_1),
@@ -44,5 +48,6 @@ class RSXA(Structure):
     _fields_ = [('log_dir', c_char * MAX_LEN_2),
                 ('procs',POINTER(RSXA_procs)),
                 ('hw'     , POINTER(RSXA_hw)),
+                ('general_settings', RSXA_general_settings),
                 ('array_len_procs', c_int),
                 ('array_len_hw', c_int)]

@@ -93,6 +93,16 @@
 
     }RSXA_procs;
 
+    /** @struct RSXA_general_settings
+     *  General NiBot Operation Settings*/
+    typedef struct RSXA_general_settings
+    {
+        /**@var camera_motor_sensitivity
+         *  Motor Sensitivity for Camera */
+        int camera_motor_sensitivity;
+
+    }RSXA_general_settings;
+
     /** @struct RSXA
      * Root struct with all Robot Settings */
     typedef struct RSXA
@@ -108,6 +118,10 @@
         /** @var hw
          *  Contains all hardware settnigs */
         RSXA_hw *hw;
+
+        /**@var general_settings
+         * Nibot General Settings */
+         RSXA_general_settings general_settings;
 
         /** @var array_len_procs
          *  No of proc structs */

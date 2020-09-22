@@ -53,7 +53,8 @@ using namespace std;
 RobotMotorController::RobotMotorController(RSXA_hw pca9685_hw_config, 
                                            RSXA_hw cam_motor_hw_config,
                                            RSXA_hw left_motor_hw_config, 
-                                           RSXA_hw right_motor_hw_config)
+                                           RSXA_hw right_motor_hw_config,
+                                           double camera_motor_sensitivity)
 {
     /*!
      *  @brief     Constructor Implementation for RobotMotorController
@@ -89,7 +90,10 @@ RobotMotorController::RobotMotorController(RSXA_hw pca9685_hw_config,
 
     /* 2. Initialize the Camera Motors */
     if (result == OK)
+    {
         result = LD27MG_init(cam_motor_hw_config);
+        this->camera_motor_sensitivity = camera_motor_sensitivity;
+    }
 
     /* 3 .Initialize L9110 Drive Motors */
     try
@@ -157,8 +161,7 @@ NMT_result RobotMotorController::process_motor_action(std::string motor, std::st
 
 NMT_result RobotMotorController::move_camera_motor(CAMERA_MOTOR_DIRECTIONS direction, 
                                                    LD27MG_MOTORS camera_motor,
-                                                   double angle_to_move, 
-                                                   double default_angle)
+                                                   double angle_to_move)
 {
     /*!
      *  @brief     Method to move the Camera Motors
@@ -170,7 +173,7 @@ NMT_result RobotMotorController::move_camera_motor(CAMERA_MOTOR_DIRECTIONS direc
      */
 
     NMT_log_write(DEBUG, (char *)"> direction=%s, angle_to_move=%.2f, default_angle=%.2f",
-                  DIRECTION_TO_STR[direction].c_str(), angle_to_move, default_angle);
+                  DIRECTION_TO_STR[direction].c_str(), angle_to_move, camera_motor_sensitivity);
 
     /*Initialize Varibles */
     NMT_result result = OK;
@@ -205,11 +208,11 @@ NMT_result RobotMotorController::move_camera_motor(CAMERA_MOTOR_DIRECTIONS direc
         {
             case UP:
             case LEFT:
-                angle_to_move = angle + default_angle;
+                angle_to_move = angle + camera_motor_sensitivity;
                 break;
             case RIGHT:
             case DOWN:
-                angle_to_move = angle - default_angle;
+                angle_to_move = angle - camera_motor_sensitivity;
                 break;
             case CUSTOM:
             case MAX_DIRECTIONS:

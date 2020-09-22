@@ -121,13 +121,21 @@ class LayoutBase(object):
     #---------------------------------------------------#
     #                Public Methods                     #
     #---------------------------------------------------#
-    def new_button(self, window, text, style="std", command=None):
+    def new_button(self, window, text, style="std", command=None, on_click=None, on_release=None):
 
         """ 
         "  @brief Wrapper method to create a new button
         """
 
-        return ttk.Button(window, text=text, style=f"{style}.TButton", command=command)
+        btn = ttk.Button(window, text=text, style=f"{style}.TButton", command=command)
+
+        if on_click:
+            "I am here"
+            btn.bind("<ButtonPress>", on_click)
+        if on_release:
+            btn.bind("<ButtonRelease>", on_release)
+
+        return btn
 
     def new_label_frame(self, window, text):
             return ttk.LabelFrame(self.window, text=text, width=self.lframe_width, height=self.lframe_height)
