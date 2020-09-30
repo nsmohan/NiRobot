@@ -160,24 +160,6 @@ class LayoutBase(object):
 
         return btn
 
-    def repeat_action(self):
-
-        """ 
-        "  @brief Method to repeat action while button is held down
-        """
-
-        print ("repeat action")
-
-    def destroy_action_thread(self, action):
-
-        """ 
-        "  @brief Destory Current running action
-        """
-
-        print("In destroy action")
-        global_var.root_window.after_cancel(self.action_id)
-
-
     def new_label_frame(self, window, text):
             return ttk.LabelFrame(self.window, text=text, width=self.lframe_width, height=self.lframe_height)
 
