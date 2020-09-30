@@ -54,10 +54,10 @@ class SettingsTabView(LayoutBase):
         "  @brief SettingsView Buttons
         """
 
-        self.toggle_simbtn = self.new_button(self.window, "TOGGLE SIM", "L", command=self.__handle_toggle_sim)
-        self.edit_valuebtn = self.new_button(self.window, "EDIT VALUE", "L", command=self.__handle_change_setting)
-        self.undo_changesbtn = self.new_button(self.window, "UNDO CHANGES", "L", command=self.__handle_undo_changes)
-        self.apply_btn = self.new_button(self.window, "APPLY CHANGES", "L", command=self.__handle_apply_changes)
+        self.toggle_simbtn = self.new_button(self.window, "TOGGLE SIM", style="L", command=self.__handle_toggle_sim)
+        self.edit_valuebtn = self.new_button(self.window, "EDIT VALUE", style="L", command=self.__handle_change_setting)
+        self.undo_changesbtn = self.new_button(self.window, "UNDO CHANGES", style="L", command=self.__handle_undo_changes)
+        self.apply_btn = self.new_button(self.window, "APPLY CHANGES", style="L", command=self.__handle_apply_changes)
 
     def _tree(self):
 
@@ -129,6 +129,13 @@ class SettingsTabView(LayoutBase):
 
                     # -- Repeat -- #
                     self.__parse_settings(item, node=new_iid, index=new_index, key_eq_item=set_as_item)
+
+            elif isinstance(root[key], dict):
+
+                #-- Handle Dictionary Item --#
+                self.settings_tree.insert(node, 'end', iid, text=key, value=("", ""))
+                self.__parse_settings(root[key], node=iid, key_eq_item=True)
+
             else:
 
                 # -- Refresh Variables for each iteration -- #
@@ -264,6 +271,11 @@ class SettingsTabView(LayoutBase):
                 key = iid[0].split("-")[1]
                 proc = self.rsxa_settings_mem["procs"][index]
                 proc[key] = new_setting
+            elif root_key == "operational_settings":
+                key = items[0]
+                self.rsxa_settings_mem[root_key][key] = new_setting
+            else:
+                self.rsxa_settings_mem[root_key] = new_setting
                 
             self.__update_tree(iid, (items[0], new_setting))
 
@@ -324,7 +336,7 @@ class SettingsTabView(LayoutBase):
         """
 
         #-- Get the Tree Item --#
-        iid = self.settings_tree.selection()
+        iid = self.settings_tree.selection()[0]
         items = self.settings_tree.item(iid)
 
         #-- End of Function --#

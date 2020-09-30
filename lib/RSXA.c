@@ -90,7 +90,7 @@ const char *CAMERA_MOTOR_SENSITIVITY = "camera_motor_sensitivity";
 
 /**@var SETTINGS
  *  general_settings key */
-const char *SETTINGS = "settings";
+const char *SETTINGS = "operational_settings";
 
 /*------------------Prototypes----------------------*/
 static NMT_result RSXA_parse_json(char *data_to_parse, RSXA *RSXA_Object);

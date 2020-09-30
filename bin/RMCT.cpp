@@ -69,7 +69,7 @@ typedef struct RMDR_hw_settings
 
     /** @var camera_motor_sensitivity
      *  Default amount camera should mvoe */
-    int camera_motor_sensitivity;
+    double camera_motor_sensitivity;
 } RMCT_hw_settings;
 
 /*--------------------------------------------------/

@@ -125,5 +125,6 @@ if __name__ == '__main__':
     window = tk.Tk()
     nibot_ap = GUI_Application()
     update_screen_resolution_vars(window)
+    set_root_window_var(window)
     GUIController(window, nibot_ap)
     window.mainloop()
