@@ -72,10 +72,10 @@ class CameraControlBox(MotorControlHandle):
         "  @brief Button Definitions
         """
 
-        self.upbtn    = self.new_button(self.camctrl_gb, "UP",         command=self.UP)
-        self.downbtn  = self.new_button(self.camctrl_gb, "DOWN",       command=self.DOWN)
-        self.leftbtn  = self.new_button(self.camctrl_gb, "LEFT",       command=self.LEFT)
-        self.rightbtn = self.new_button(self.camctrl_gb, "RIGHT",      command=self.RIGHT)
+        self.upbtn    = self.new_button(self.camctrl_gb, "UP",         on_click=self.UP,    repeat=True)
+        self.downbtn  = self.new_button(self.camctrl_gb, "DOWN",       on_click=self.DOWN,  repeat=True)
+        self.leftbtn  = self.new_button(self.camctrl_gb, "LEFT",       on_click=self.LEFT,  repeat=True)
+        self.rightbtn = self.new_button(self.camctrl_gb, "RIGHT",      on_click=self.RIGHT, repeat=True)
         self.homebtn  = self.new_button(self.camctrl_gb, "HOME",       command=self.HOME)
         self.hrznbtn  = self.new_button(self.camctrl_gb, "HRZN MOTOR", command=self.HRNZ_MTR)
         self.vertbtn  = self.new_button(self.camctrl_gb, "VERT MOTOR", command=self.VERT_MTR)
@@ -95,3 +95,10 @@ class CameraControlBox(MotorControlHandle):
         self.angle_txbx.place(x=150, y=120, height=self.std_button_height, width=self.std_button_width)
         self.hrznbtn.place(x=300, y=60)
         self.vertbtn.place(x=0, y=60)
+
+    def move_camera(direction):
+
+        """ 
+        "  @brief Move Camera Action
+        """
+

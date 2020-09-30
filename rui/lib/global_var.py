@@ -64,5 +64,11 @@ def get_current_monitor(xpos, ypos):
             return m
     return monitors[0]
 
+def set_root_window_var(window):
+    """ 
+    "  @brief Set the root window for the entire app
+    """
 
+    global root_window
 
+    root_window = window

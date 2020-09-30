@@ -45,7 +45,7 @@ class TestRunner(object):
     def tearDown(self):
 
         os.system("python3 %s/nibot_mtr_ctrl.py -e"%TOOLS_PATH)
-        os.system("mv %s %s.backup"%(RSXA_FILE_PATH, RSXA_FILE_PATH))
+        os.system("mv %s.backup %s"%(RSXA_FILE_PATH, RSXA_FILE_PATH))
 
     def _get_tests_to_run(self, args):
         tests_to_run = []

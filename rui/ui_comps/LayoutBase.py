@@ -16,8 +16,16 @@ import tkinter as tk
 import tkinter.ttk as ttk
 
 #---------------------------------------------------#
+#                   Local Imports                   #
+#---------------------------------------------------#
+from lib.global_var import *
+from lib import global_var
+from lib_py import NMT_timer
+
+#---------------------------------------------------#
 #                   Constants                       #
 #---------------------------------------------------#
+DEFAULT_REPEAT_TIME = 0.1 #-- 100ms --#
 
 #---------------------------------------------------#
 #                 Start of Program                  #
@@ -28,7 +36,7 @@ import tkinter.ttk as ttk
 """
 class LayoutBase(object):
 
-    def __init__(self, window, nibot_ap):
+    def __init__(self, window, nibot_ap, root_window=False):
 
         """ 
         "  @brief Constructor
@@ -118,24 +126,57 @@ class LayoutBase(object):
                              font = ('comic', 20, 'bold'), 
                              width=15) 
 
+    def _parse_btn_args(self, kwargs):
+
+        style      = kwargs.get('style',      'std')
+        command    = kwargs.get('command',    None)
+        on_click   = kwargs.get('on_click',   None)
+        on_release = kwargs.get('on_release', None)
+        repeat     = kwargs.get('repeat',     False)
+
+        return style, command, on_click, on_release, repeat
+        
     #---------------------------------------------------#
     #                Public Methods                     #
     #---------------------------------------------------#
-    def new_button(self, window, text, style="std", command=None, on_click=None, on_release=None):
+    def new_button(self, window, text, **kwargs):
 
         """ 
         "  @brief Wrapper method to create a new button
         """
+        style, command, on_click, on_release, repeat = self._parse_btn_args(kwargs)
 
         btn = ttk.Button(window, text=text, style=f"{style}.TButton", command=command)
+        if repeat:
+            action = NMT_timer.NMT_Timer(DEFAULT_REPEAT_TIME, on_click)
+            btn.bind("<ButtonPress>", lambda event: action.start())
+            btn.bind("<ButtonRelease>", lambda event: action.stop())
+        else:
 
-        if on_click:
-            "I am here"
-            btn.bind("<ButtonPress>", on_click)
-        if on_release:
-            btn.bind("<ButtonRelease>", on_release)
+            if on_click:
+                btn.bind("<ButtonPress>", on_click)
+            if on_release:
+                btn.bind("<ButtonRelease>", on_release)
 
         return btn
+
+    def repeat_action(self):
+
+        """ 
+        "  @brief Method to repeat action while button is held down
+        """
+
+        print ("repeat action")
+
+    def destroy_action_thread(self, action):
+
+        """ 
+        "  @brief Destory Current running action
+        """
+
+        print("In destroy action")
+        global_var.root_window.after_cancel(self.action_id)
+
 
     def new_label_frame(self, window, text):
             return ttk.LabelFrame(self.window, text=text, width=self.lframe_width, height=self.lframe_height)
