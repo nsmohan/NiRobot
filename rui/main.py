@@ -112,6 +112,7 @@ class GUIController(LayoutBase):
         self.body_box.place(x=0, y=HEADER_HEIGHT + 1)
         self.window.title(WINDOW_TITLE)
         self.window.geometry(f"{global_var.ScreenWidth}x{global_var.ScreenHeight}")
+        self.window.resizable(width=False, height=False)
 
     def __handle_button_states(self, event):
 

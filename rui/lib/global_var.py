@@ -26,8 +26,8 @@ BODY_HEIGHT = 600
 MIN_X = 10
 MIN_Y = 10
 MIN_FRAME = 20
-WIDTH_ADJUST_FACTOR = 500
-HEIGHT_ADJUST_FACTOR = 300
+SCREEN_HEIGHT = 780
+SCREEN_WIDTH  = 1300
 
 #--------------------------------------------------------------------------#
 #                               Start of Program                           #
@@ -47,8 +47,12 @@ def update_screen_resolution_vars(window):
 
     current_monitor = get_current_monitor(xpos, ypos)
 
-    ScreenHeight = current_monitor.height - HEIGHT_ADJUST_FACTOR
-    ScreenWidth  = current_monitor.width - WIDTH_ADJUST_FACTOR
+    ScreenHeight = SCREEN_HEIGHT
+    ScreenWidth  = SCREEN_WIDTH
+
+    #--- To be implemented in the future ---#
+    #ScreenHeight = current_monitor.height - HEIGHT_ADJUST_FACTOR
+    #ScreenWidth  = current_monitor.width - WIDTH_ADJUST_FACTOR
 
     MaxHeight = ScreenHeight - MIN_FRAME
     MaxWidth  = ScreenWidth - MIN_FRAME
