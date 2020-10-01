@@ -100,11 +100,11 @@ class RobotMotorController
    private:
         /** @var cam_mtr_step_size 
          * The default amount the motor should when direction is provided */
-        double cam_mtr_step_size;
+        double cam_mtr_step_size = 0;
 
         /** @var default_drive_speed 
          * Default drive speed for camera motors */
-        double default_drive_speed;
+        double default_drive_speed = 0;
         
         /** @var default_drive_motor_speed 
          *  Default Speed the Drive Motors move */
