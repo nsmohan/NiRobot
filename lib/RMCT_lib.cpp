@@ -85,7 +85,8 @@ RobotMotorController::RobotMotorController(RMCT_hw_settings rmct_hw_settings)
         this->cam_mtr_step_size = rmct_hw_settings.cam_mtr_step_size;
     }
 
-    /* 3 .Initialize L9110 Drive Motors */
+    /* 3 .In itialize L9110 Drive Motors */
+    this->default_drive_speed = rmct_hw_settings.default_drive_speed;
     try
     {
         left_drv_motor = Create_drv_motor(rmct_hw_settings.left_motor_hw_config);
