@@ -50,6 +50,38 @@ extern const std::string DIRECTION_TO_STR[MAX_DIRECTIONS] = {"UP",
                                                              "LEFT",
                                                              "RIGHT", 
                                                              "CUSTOM"};
+/** @struct RMCT_hw_settings
+ *  Hardware Settings for Robot Motor Controller */
+typedef struct RMDR_hw_settings
+{
+    /** @var pca9685_hw_config
+     *  PCA9685 Settings Structure */
+    RSXA_hw pca9685_hw_config;
+
+    /** @var left_motor_hw_config
+     *  Left Motor Settings Structure*/
+    RSXA_hw left_motor_hw_config;
+
+    /** @var right_motor_hw_config
+     *  Right Motor Settings Structure*/
+    RSXA_hw right_motor_hw_config;
+
+    /** @var cam_motor_hw_config
+     *  Camera Motor Settings */
+    RSXA_hw cam_motor_hw_config;
+
+    /** @var rmct_hw_settings
+     *  RMCT Task Settings */
+    RSXA_procs rmct_task_config;
+
+    /** @var cam_mtr_step_size
+     *  Default amount camera should move */
+    double cam_mtr_step_size;
+
+    /** @var default_drive_speed
+     *  Default drive speed for motors */
+    double default_drive_speed;
+} RMCT_hw_settings;
 
 /** @class RobotMotorController
  *  Object which controls all Peripherals */
@@ -57,11 +89,7 @@ class RobotMotorController
 {
     public:
         /* Constructor for RobotMotorController */
-        RobotMotorController(RSXA_hw pca9685_hw_config, 
-                             RSXA_hw cam_motor_hw_config,
-                             RSXA_hw left_motor_hw_config, 
-                             RSXA_hw right_motor_hw_config,
-                             double camera_motor_sensitivity);
+        RobotMotorController(RMCT_hw_settings rmct_hw_settings);
 
         ~RobotMotorController() {};
 
@@ -70,9 +98,13 @@ class RobotMotorController
         NMT_result process_motor_action(std::string motor, std::string direction, double angle, int speed);
 
    private:
-        /** @var motor_sensitivity 
+        /** @var cam_mtr_step_size 
          * The default amount the motor should when direction is provided */
-        double camera_motor_sensitivity;
+        double cam_mtr_step_size;
+
+        /** @var default_drive_speed 
+         * Default drive speed for camera motors */
+        double default_drive_speed;
         
         /** @var default_drive_motor_speed 
          *  Default Speed the Drive Motors move */

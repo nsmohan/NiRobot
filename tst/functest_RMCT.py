@@ -40,7 +40,7 @@ class RMCT_Test(unittest.TestCase):
         os.system("sudo %s"%CLR_LOGS)
         self.rmct = RMCTSockConnect()
 
-    def test_RMCT(self):
+    def test_RMCT_GW(self):
         camera = "CAMERA"
         camera_motors = ["CAM_HRZN_MTR", "CAM_VERT_MTR"]
         drive_motors = ["LEFT_DRV_MTR", "RIGHT_DRV_MTR"]
@@ -106,8 +106,7 @@ class RMCT_Test(unittest.TestCase):
             self.assertEqual(base["message"], test["message"], msg="ERROR: %s does not equal %s"%(base["message"], test["message"]))
             
     def tearDown(self):
-        pass
-        #os.system("sudo %s"%CLR_LOGS)
+        os.system("sudo %s"%CLR_LOGS)
 
 if __name__ == '__main__':
     unittest.main()

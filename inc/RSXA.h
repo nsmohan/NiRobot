@@ -97,9 +97,13 @@
      *  General NiBot Operation Settings*/
     typedef struct RSXA_general_settings
     {
-        /**@var camera_motor_sensitivity
+        /**@var cam_mtr_step_size
          *  Motor Sensitivity for Camera */
-        int camera_motor_sensitivity;
+        int cam_mtr_step_size;
+
+        /**@var default_drive_speed
+         *  Default speed for which the motors move */
+        unsigned int default_drive_speed;
 
     }RSXA_general_settings;
 

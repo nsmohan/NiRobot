@@ -41,38 +41,6 @@ const unsigned int SOCK_TIMEOUT = 600;
 const unsigned int NO_OF_HW = 4;
 
 /*--------------------------------------------------/
-/                Structs/Classes/Enums              /
-/--------------------------------------------------*/
-/** @struct RMCT_hw_settings
- *  Hardware Settings for Robot Motor Controller */
-typedef struct RMDR_hw_settings
-{
-    /** @var pca9685_hw_config
-     *  PCA9685 Settings Structure */
-    RSXA_hw pca9685_hw_config;
-
-    /** @var left_motor_hw_config
-     *  Left Motor Settings Structure*/
-    RSXA_hw left_motor_hw_config;
-
-    /** @var right_motor_hw_config
-     *  Right Motor Settings Structure*/
-    RSXA_hw right_motor_hw_config;
-
-    /** @var cam_motor_hw_config
-     *  Camera Motor Settings */
-    RSXA_hw cam_motor_hw_config;
-
-    /** @var rmct_hw_settings
-     *  RMCT Task Settings */
-    RSXA_procs rmct_task_config;
-
-    /** @var camera_motor_sensitivity
-     *  Default amount camera should mvoe */
-    double camera_motor_sensitivity;
-} RMCT_hw_settings;
-
-/*--------------------------------------------------/
 /                  Prototypes                       /
 /--------------------------------------------------*/
 static bool rmct_validate_robot_action(Json::Value mc);
@@ -134,11 +102,7 @@ int main(int argc, char *argv[])
         NMT_log_init((char *)hw_settings.log_dir, verbosity);
 
         /* Initialize Robot Motor Controller */
-        RobotMotorController rmct_obj(rmct_hw_settings.pca9685_hw_config,
-                                      rmct_hw_settings.cam_motor_hw_config,
-                                      rmct_hw_settings.left_motor_hw_config,
-                                      rmct_hw_settings.right_motor_hw_config,
-                                      rmct_hw_settings.camera_motor_sensitivity);
+        RobotMotorController rmct_obj(rmct_hw_settings);
 
         /** Free RSXA Memory (Everything is initialized) */
         if (result == OK) {RSXA_free_mem(&hw_settings);}
@@ -271,7 +235,10 @@ static NMT_result rmct_get_robot_settings(RSXA &hw_settings, RMCT_hw_settings &r
     if (result == OK)
     {
         /* Camera Motor Sensitivity */
-        rmct_hw_settings.camera_motor_sensitivity = hw_settings.general_settings.camera_motor_sensitivity;
+        rmct_hw_settings.cam_mtr_step_size = hw_settings.general_settings.cam_mtr_step_size;
+
+        /* Default Drive Speed */
+        rmct_hw_settings.default_drive_speed = hw_settings.general_settings.default_drive_speed;
 
         for (int i = 0; i < hw_settings.array_len_hw; i++)
         {

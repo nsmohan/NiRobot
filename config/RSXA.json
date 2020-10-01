@@ -2,7 +2,8 @@
     "_comment"             : "Robot Operation Settings",
     "log_dir"              : "/var/log/NiBot",
     "operational_settings" : {
-                               "camera_motor_sensitivity": 10
+                               "cam_mtr_step_size"  : 10,
+                               "default_drive_speed": 50
                              },
     "procs"                : [{ 
                                 "proc_name" : "RMCT",

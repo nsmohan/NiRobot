@@ -22,7 +22,8 @@ rsxa = CDLL("Obj/libRSXA.so")
 
 #RSXA General Settings Struct
 class RSXA_general_settings(Structure):
-    _fields_ = [('camera_motor_sensitivity', c_int)]
+    _fields_ = [('cam_mtr_step_size'  , c_int),
+                ('default_drive_speed', c_int)]
 
 #RSXA Pins Struct
 class RSXA_pins(Structure):
