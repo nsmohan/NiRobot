@@ -85,8 +85,12 @@ const char *PIN_NAME    = "pin_name";
 const char *PIN_NO      = "pin_no";
 
 /**@var CAMERA_MOTOR_SENSITIVITY
- *  camera_motor_sensitivity key */
-const char *CAMERA_MOTOR_SENSITIVITY = "camera_motor_sensitivity";
+ *  cam_mtr_step_size key */
+const char *CAMERA_MOTOR_SENSITIVITY = "cam_mtr_step_size";
+
+/**@var DEFAULT_DRV_SPEED
+ *  default_drive_speed key */
+const char *DEFAULT_DRV_SPEED = "default_drive_speed";
 
 /**@var SETTINGS
  *  general_settings key */
@@ -188,7 +192,13 @@ static NMT_result RSXA_parse_json(char *data_to_parse, RSXA *RSXA_Object)
     if (result == OK) {result = RSXA_find_key(jobj_settings, CAMERA_MOTOR_SENSITIVITY, &jvalues);}
 
     /* Copy camera motor sensitivity value */
-    if (result == OK) {RSXA_Object->general_settings.camera_motor_sensitivity = json_object_get_int(jvalues);}
+    if (result == OK) {RSXA_Object->general_settings.cam_mtr_step_size = json_object_get_int(jvalues);}
+
+    /* Find Default Drive Speed */
+    if (result == OK) {result = RSXA_find_key(jobj_settings, DEFAULT_DRV_SPEED, &jvalues);}
+
+    /* Copy default drive speed value */
+    if (result == OK) {RSXA_Object->general_settings.default_drive_speed = json_object_get_int(jvalues);}
 
     /* Get the procs object */
     if (result == OK) {result = RSXA_find_key(rsxa_root_obj, PROCS, &jobj_procs);}

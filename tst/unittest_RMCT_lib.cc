@@ -9,7 +9,8 @@
 
 /*--------------------------------------------------/
 /                   System Imports                  /
-/--------------------------------------------------*/ #include <gtest/gtest.h>
+/--------------------------------------------------*/ 
+#include <gtest/gtest.h>
 
 /*--------------------------------------------------/
 /                   Local Imports                   /
@@ -37,46 +38,45 @@ public:
 class RMCT_lib_Test_Fixture : public ::testing::Test
 {
     public:
-       RSXA_hw pca9685_config;
-       RSXA_hw cam_config;
-       RSXA_hw left_motor_config;
-       RSXA_hw right_motor_config;
-       double angle_sensitivity = 10.00;
+        RMCT_hw_settings rmct_hw_settings = {0};
 
     RMCT_lib_Test_Fixture()
     {
+        rmct_hw_settings.cam_mtr_step_size = 10;
+        rmct_hw_settings.default_drive_speed = 50;
+
         /* PCA9685 Driver Config */
-        strcpy(pca9685_config.hw_name, "PCA9685_PWM_DRIVER");
-        pca9685_config.hw_sim_mode = true;
+        strcpy(rmct_hw_settings.pca9685_hw_config.hw_name, "PCA9685_PWM_DRIVER");
+        rmct_hw_settings.pca9685_hw_config.hw_sim_mode = true;
 
         /* Settings for Left Drive Motor */
-        left_motor_config = {0};
-        strcpy(left_motor_config.hw_name, "LEFT_DRV_MOTOR");
-        left_motor_config.hw_sim_mode = true;
-        left_motor_config.hw_interface = (RSXA_pins *)malloc(sizeof(RSXA_pins) * 2);
-        strcpy(left_motor_config.hw_interface[0].pin_name, "forward");
-        strcpy(left_motor_config.hw_interface[1].pin_name, "reverse");
-        left_motor_config.hw_interface[0].pin_no = 1;
-        left_motor_config.hw_interface[1].pin_no = 2;
+        rmct_hw_settings.left_motor_hw_config = {0};
+        strcpy(rmct_hw_settings.left_motor_hw_config.hw_name, "LEFT_DRV_MOTOR");
+        rmct_hw_settings.left_motor_hw_config.hw_sim_mode = true;
+        rmct_hw_settings.left_motor_hw_config.hw_interface = (RSXA_pins *)malloc(sizeof(RSXA_pins) * 2);
+        strcpy(rmct_hw_settings.left_motor_hw_config.hw_interface[0].pin_name, "forward");
+        strcpy(rmct_hw_settings.left_motor_hw_config.hw_interface[1].pin_name, "reverse");
+        rmct_hw_settings.left_motor_hw_config.hw_interface[0].pin_no = 1;
+        rmct_hw_settings.left_motor_hw_config.hw_interface[1].pin_no = 2;
 
         /* Settings for Right Drive Motor */
-        right_motor_config = {0};
-        strcpy(left_motor_config.hw_name, "RIGHT_DRV_MTR");
-        right_motor_config.hw_sim_mode = true;
-        right_motor_config.hw_interface = (RSXA_pins *)malloc(sizeof(RSXA_pins) * 2);
-        strcpy(right_motor_config.hw_interface[0].pin_name, "forward");
-        strcpy(right_motor_config.hw_interface[1].pin_name, "reverse");
-        right_motor_config.hw_interface[0].pin_no = 1;
-        right_motor_config.hw_interface[1].pin_no = 2;
+        rmct_hw_settings.right_motor_hw_config = {0};
+        strcpy(rmct_hw_settings.left_motor_hw_config.hw_name, "RIGHT_DRV_MTR");
+        rmct_hw_settings.right_motor_hw_config.hw_sim_mode = true;
+        rmct_hw_settings.right_motor_hw_config.hw_interface = (RSXA_pins *)malloc(sizeof(RSXA_pins) * 2);
+        strcpy(rmct_hw_settings.right_motor_hw_config.hw_interface[0].pin_name, "forward");
+        strcpy(rmct_hw_settings.right_motor_hw_config.hw_interface[1].pin_name, "reverse");
+        rmct_hw_settings.right_motor_hw_config.hw_interface[0].pin_no = 1;
+        rmct_hw_settings.right_motor_hw_config.hw_interface[1].pin_no = 2;
 
-       cam_config = {0};
-       strcpy(cam_config.hw_name, "CAMERA_MOTORS");
-       cam_config.hw_sim_mode = false;
-       cam_config.hw_interface = (RSXA_pins *)malloc(sizeof(RSXA_pins) * 2);
-       strcpy(cam_config.hw_interface[0].pin_name, "CAM_HRZN_MTR");
-       strcpy(cam_config.hw_interface[1].pin_name, "CAM_VERT_MTR");
-       cam_config.hw_interface[0].pin_no = 1;
-       cam_config.hw_interface[1].pin_no = 2;
+       rmct_hw_settings.cam_motor_hw_config = {0};
+       strcpy(rmct_hw_settings.cam_motor_hw_config.hw_name, "CAMERA_MOTORS");
+       rmct_hw_settings.cam_motor_hw_config.hw_sim_mode = false;
+       rmct_hw_settings.cam_motor_hw_config.hw_interface = (RSXA_pins *)malloc(sizeof(RSXA_pins) * 2);
+       strcpy(rmct_hw_settings.cam_motor_hw_config.hw_interface[0].pin_name, "CAM_HRZN_MTR");
+       strcpy(rmct_hw_settings.cam_motor_hw_config.hw_interface[1].pin_name, "CAM_VERT_MTR");
+       rmct_hw_settings.cam_motor_hw_config.hw_interface[0].pin_no = 1;
+       rmct_hw_settings.cam_motor_hw_config.hw_interface[1].pin_no = 2;
     }
 };
 
@@ -96,7 +96,7 @@ TEST_F(RMCT_lib_Test_Fixture, VerifyConstructorGW)
     EXPECT_CALL(pca9685mock, PCA9685_init(_)).Times(1);
 
     /* Perform Action */
-    RobotMotorController  obj(pca9685_config, cam_config, left_motor_config, right_motor_config, angle_sensitivity);   
+    RobotMotorController  obj(rmct_hw_settings);   
 }
 
 TEST_F(RMCT_lib_Test_Fixture, VerifyConstructorBW1)
@@ -116,7 +116,7 @@ TEST_F(RMCT_lib_Test_Fixture, VerifyConstructorBW1)
     /* Perform Action */
     try
     {
-        RobotMotorController  obj(pca9685_config, cam_config, left_motor_config, right_motor_config, angle_sensitivity);   
+        RobotMotorController  obj(rmct_hw_settings);   
     }
     catch (std::exception &e)
     {
@@ -141,7 +141,7 @@ TEST_F(RMCT_lib_Test_Fixture, VerifyConstructorBW2)
     /* Perform Action */
     try
     {
-        RobotMotorController  obj(pca9685_config, cam_config, left_motor_config, right_motor_config, angle_sensitivity);   
+        RobotMotorController  obj(rmct_hw_settings);   
     }
     catch (std::exception &e)
     {
@@ -161,7 +161,7 @@ TEST_F(RMCT_lib_Test_Fixture, VerifyMoveCameraGW1)
     LD27MGMocker ld27mgmock;
     double ret_angle = 10.00;
 
-    double angle_to_move = ret_angle + angle_sensitivity;
+    double angle_to_move = ret_angle + rmct_hw_settings.cam_mtr_step_size;
     
     /* Set Expectations */
     EXPECT_CALL(ld27mgmock, LD27MG_init(_)).Times(1);
@@ -170,7 +170,7 @@ TEST_F(RMCT_lib_Test_Fixture, VerifyMoveCameraGW1)
     EXPECT_CALL(ld27mgmock, LD27MG_move_motor(CAM_VERT_MTR, angle_to_move)).Times(1);
 
     /* Initialize */
-    RobotMotorController  obj(pca9685_config, cam_config, left_motor_config, right_motor_config, angle_sensitivity);   
+    RobotMotorController  obj(rmct_hw_settings);   
 
     /* Perform Action */
     obj.process_motor_action("CAMERA", "UP", 0, 0);
@@ -188,7 +188,7 @@ TEST_F(RMCT_lib_Test_Fixture, VerifyMoveCameraGW2)
     LD27MGMocker ld27mgmock;
     double ret_angle = 10.00;
 
-    double angle_to_move = ret_angle - angle_sensitivity;
+    double angle_to_move = ret_angle - rmct_hw_settings.cam_mtr_step_size;
     
     /* Set Expectations */
     EXPECT_CALL(ld27mgmock, LD27MG_init(_)).Times(1);
@@ -197,7 +197,7 @@ TEST_F(RMCT_lib_Test_Fixture, VerifyMoveCameraGW2)
     EXPECT_CALL(ld27mgmock, LD27MG_move_motor(CAM_VERT_MTR, angle_to_move)).Times(1);
 
     /* Initialize */
-    RobotMotorController  obj(pca9685_config, cam_config, left_motor_config, right_motor_config, angle_sensitivity);   
+    RobotMotorController  obj(rmct_hw_settings);   
 
     /* Perform Action */
     obj.process_motor_action("CAMERA", "DOWN", 0, 0);
@@ -215,7 +215,7 @@ TEST_F(RMCT_lib_Test_Fixture, VerifyMoveCameraGW3)
     LD27MGMocker ld27mgmock;
     double ret_angle = 10.00;
 
-    double angle_to_move = ret_angle + angle_sensitivity;
+    double angle_to_move = ret_angle + rmct_hw_settings.cam_mtr_step_size;
     
     /* Set Expectations */
     EXPECT_CALL(ld27mgmock, LD27MG_init(_)).Times(1);
@@ -224,7 +224,7 @@ TEST_F(RMCT_lib_Test_Fixture, VerifyMoveCameraGW3)
     EXPECT_CALL(ld27mgmock, LD27MG_move_motor(CAM_HRZN_MTR, angle_to_move)).Times(1);
 
     /* Initialize */
-    RobotMotorController  obj(pca9685_config, cam_config, left_motor_config, right_motor_config, angle_sensitivity);   
+    RobotMotorController  obj(rmct_hw_settings);   
 
     /* Perform Action */
     obj.process_motor_action("CAMERA", "LEFT", 0, 0);
@@ -242,7 +242,7 @@ TEST_F(RMCT_lib_Test_Fixture, VerifyMoveCameraGW4)
     LD27MGMocker ld27mgmock;
     double ret_angle = 10.00;
 
-    double angle_to_move = ret_angle - angle_sensitivity;
+    double angle_to_move = ret_angle - rmct_hw_settings.cam_mtr_step_size;
     
     /* Set Expectations */
     EXPECT_CALL(ld27mgmock, LD27MG_init(_)).Times(1);
@@ -251,7 +251,7 @@ TEST_F(RMCT_lib_Test_Fixture, VerifyMoveCameraGW4)
     EXPECT_CALL(ld27mgmock, LD27MG_move_motor(CAM_HRZN_MTR, angle_to_move)).Times(1);
 
     /* Initialize */
-    RobotMotorController  obj(pca9685_config, cam_config, left_motor_config, right_motor_config, angle_sensitivity);   
+    RobotMotorController  obj(rmct_hw_settings);   
 
     /* Perform Action */
     obj.process_motor_action("CAMERA", "RIGHT", 0, 0);
@@ -275,7 +275,7 @@ TEST_F(RMCT_lib_Test_Fixture, VerifyMoveCameraGW5)
     EXPECT_CALL(ld27mgmock, LD27MG_move_motor(CAM_HRZN_MTR, angle_to_move)).Times(1);
 
     /* Initialize */
-    RobotMotorController  obj(pca9685_config, cam_config, left_motor_config, right_motor_config, angle_sensitivity);   
+    RobotMotorController  obj(rmct_hw_settings);   
 
     /* Perform Action */
     obj.process_motor_action("CAM_HRZN_MTR", "", angle_to_move, 0);
@@ -299,7 +299,7 @@ TEST_F(RMCT_lib_Test_Fixture, VerifyMoveCameraGW6)
     EXPECT_CALL(ld27mgmock, LD27MG_move_motor(CAM_VERT_MTR, angle_to_move)).Times(1);
 
     /* Initialize */
-    RobotMotorController  obj(pca9685_config, cam_config, left_motor_config, right_motor_config, angle_sensitivity);   
+    RobotMotorController  obj(rmct_hw_settings);   
 
     /* Perform Action */
     obj.process_motor_action("CAM_VERT_MTR", "", angle_to_move, 0);
@@ -326,7 +326,7 @@ TEST_F(RMCT_lib_Test_Fixture, VerifyMoveCameraGW7)
     EXPECT_CALL(ld27mgmock, LD27MG_move_motor(CAM_VERT_MTR, angle_to_move)).Times(1);
 
     /* Initialize */
-    RobotMotorController  obj(pca9685_config, cam_config, left_motor_config, right_motor_config, angle_sensitivity);   
+    RobotMotorController  obj(rmct_hw_settings);   
 
     /* Perform Action */
     obj.process_motor_action("CAM_VERT_MTR", "UP", 20.00, 0);
@@ -345,8 +345,8 @@ TEST_F(RMCT_lib_Test_Fixture, VerifyMoveCameraGW8)
     LD27MGMocker ld27mgmock;
     PCA9685Mocker pwmstub;
 
-    left_motor_config.hw_sim_mode = false;
-    right_motor_config.hw_sim_mode = false;
+    rmct_hw_settings.left_motor_hw_config.hw_sim_mode = false;
+    rmct_hw_settings.right_motor_hw_config.hw_sim_mode = false;
     
     /* Set Expectations */
     EXPECT_CALL(ld27mgmock, LD27MG_init(_)).Times(1);
@@ -356,7 +356,7 @@ TEST_F(RMCT_lib_Test_Fixture, VerifyMoveCameraGW8)
     EXPECT_CALL(pwmstub, PCA9685_setPWM(_, _, _)).Times(AtLeast(1));
 
     /* Initialize */
-    RobotMotorController obj(pca9685_config, cam_config, left_motor_config, right_motor_config, angle_sensitivity);   
+    RobotMotorController obj(rmct_hw_settings);   
     
     EXPECT_CALL(pwmstub, PCA9685_setPWM(_, _, _)).Times(2);
     obj.process_motor_action("LEFT_DRV_MTR", "FORWARD", 0, 0);
@@ -375,8 +375,8 @@ TEST_F(RMCT_lib_Test_Fixture, VerifyMoveCameraGW9)
     LD27MGMocker ld27mgmock;
     PCA9685Mocker pwmstub;
 
-    left_motor_config.hw_sim_mode = false;
-    right_motor_config.hw_sim_mode = false;
+    rmct_hw_settings.left_motor_hw_config.hw_sim_mode = false;
+    rmct_hw_settings.right_motor_hw_config.hw_sim_mode = false;
     
     /* Set Expectations */
     EXPECT_CALL(ld27mgmock, LD27MG_init(_)).Times(1);
@@ -386,7 +386,7 @@ TEST_F(RMCT_lib_Test_Fixture, VerifyMoveCameraGW9)
     EXPECT_CALL(pwmstub, PCA9685_setPWM(_, _, _)).Times(AtLeast(1));
 
     /* Initialize */
-    RobotMotorController obj(pca9685_config, cam_config, left_motor_config, right_motor_config, angle_sensitivity);   
+    RobotMotorController obj(rmct_hw_settings);   
     
     EXPECT_CALL(pwmstub, PCA9685_setPWM(_, _, _)).Times(2);
     obj.process_motor_action("RIGHT_DRV_MTR", "REVERSE", 0, 80);
