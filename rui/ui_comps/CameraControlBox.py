@@ -95,10 +95,3 @@ class CameraControlBox(MotorControlHandle):
         self.angle_txbx.place(x=150, y=120, height=self.std_button_height, width=self.std_button_width)
         self.hrznbtn.place(x=300, y=60)
         self.vertbtn.place(x=0, y=60)
-
-    def move_camera(direction):
-
-        """ 
-        "  @brief Move Camera Action
-        """
-
