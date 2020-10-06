@@ -97,6 +97,7 @@ class GUIController(LayoutBase):
         self.body = LayoutBody(self.body_box, self.nibot_ap)
         zope.event.subscribers.append(self.__handle_button_states)
         self.body.disable_body_tabs()
+        self.window.protocol("WM_DELETE_WINDOW", self.__handle_exit)
 
     def _frames(self):
         self.border_box = tk.Frame(self.window, height=MAX_HEIGHT, width=MAX_WIDTH, bg=self.std_bg_color)
@@ -116,6 +117,14 @@ class GUIController(LayoutBase):
             self.body.enable_body_tabs()
         elif event == "disconnected":
             self.body.disable_body_tabs()
+
+    def __handle_exit(self):
+
+        """ 
+        "  @brief Raise closing event
+        """
+        zope.event.notify("exit")
+        self.window.destroy()
 
 if __name__ == '__main__':
     window = tk.Tk()

@@ -27,9 +27,10 @@ from lib_py.rmct_sock_lib import RMCTSockConnect
 #---------------------------------------------------#
 #                   Constants                       #
 #---------------------------------------------------#
-LOCAL_RSXA_FILE = "/etc/NiBot/RSXA.json"
+LOCAL_RSXA_FILE  = "/etc/NiBot/RSXA.json"
 REMOTE_RSXA_FILE = "/etc/NiBot/RSXA.json"
-RMCT_TASK = "/home/nibot/NiRobot/bld/RMCT"
+RMCT_TASK        = "/home/nibot/NiRobot/bld/RMCT"
+RUIxSETTINGS     = "/etc/NiBot/RUIxSettings.json"
 
 """ 
 "  @class  GUI_Application
@@ -37,6 +38,16 @@ RMCT_TASK = "/home/nibot/NiRobot/bld/RMCT"
 """
 
 class GUI_Application(object):
+
+    def __init__(self):
+
+        """ 
+        "  @brief Class Init
+        """
+
+        self.rui_settings = self.__read_rui_settings()
+        zope.event.subscribers.append(self.__handle_exit)
+
 
     def __read_rsxa_settings(self):
 
@@ -47,6 +58,23 @@ class GUI_Application(object):
         with open(LOCAL_RSXA_FILE, "r") as rsxa_file:
             return json.loads(rsxa_file.read())
 
+    def __read_rui_settings(self):
+
+        """ 
+        "  @brief Read the RUI Settings File
+        """
+
+        with open(RUIxSETTINGS, "r") as rui_settings:
+            return json.loads(rui_settings.read())
+
+    def __write_rui_settings(self):
+
+        """ 
+        "  @brief Write RUI Settings to File
+        """
+
+        with open(RUIxSETTINGS, "w") as rui_settings_file:
+            json.dump(self.rui_settings, rui_settings_file, indent=4)
 
     def __write_rsxa_settings(self, rsxa_settings):
 
@@ -56,6 +84,17 @@ class GUI_Application(object):
 
         with open(LOCAL_RSXA_FILE, "w") as rsxa_settings_file:
             json.dump(rsxa_settings, rsxa_settings_file, indent=4)
+
+    def __handle_exit(self, event):
+
+        """ 
+        "  @brief Handle Exit Event
+        """
+
+        if event == "exit":
+
+            # -- 1. Write RUI Settings --#
+            self.__write_rui_settings()
 
     def connect_to_nibot(self, ip_address):
 
@@ -74,6 +113,12 @@ class GUI_Application(object):
             print(e)
             raise Exception ("Unable to Connect to NiBot!")
         else:
+
+            #-- Update Hosts in RUI Settings --#
+            if self.ip_address not in self.rui_settings['known_host']:
+                self.rui_settings['known_host'].append(self.ip_address)
+
+            #-- Run RMCT --#
             if not GUI_Application.is_task_running(self.nibot, "RMCT"):
                 print("RMCT Task not running in NiBot...... ")
                 GUI_Application.start_task(self.nibot, RMCT_TASK)
@@ -209,4 +254,10 @@ class GUI_Application(object):
         # -- Connect to RMCT Socket --#
         print("Creating Socket Connection with RMCT")
         self.rmct = RMCTSockConnect(self.ip_address)
+
+    def get_known_hosts(self):
+
+        """ 
+        "  @brief Get list of known hosts
+        """
 

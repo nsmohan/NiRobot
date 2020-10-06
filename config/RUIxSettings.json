@@ -1,0 +1,9 @@
+{
+    "_comment"  : "RUI Settings",
+    "known_host": [],
+    "motor_defaults": 
+                    {
+                        "home_angle"        : 90,
+                        "default_turn_speed": 100
+                    }
+}

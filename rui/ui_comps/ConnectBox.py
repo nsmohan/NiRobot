@@ -31,7 +31,13 @@ class ConnectBox(LayoutBase):
 
         
     def _class_comps_init(self):
+
+        """ 
+        "  @brief Initialize Class
+        """
+
         self.default_button_states()
+        self.__update_hosts_box()
 
     def _grpbox(self):
         
@@ -56,7 +62,7 @@ class ConnectBox(LayoutBase):
         "  @brief Inputs for element
         """
 
-        self.host_txtbox = ttk.Entry(self.connect_gb)
+        self.host_txtbox = ttk.Combobox(self.connect_gb)
 
     def _layout(self):
 
@@ -71,23 +77,64 @@ class ConnectBox(LayoutBase):
         self.cbtn.place(x=self.std_button_width, y=box_height/10)
         self.dcbtn.place(x=self.std_button_width*2, y=box_height/10)
 
+    def __update_hosts_box(self):
+
+        """ 
+        "  @brief Update Combox List
+        """
+
+        for host in self.__get_known_hosts():
+            self.host_txtbox['value'] += host
+
     def __handle_connect(self):
 
+        """ 
+        "  @brief Handle Connect Button
+        """
+
+        hostname = self.host_txtbox.get()
         try:
-            self.nibot_ap.connect_to_nibot(self.host_txtbox.get())
+            self.nibot_ap.connect_to_nibot(hostname)
         except Exception as e:
             self.throw_error("Unable to Connect to NiBot! {}".format(e))
         else:
             self.active_button_states()
+            if hostname not in self.host_txtbox['values']:
+                self.host_txtbox['values'] += hostname
+
 
     def __handle_disconnect(self):
+
+        """ 
+        "  @brief Handle Disconnect Button
+        """
+
         self.nibot_ap.disconnect_from_nibot()
         self.default_button_states()
 
+    def __get_known_hosts(self):
+
+        """ 
+        "  @brief Get list of known hosts
+        """
+
+        return self.nibot_ap.rui_settings["known_host"]
+
+
     def default_button_states(self):
+
+        """ 
+        "  @brief Set default button states
+        """
+
         self.cbtn["state"] = "normal"
         self.dcbtn["state"] = "disabled"
 
     def active_button_states(self):
+
+        """ 
+        "  @brief Set active button states
+        """
+
         self.cbtn["state"] = "disabled"
         self.dcbtn["state"] = "normal"
