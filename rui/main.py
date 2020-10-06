@@ -122,19 +122,7 @@ class GUIController(LayoutBase):
         elif event == "disconnected":
             self.body.disable_body_tabs()
 
-    def _update_screen_resolution(self):
-        """ 
-        "  @brief Get Current Screen Resolutions
-        """
-
-        print("I am here")
-
-        WIDTH      = self.window.winfo_screenwidth() 
-        HEIGHT     = self.window.winfo_screenheight()
-        MAX_HEIGHT = HEIGHT - MIN_FRAME
-        MAX_WIDTH  = WIDTH - MIN_FRAME
-		
-	def __handle_exit(self):
+    def __handle_exit(self):
 
         """ 
         "  @brief Raise closing event
