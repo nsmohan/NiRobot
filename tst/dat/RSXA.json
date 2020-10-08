@@ -1,92 +1,96 @@
 {
-    "_comment" : "Robot Operation Settings",
-    "log_dir"  : "/var/log/NiBot",
-    "procs"    : [{ 
-                    "proc_name" : "RMCT",
-                    "server_ip" : "127.0.0.1",
-                    "server_p"  : 5600,
-                    "client_ip" : "",
-                    "client_p"  : 0
-                 }],
-    "hw"       : [{
-                    "hw_name"     : "PCA9685_PWM_DRIVER",
-                    "hw_sim_mode" : true,
-                    "hw_interface": []
-                  },
-                  { "hw_name"     : "HCxSR04_Front",
-                    "hw_sim_mode" : true,
-                    "hw_interface": [{"pin_name": "echoPin",
-                                      "pin_no"  : 0
-                                    },
-                                    {
-                                     "pin_name" : "trigPin",
-                                     "pin_no"   : 4
-                                    }]
-                  },
-                  { "hw_name"     : "HCxSR04_Back",
-                    "hw_sim_mode" : true,
-                    "hw_interface": [{
-                                     "pin_name": "echoPin",
-                                     "pin_no"  : 1
-                                    },
-                                    {
-                                     "pin_name" : "trigPin",
-                                     "pin_no"   : 4
-                                    }]
-                  },
-                  { "hw_name"     : "HCxSR04_Left",
-                    "hw_sim_mode" : true,
-                    "hw_interface": [{
-                                     "pin_name": "echoPin",
-                                     "pin_no"  : 2
-                                    },
-                                    {
-                                     "pin_name" : "trigPin",
-                                     "pin_no"   : 4
-                                    }]
-                  },
-                  { "hw_name"     : "HCxSR04_Right",
-                    "hw_sim_mode" : true,
-                    "hw_interface": [{
-                                     "pin_name": "echoPin",
-                                     "pin_no"  : 3
-                                    },
-                                    {
-                                     "pin_name" : "trigPin",
-                                     "pin_no"   : 4
-                                    }]
-                  },
-                  { "hw_name"     : "CAMERA_MOTORS",
-                    "hw_sim_mode" : false,
-                    "hw_interface": [{
-                                     "pin_name": "CAM_HRZN_MTR",
-                                     "pin_no"  : 15
-                                    },
-                                    {
-                                     "pin_name" : "CAM_VERT_MTR",
-                                     "pin_no"   : 14
-                                    }]
-                  },
-                  { "hw_name"     : "LEFT_DRV_MTR",
-                    "hw_sim_mode" : false,
-                    "hw_interface": [{
-                                     "pin_name": "forward",
-                                     "pin_no"  : 13
-                                    },
-                                    {
-                                     "pin_name" : "reverse",
-                                     "pin_no"   : 12
-                                    }]
-                  },
-                  { "hw_name"     : "RIGHT_DRV_MTR",
-                    "hw_sim_mode" : false,
-                    "hw_interface": [{
-                                     "pin_name": "forward",
-                                     "pin_no"  : 11
-                                    },
-                                    {
-                                     "pin_name" : "reverse",
-                                     "pin_no"   : 10
-                                    }]
-              }]
+    "_comment"             : "Robot Operation Settings",
+    "log_dir"              : "/var/log/NiBot",
+    "operational_settings" : {
+                               "cam_mtr_step_size"  : 10,
+                               "default_drive_speed": 50
+                             },
+    "procs"                : [{ 
+                                "proc_name" : "RMCT",
+                                "server_ip" : "127.0.0.1",
+                                "server_p"  : 5600,
+                                "client_ip" : "",
+                                "client_p"  : 0
+                             }],
+    "hw"                   : [{
+                                "hw_name"     : "PCA9685_PWM_DRIVER",
+                                "hw_sim_mode" : true,
+                                "hw_interface": []
+                              },
+                              { "hw_name"     : "HCxSR04_Front",
+                                "hw_sim_mode" : true,
+                                "hw_interface": [{"pin_name": "echoPin",
+                                                  "pin_no"  : 0
+                                                },
+                                                {
+                                                 "pin_name" : "trigPin",
+                                                 "pin_no"   : 4
+                                                }]
+                              },
+                              { "hw_name"     : "HCxSR04_Back",
+                                "hw_sim_mode" : true,
+                                "hw_interface": [{
+                                                 "pin_name": "echoPin",
+                                                 "pin_no"  : 1
+                                                },
+                                                {
+                                                 "pin_name" : "trigPin",
+                                                 "pin_no"   : 4
+                                                }]
+                              },
+                              { "hw_name"     : "HCxSR04_Left",
+                                "hw_sim_mode" : true,
+                                "hw_interface": [{
+                                                 "pin_name": "echoPin",
+                                                 "pin_no"  : 2
+                                                },
+                                                {
+                                                 "pin_name" : "trigPin",
+                                                 "pin_no"   : 4
+                                                }]
+                              },
+                              { "hw_name"     : "HCxSR04_Right",
+                                "hw_sim_mode" : true,
+                                "hw_interface": [{
+                                                 "pin_name": "echoPin",
+                                                 "pin_no"  : 3
+                                                },
+                                                {
+                                                 "pin_name" : "trigPin",
+                                                 "pin_no"   : 4
+                                                }]
+                              },
+                              { "hw_name"     : "CAMERA_MOTORS",
+                                "hw_sim_mode" : false,
+                                "hw_interface": [{
+                                                 "pin_name": "CAM_HRZN_MTR",
+                                                 "pin_no"  : 15
+                                                },
+                                                {
+                                                 "pin_name" : "CAM_VERT_MTR",
+                                                 "pin_no"   : 14
+                                                }]
+                              },
+                              { "hw_name"     : "LEFT_DRV_MTR",
+                                "hw_sim_mode" : false,
+                                "hw_interface": [{
+                                                 "pin_name": "forward",
+                                                 "pin_no"  : 13
+                                                },
+                                                {
+                                                 "pin_name" : "reverse",
+                                                 "pin_no"   : 12
+                                                }]
+                              },
+                              { "hw_name"     : "RIGHT_DRV_MTR",
+                                "hw_sim_mode" : false,
+                                "hw_interface": [{
+                                                 "pin_name": "forward",
+                                                 "pin_no"  : 11
+                                                },
+                                                {
+                                                 "pin_name" : "reverse",
+                                                 "pin_no"   : 10
+                                                }]
+                          }]
 }

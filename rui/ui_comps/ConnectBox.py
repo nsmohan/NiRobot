@@ -21,6 +21,8 @@ import json
 #                   Local Imports                   #
 #---------------------------------------------------#
 from ui_comps.LayoutBase import *
+from lib.global_var import *
+from lib import global_var
 
 """ 
 "  @class  ConnectBox
@@ -72,7 +74,7 @@ class ConnectBox(LayoutBase):
 
         box_width = (self.std_button_width * 3) + 20
         box_height = (self.std_button_height) + 30
-        self.connect_gb.place(x=MAX_WIDTH - box_width, y=0, height=box_height, width=box_width)
+        self.connect_gb.place(x=global_var.MaxWidth - box_width, y=0, height=box_height, width=box_width)
         self.host_txtbox.place(x=0, y=box_height/10, width=self.std_button_width, height=self.std_button_height)
         self.cbtn.place(x=self.std_button_width, y=box_height/10)
         self.dcbtn.place(x=self.std_button_width*2, y=box_height/10)
@@ -83,8 +85,7 @@ class ConnectBox(LayoutBase):
         "  @brief Update Combox List
         """
 
-        for host in self.__get_known_hosts():
-            self.host_txtbox['value'] += host
+        self.host_txtbox['value'] = self.__get_known_hosts()
 
     def __handle_connect(self):
 
@@ -99,8 +100,7 @@ class ConnectBox(LayoutBase):
             self.throw_error("Unable to Connect to NiBot! {}".format(e))
         else:
             self.active_button_states()
-            if hostname not in self.host_txtbox['values']:
-                self.host_txtbox['values'] += hostname
+            self.__update_hosts_box()
 
 
     def __handle_disconnect(self):

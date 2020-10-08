@@ -26,13 +26,7 @@
 /--------------------------------------------------*/
 /** @var PWM_FREQ
  *  PWM Frequency for PCA9685 Driver */
-
-/** @var DEFAULT_DRV_SPEED
- *  Default speed to drive the motors*/
-const int DEFAULT_DRV_SPEED = 50.00;
-
 const int PWM_FREQ = 50.00;
-
 
 /** @map camera_directions
  *  CAMERA_MOTOR_DIRECTIONS STR to ENUM Mapping */
@@ -50,10 +44,7 @@ std::map<std::string, L9110_DIRECTIONS> l9110_directions;
 /             Library Implementation                /
 /--------------------------------------------------*/
 using namespace std;
-RobotMotorController::RobotMotorController(RSXA_hw pca9685_hw_config, 
-                                           RSXA_hw cam_motor_hw_config,
-                                           RSXA_hw left_motor_hw_config, 
-                                           RSXA_hw right_motor_hw_config)
+RobotMotorController::RobotMotorController(RMCT_hw_settings rmct_hw_settings)
 {
     /*!
      *  @brief     Constructor Implementation for RobotMotorController
@@ -84,18 +75,22 @@ RobotMotorController::RobotMotorController(RSXA_hw pca9685_hw_config,
     l9110_directions["STOP"] = STOP;
 
     /* 1. Initialize the PCA9685 Driver */
-    PCA9685_settings pwm_settings = {PWM_FREQ, pca9685_hw_config.hw_sim_mode};
+    PCA9685_settings pwm_settings = {PWM_FREQ, rmct_hw_settings.pca9685_hw_config.hw_sim_mode};
     result = PCA9685_init(pwm_settings);
 
     /* 2. Initialize the Camera Motors */
     if (result == OK)
-        result = LD27MG_init(cam_motor_hw_config);
+    {
+        result = LD27MG_init(rmct_hw_settings.cam_motor_hw_config);
+        this->cam_mtr_step_size = rmct_hw_settings.cam_mtr_step_size;
+    }
 
-    /* 3 .Initialize L9110 Drive Motors */
+    /* 3 .In itialize L9110 Drive Motors */
+    this->default_drive_speed = rmct_hw_settings.default_drive_speed;
     try
     {
-        left_drv_motor = Create_drv_motor(left_motor_hw_config);
-        right_drv_motor = Create_drv_motor(right_motor_hw_config);
+        left_drv_motor = Create_drv_motor(rmct_hw_settings.left_motor_hw_config);
+        right_drv_motor = Create_drv_motor(rmct_hw_settings.right_motor_hw_config);
     }
     catch (std::exception &e)
     {
@@ -135,7 +130,7 @@ NMT_result RobotMotorController::process_motor_action(std::string motor, std::st
     }
     else if (l9110_directions.count(direction))
     {
-        if (speed < 0) {speed = DEFAULT_DRV_SPEED;}
+        if (speed < 0) {speed = this->default_drive_speed;}
         if (motor == LEFT_DRV_MTR)
         {
             left_drv_motor->L9110_move_motor(l9110_directions[direction], speed);
@@ -157,8 +152,7 @@ NMT_result RobotMotorController::process_motor_action(std::string motor, std::st
 
 NMT_result RobotMotorController::move_camera_motor(CAMERA_MOTOR_DIRECTIONS direction, 
                                                    LD27MG_MOTORS camera_motor,
-                                                   double angle_to_move, 
-                                                   double default_angle)
+                                                   double angle_to_move)
 {
     /*!
      *  @brief     Method to move the Camera Motors
@@ -169,8 +163,8 @@ NMT_result RobotMotorController::move_camera_motor(CAMERA_MOTOR_DIRECTIONS direc
      *  @return    NMT_result
      */
 
-    NMT_log_write(DEBUG, (char *)"> direction=%s, angle_to_move=%.2f, default_angle=%.2f",
-                  DIRECTION_TO_STR[direction].c_str(), angle_to_move, default_angle);
+    NMT_log_write(DEBUG, (char *)"> direction=%s, angle_to_move=%.2f, cam_mtr_step_size=%.2f",
+                  DIRECTION_TO_STR[direction].c_str(), angle_to_move, cam_mtr_step_size);
 
     /*Initialize Varibles */
     NMT_result result = OK;
@@ -205,18 +199,18 @@ NMT_result RobotMotorController::move_camera_motor(CAMERA_MOTOR_DIRECTIONS direc
         {
             case UP:
             case LEFT:
-                angle_to_move = angle + default_angle;
+                angle_to_move = angle + cam_mtr_step_size;
                 break;
             case RIGHT:
             case DOWN:
-                angle_to_move = angle - default_angle;
+                angle_to_move = angle - cam_mtr_step_size;
                 break;
             case CUSTOM:
             case MAX_DIRECTIONS:
                 break;
         }
 
-        /** Move the actual motor */
+        /** Move the actual motor **/
         result = LD27MG_move_motor(camera_motor, angle_to_move);
     }
 

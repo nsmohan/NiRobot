@@ -20,6 +20,7 @@ import tkinter.ttk as ttk
 #---------------------------------------------------#
 from ui_comps.handle_motor_rq import MotorControlHandle
 from ui_comps.LayoutBase import *
+from lib.global_var import *
 
 """ 
 "  @class  DriveMotorControlBox
@@ -35,16 +36,16 @@ class DriveMotorControlBox(MotorControlHandle):
 
         self.motor = tk.StringVar()
 
-        self.FORWARD = lambda: self.motor_ctrl_action(self.motor.get(),
-                                                      direction="FORWARD",
-                                                      speed=self.speed_txbx.get())
-        self.REVERSE = lambda: self.motor_ctrl_action(self.motor.get(),
-                                                      direction="REVERSE",
-                                                      speed=self.speed_txbx.get())
-        self.STOP    = lambda: self.motor_ctrl_action(self.motor.get(),
-                                                      "STOP")
-        self.LEFT    = lambda: self.drive_left()
-        self.RIGHT   = lambda: self.drive_right()
+        self.FORWARD = lambda event: self.motor_ctrl_action(self.motor.get(),
+                                                            direction="FORWARD",
+                                                            speed=self.speed_txbx.get())
+        self.REVERSE = lambda event: self.motor_ctrl_action(self.motor.get(),
+                                                            direction="REVERSE",
+                                                            speed=self.speed_txbx.get())
+        self.STOP    = lambda event: self.motor_ctrl_action(self.motor.get(),
+                                                            "STOP")
+        self.LEFT    = lambda event: self.drive_left(speed=self.speed_txbx.get())
+        self.RIGHT   = lambda event: self.drive_right(speed=self.speed_txbx.get())
 
     def _class_comps_init(self):
 
@@ -108,11 +109,11 @@ class DriveMotorControlBox(MotorControlHandle):
         "  @brief Button Definitions
         """
 
-        self.fwdbtn   = self.new_button(self.drive_ctrl_gb, text="FORWARD", command=self.FORWARD)
-        self.stopbtn  = self.new_button(self.drive_ctrl_gb, text="STOP",    command=self.STOP)
-        self.revbtn   = self.new_button(self.drive_ctrl_gb, text="REVERSE", command=self.REVERSE)
-        self.leftbtn  = self.new_button(self.drive_ctrl_gb, text="LEFT",    command=self.LEFT)
-        self.rightbtn = self.new_button(self.drive_ctrl_gb, text="RIGHT",   command=self.RIGHT)
+        self.fwdbtn   = self.new_button(self.drive_ctrl_gb, text="FORWARD", on_click=self.FORWARD, on_release=self.STOP)
+        self.revbtn   = self.new_button(self.drive_ctrl_gb, text="REVERSE", on_click=self.REVERSE, on_release=self.STOP)
+        self.leftbtn  = self.new_button(self.drive_ctrl_gb, text="LEFT",    on_click=self.LEFT,    on_release=self.STOP)
+        self.rightbtn = self.new_button(self.drive_ctrl_gb, text="RIGHT",   on_click=self.RIGHT,   on_release=self.STOP)
+        self.stopbtn  = self.new_button(self.drive_ctrl_gb, text="STOP",    on_click=self.STOP)
 
     def _layout(self):
 

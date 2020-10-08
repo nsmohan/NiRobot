@@ -16,28 +16,27 @@ import tkinter as tk
 import tkinter.ttk as ttk
 
 #---------------------------------------------------#
+#                   Local Imports                   #
+#---------------------------------------------------#
+from lib.global_var import *
+from lib import global_var
+from lib_py import NMT_timer
+
+#---------------------------------------------------#
 #                   Constants                       #
 #---------------------------------------------------#
-WIDTH  = "1600"
-HEIGHT = "900"
-MAX_WIDTH = 1580
-MAX_HEIGHT = 880
-HEADER_HEIGHT = 200
-BODY_HEIGHT = 600
-MIN_X = 10
-MIN_Y = 10
+DEFAULT_REPEAT_TIME = 0.05 #-- 100ms --#
 
 #---------------------------------------------------#
 #                 Start of Program                  #
 #---------------------------------------------------#
-
 """ 
 "  @class  LayoutBase
-"          Skeleon Object for Layout
+"          Skeleton Object for Layout
 """
 class LayoutBase(object):
 
-    def __init__(self, window, nibot_ap):
+    def __init__(self, window, nibot_ap, root_window=False):
 
         """ 
         "  @brief Constructor
@@ -48,7 +47,7 @@ class LayoutBase(object):
         self.nibot_ap = nibot_ap
 
         # -- Initialize Variables --#
-        self.style = ttk.Style()
+        self.style             = ttk.Style()
         self.std_button_width  = 150
         self.std_button_height = 30
         self.L_button_width    = 300
@@ -127,16 +126,39 @@ class LayoutBase(object):
                              font = ('comic', 20, 'bold'), 
                              width=15) 
 
+    def _parse_btn_args(self, kwargs):
+
+        style      = kwargs.get('style',      'std')
+        command    = kwargs.get('command',    None)
+        on_click   = kwargs.get('on_click',   None)
+        on_release = kwargs.get('on_release', None)
+        repeat     = kwargs.get('repeat',     False)
+
+        return style, command, on_click, on_release, repeat
+        
     #---------------------------------------------------#
     #                Public Methods                     #
     #---------------------------------------------------#
-    def new_button(self, window, text, style="std", command=None):
+    def new_button(self, window, text, **kwargs):
 
         """ 
         "  @brief Wrapper method to create a new button
         """
+        style, command, on_click, on_release, repeat = self._parse_btn_args(kwargs)
 
-        return ttk.Button(window, text=text, style=f"{style}.TButton", command=command)
+        btn = ttk.Button(window, text=text, style=f"{style}.TButton", command=command)
+        if repeat:
+            action = NMT_timer.NMT_Timer(DEFAULT_REPEAT_TIME, on_click)
+            btn.bind("<ButtonPress>", lambda event: action.start())
+            btn.bind("<ButtonRelease>", lambda event: action.stop())
+        else:
+
+            if on_click:
+                btn.bind("<ButtonPress>", on_click)
+            if on_release:
+                btn.bind("<ButtonRelease>", on_release)
+
+        return btn
 
     def new_label_frame(self, window, text):
             return ttk.LabelFrame(self.window, text=text, width=self.lframe_width, height=self.lframe_height)
@@ -150,3 +172,4 @@ class LayoutBase(object):
         """
 
         tk.messagebox.showerror(title="NiBot", message=error)
+

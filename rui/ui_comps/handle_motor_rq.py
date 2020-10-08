@@ -21,12 +21,14 @@ from ui_comps.LayoutBase import *
 #---------------------------------------------------#
 #                   Global Variables                #
 #---------------------------------------------------#
-HOME_ANGLE = 90.00
-DEFAULT_SPEED = 50
-
 DRIVE_MOTORS = ["DRIVE_DRV_MTR", "LEFT_DRV_MTR", "RIGHT_DRV_MTR"]
 
 class MotorControlHandle(LayoutBase):
+
+    def __init__(self, window, nibot_ap):
+        super().__init__(window, nibot_ap)
+        self.home_angle = self.nibot_ap.rui_settings['motor_defaults']['home_angle']
+        self.default_turn_speed = self.nibot_ap.rui_settings['motor_defaults']['default_turn_speed']
 
     def motor_ctrl_action(self, motor, direction="", angle="", speed=""):
 
@@ -90,29 +92,37 @@ class MotorControlHandle(LayoutBase):
         #-- Perform Action --#
         self.__move_motor(action)
 
-    def drive_left(self):
+    def drive_left(self, speed=None):
 
         """ 
         "  @brief Drive the Robot Left
         """
 
+        # -- Check Speed --#
+        if not speed:
+            speed = self.default_turn_speed
+
         #-- Construct Actions --#
-        action = [("LEFT_DRV_MTR", "REVERSE", -1, DEFAULT_SPEED),
-                 ("RIGHT_DRV_MTR", "FORWARD", -1, DEFAULT_SPEED)]
+        action = [("LEFT_DRV_MTR", "REVERSE", -1, speed),
+                 ("RIGHT_DRV_MTR", "FORWARD", -1, speed)]
 
         #-- Perform Action --#
         self.__move_motor(action)
 
 
-    def drive_right(self):
+    def drive_right(self, speed=None):
 
         """ 
         "  @brief Drive the Robot Right
         """
 
+        # -- Check Speed --#
+        if not speed:
+            speed = self.default_turn_speed
+
         #-- Construct Actions --#
-        action = [("LEFT_DRV_MTR", "FORWARD", -1, DEFAULT_SPEED),
-                 ("RIGHT_DRV_MTR", "REVERSE", -1, DEFAULT_SPEED)]
+        action = [("LEFT_DRV_MTR", "FORWARD", -1, speed),
+                 ("RIGHT_DRV_MTR", "REVERSE", -1, speed)]
 
         #-- Perform Action --#
         self.__move_motor(action)
@@ -124,8 +134,8 @@ class MotorControlHandle(LayoutBase):
         """
 
         # -- Construct Actions --#
-        action = [("CAM_HRZN_MTR", "", HOME_ANGLE, -1),
-                 ("CAM_VERT_MTR", "", HOME_ANGLE, -1)]
+        action = [("CAM_HRZN_MTR", "",  self.home_angle, -1),
+                 ("CAM_VERT_MTR",  "",  self.home_angle, -1)]
 
         #-- Perform Action --#
         self.__move_motor(action)
