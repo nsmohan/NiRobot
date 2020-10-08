@@ -85,8 +85,7 @@ class ConnectBox(LayoutBase):
         "  @brief Update Combox List
         """
 
-        for host in self.__get_known_hosts():
-            self.host_txtbox['value'] += host
+        self.host_txtbox['value'] = self.__get_known_hosts()
 
     def __handle_connect(self):
 
@@ -101,8 +100,7 @@ class ConnectBox(LayoutBase):
             self.throw_error("Unable to Connect to NiBot! {}".format(e))
         else:
             self.active_button_states()
-            if hostname not in self.host_txtbox['values']:
-                self.host_txtbox['values'] += hostname
+            self.__update_hosts_box()
 
 
     def __handle_disconnect(self):

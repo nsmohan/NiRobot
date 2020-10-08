@@ -261,7 +261,9 @@ class SettingsTabView(LayoutBase):
             root_key = self.__get_treeroot(iid)
 
             if root_key == "hw":
-                indexes = iid[0][-3:]
+                indexes = iid[-3:]
+                print("iid=", iid)
+                print("index=", indexes)
                 index1 = int(indexes[-2])
                 index2 = int(indexes[-1])
                 hw_interface = self.rsxa_settings_mem["hw"][index1]["hw_interface"][index2]
