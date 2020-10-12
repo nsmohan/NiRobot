@@ -33,11 +33,11 @@
 
     /** @enum log_level
      * Logging Levels Enumeration */
-    typedef enum {DEBUG, WARNING, ERROR} log_level;
+    typedef enum {NOT_SET=-1, DEBUG, WARNING, ERROR} log_level;
 
     /** @var log_level_e2s
      *  Convert Enum to string for log_level */
-    const char* const log_level_e2s[] = {"DEBUG", "WARNING", "ERROR"};
+    const char* const log_level_e2s[] = {"NOT_SET", "DEBUG", "WARNING", "ERROR"};
 
     //------------------Prototypes----------------------//
     extern void NMT_log_finish(void);

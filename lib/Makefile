@@ -17,7 +17,8 @@ OBJS        = NMT_stdlib.so \
               NMT_sock_multi.so \
               NMT_sock_tcp.so \
               L9110.so \
-              RMCT_lib.so
+              RMCT_lib.so \
+              ADS115.so
 
 #---------------------------------------#
 #                                       #
@@ -78,6 +79,13 @@ RMCT_lib_LIBS      = -lNMT_stdlib \
                      -lL9110 \
                      -lPCA9685 \
                      -lLD27MG
+
+ADS115_LIBS       = -lNMT_log \
+                    -lRSXA \
+                    -lwiringPi \
+                    -lcrypt \
+                    -lm \
+                    -lrt
 
 # -------Update output file name ---------#
 TARGET_OBJS := $(foreach OBJ,$(OBJS),$(OBJ_DIR)/lib$(OBJ))
