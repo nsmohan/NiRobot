@@ -32,6 +32,7 @@
 /--------------------------------------------------*/
 static const std::string BATTERY_VOLTAGE = "BATTERY_VOLTAGE";
 static const std::string PI_INPUT_VOLTAGE = "PI_INPUT_VOLTAGE";
+static const int NROF_DEVICES = 2;
 
 /*--------------------------------------------------/
 /                Structs/Classes/Enums              /
@@ -103,6 +104,12 @@ int main(int argc, char *argv[])
        get_and_print_voltage(timeout, ads115_devices);
 
     }
+
+    /* Clean up */
+    RSXA_free_mem(&hw_settings);
+    NMT_log_finish();
+
+    /* Exit */
     return 0;
 }
 
@@ -118,7 +125,7 @@ static void get_and_print_voltage(int timeout, ADS115 *ads115_devices)
 
     /* Initialize Vtribles */
     int delay = pow(10, 6);
-    string devices[2] = {BATTERY_VOLTAGE, PI_INPUT_VOLTAGE};
+    string devices[NROF_DEVICES] = {BATTERY_VOLTAGE, PI_INPUT_VOLTAGE};
 
     /* Main Loop */
     while (1)

@@ -19,6 +19,7 @@
 /                   Local Imports                   /
 /--------------------------------------------------*/
 #include "ADS115.hpp"
+#include "NMT_stdlib.h"
 #include "NMT_log.h"
 #include "PCA9685.h"
 
@@ -39,7 +40,7 @@
 
 /**@def MAX_OUTPUT
  * Max Conversion Register Value */
-#define MAX_OUTPUT 0xFFFF
+#define MAX_OUTPUT 0x8000
 
 /* @def GAIN_VOLTAGE
  * FS Gain Voltage */
@@ -117,6 +118,8 @@ ADS115::ADS115(RSXA_hw hw_config)
 
     if (this->fd < 1){throw std::runtime_error("Error! Unable initialize I2C communication");}
 
+    if (!this->sim_mode) {ADS115_reset();}
+
     /* Exit the Function */
     NMT_log_write(DEBUG, (char *)"< ");
 }
@@ -132,7 +135,7 @@ double ADS115::ADS115_get_voltage(std::string hw_name)
      *  @return    Voltage read
      */
 
-    NMT_log_write(DEBUG, (char *)"> ");
+    NMT_log_write(DEBUG, (char *)"> hw_name=%s", hw_name.c_str());
 
     /* Initialize Varibles */
     double voltage = 0;
@@ -166,14 +169,19 @@ void ADS115::ADS115_reset(void)
      */
     NMT_log_write(DEBUG, (char *)"> ");
 
-    /* Reset the IC */
-    wiringPiI2CWriteReg8(this->fd, CONVERSION_REG, RESET_VALUE);
+    if (!this->sim_mode)
+    {
+        /* Reset the IC */
+        wiringPiI2CWriteReg8(this->fd, (int)CONVERSION_REG, RESET_VALUE);
 
-    /* 10ms delay to allow things to settle */
-    delay(10);
+        /* 10ms delay to allow things to settle */
+        delay(10);
 
-    /* Set the Config Register */ 
-    wiringPiI2CWriteReg16(this->fd, CONFIG_REG, CONFIG_REG_VALUE);
+        /* Set the Config Register */ 
+        wiringPiI2CWriteReg16(this->fd, 
+                              (int)CONFIG_REG, 
+                              (int16_t)NMT_stdlib_swapBytes(CONFIG_REG_VALUE));
+    }
 
     /* Exit the Function */
     NMT_log_write(DEBUG, (char *)"< ");
@@ -191,17 +199,19 @@ void ADS115::ADS115_begin_conversion_for_input(std::string hw_name)
      */
 
     NMT_log_write(DEBUG, (char *)"> ");
-    
-    /* Read Conversion Reg */
-    uint16_t reg_val = wiringPiI2CReadReg16(this->fd, CONFIG_REG);
-    NMT_log_write(DEBUG, (char *)"config_register_value=%X", reg_val);
+
+    /* Read Config Reg */
+    int16_t reg_val = NMT_stdlib_swapBytes(wiringPiI2CReadReg16(this->fd, int(CONFIG_REG)));
+    NMT_log_write(DEBUG, (char *)"config_register_value=0x%x", reg_val);
 
     /* Calculate the New Byte Value */
-    uint16_t new_reg_val = ((devices[hw_name] + BYTE_OFFSET) << 8) | reg_val;
-    NMT_log_write(DEBUG, (char *)"Update Config Register Value=%X", new_reg_val);
+    int16_t new_reg_val = ((devices[hw_name] + BYTE_OFFSET) << 12) | reg_val;
+    NMT_log_write(DEBUG, (char *)"New Config Register Value=0x%x", reg_val);
 
     /* Write new value to the config register */
-    wiringPiI2CWriteReg16(this->fd, CONFIG_REG, new_reg_val);
+    wiringPiI2CWriteReg16(this->fd, 
+                          CONFIG_REG,
+                          NMT_stdlib_swapBytes(new_reg_val));
 
     /* Exit the function */
     NMT_log_write(DEBUG, (char *)"< ");
@@ -217,13 +227,15 @@ double ADS115::ADS115_retrive_voltage_from_register()
     NMT_log_write(DEBUG, (char *)"> ");
 
     /* Read the register */
-    int16_t conversion_reg_val = wiringPiI2CReadReg16(this->fd, CONVERSION_REG);
+    int16_t conversion_reg_val = NMT_stdlib_swapBytes(wiringPiI2CReadReg16(this->fd,
+                                                                           (int)CONVERSION_REG));
+    NMT_log_write(DEBUG, (char *)"conversion_reg_val=0x%x", conversion_reg_val);
 
     /* Convert Register value to voltage */
-    double voltage = GAIN_VOLTAGE * (conversion_reg_val/MAX_OUTPUT);
+    double voltage = GAIN_VOLTAGE * (conversion_reg_val/(double)MAX_OUTPUT);
 
     /* Exit the Function */
-    NMT_log_write(DEBUG, (char *)"< %4.f", voltage);
+    NMT_log_write(DEBUG, (char *)"< voltage=%0.4fv", voltage);
     return voltage;
 }
 
@@ -243,7 +255,7 @@ void ADS115::ADS115_wait_for_converstion_to_complete()
     while (!osBit)
     {
         /* Get OS Bit State */
-        osBit = (wiringPiI2CReadReg16(this->fd, CONFIG_REG) & 0x8000) >> 15;
+        osBit = (NMT_stdlib_swapBytes(wiringPiI2CReadReg16(this->fd, CONFIG_REG)) & 0x8000) >> 15;
         delay(100);
     }
 

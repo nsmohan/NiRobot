@@ -175,3 +175,16 @@ size_t NMT_stdlib_get_file_size(char *filepath)
     fclose(fp);
     return size;
 }
+
+
+int16_t NMT_stdlib_swapBytes(int16_t Bytes) 
+{
+    /*!
+     *  @brief     Swap Bytes
+     *  @param[in] Bytes
+     *  @return    Bytes (Swapped)
+     */
+
+    /* Exit the Function */
+    return (int16_t)(Bytes << 8) + (int16_t)((Bytes >> 8) & 0x00FF);
+}
