@@ -132,7 +132,11 @@ static void get_and_print_voltage(int timeout, ADS115 *ads115_devices)
     {
         for (const string &device : devices)
         {
-            cout << device << " = " << ads115_devices->ADS115_get_voltage(device) << endl;
+            cout << device 
+                 << " = " 
+                 << ads115_devices->ADS115_get_voltage(device) 
+                 << "v" 
+                 << endl;
         }
         if(!timeout) {break;}
         usleep(delay);
