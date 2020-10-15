@@ -118,7 +118,8 @@ ADS115::ADS115(RSXA_hw hw_config)
 
     if (this->fd < 1){throw std::runtime_error("Error! Unable initialize I2C communication");}
 
-    if (!this->sim_mode) {ADS115_reset();}
+    /* 5. Reset Device */
+    ADS115_reset();
 
     /* Exit the Function */
     NMT_log_write(DEBUG, (char *)"< ");

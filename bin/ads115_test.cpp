@@ -43,6 +43,7 @@ static const int NROF_DEVICES = 2;
 /--------------------------------------------------*/
 static void print_usage(int es);
 static void get_and_print_voltage(int timeout, ADS115 *ads115_devices);
+static ADS115* get_ADS115_devices(RSXA hw_settings);
 
 /*--------------------------------------------------------------------/
 /                             Start of Program                        /
@@ -56,7 +57,6 @@ int main(int argc, char *argv[])
     bool verbosity    = false;
     bool timeout      = false;
     int opt;
-    ADS115 *ads115_devices;
 
     /* 1. Parse Arguments */
     while ((opt = getopt(argc, argv, ":hvt")) != -1)
@@ -80,37 +80,69 @@ int main(int argc, char *argv[])
         }
     }
 
-    /* 2. Get RSXA Settings */
+    /* 1. Get RSXA Settings */
     result = RSXA_init(&hw_settings);
-    
+
     if (result == OK)
     {
-        /* 3. Initialize the logger */
+        /* 2. Initialize the logger */
         NMT_log_init((char *)hw_settings.log_dir, verbosity);
 
-        for (int i = 0; i < hw_settings.array_len_hw; i++)
+        try
         {
-            string hw_name(hw_settings.hw[i].hw_name);
+            /* 3. Get ADS Devices */
+            ADS115 *ads115_devices = get_ADS115_devices(hw_settings);
 
-            /* Find ADS115 Settings and create ADS115 object */
-            if (hw_name.find(ADS115_str) != string::npos)
-            {
-                ads115_devices = new ADS115(hw_settings.hw[i]);
-                break;
-            }
+            /* 4. Get and print Voltage */
+            get_and_print_voltage(timeout, ads115_devices);
         }
-
-       /* Get and print Voltage */
-       get_and_print_voltage(timeout, ads115_devices);
-
+        catch (int e)
+        {
+            return -1;
+        }
     }
 
     /* Clean up */
-    RSXA_free_mem(&hw_settings);
     NMT_log_finish();
+    RSXA_free_mem(&hw_settings);
 
     /* Exit */
     return 0;
+}
+
+static ADS115* get_ADS115_devices(RSXA hw_settings)
+{
+    /*!
+     *  @brief     Get ADS115 Object
+     *  @return    ADS115 devices
+     */
+    
+    /* Initialize Variables */
+    ADS115 *ads115_devices;
+
+    
+    for (int i = 0; i < hw_settings.array_len_hw; i++)
+    {
+        string hw_name(hw_settings.hw[i].hw_name);
+
+        /* Find ADS115 Settings and create ADS115 object */
+        if (hw_name.find(ADS115_str) != string::npos)
+        {
+            try
+            {
+                ads115_devices = new ADS115(hw_settings.hw[i]);
+            }
+            catch (const runtime_error& error)
+            {
+                cout << "Error Configuring ADS115" << endl;
+                throw -1;
+            }
+            break;
+        }
+    }
+
+    /* Exit the Function */
+    return ads115_devices;
 }
 
 static void get_and_print_voltage(int timeout, ADS115 *ads115_devices)
@@ -136,8 +168,9 @@ static void get_and_print_voltage(int timeout, ADS115 *ads115_devices)
                  << " = " 
                  << ads115_devices->ADS115_get_voltage(device) 
                  << "v" 
-                 << endl;
+                 << " ";
         }
+        cout << endl;
         if(!timeout) {break;}
         usleep(delay);
     }

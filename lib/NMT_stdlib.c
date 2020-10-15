@@ -5,6 +5,9 @@
  *  @author    Nitin Mohan
  *  @date      Feb 7, 2019
  *  @copyright 2020 - NM Technologies
+ *
+ *  @History DD/MM/YY Author Description
+ *           14/10/20 NITM   Add Function SwapBytes
  */
 
 /*--------------------------------------------------/
