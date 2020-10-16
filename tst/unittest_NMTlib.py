@@ -193,7 +193,7 @@ class NMT_stdlib_test(unittest.TestCase):
         SwappedBytes = np.int16(NMT_stdlib.NMT_stdlib_swapBytes(BytesToSwap))
 
         #-- Verify Result --#
-        self.assertEqual(SwapBytes_expected, SwapBytes)
+        self.assertEqual(SwapBytes_expected, SwappedBytes)
 
 class NMT_log_Test(unittest.TestCase):
 

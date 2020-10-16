@@ -95,6 +95,9 @@ int main(int argc, char *argv[])
 
             /* 4. Get and print Voltage */
             get_and_print_voltage(timeout, ads115_devices);
+
+            /* Delete Object */
+            delete(ads115_devices);
         }
         catch (int e)
         {

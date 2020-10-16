@@ -21,7 +21,6 @@
 #include "ADS115.hpp"
 #include "NMT_stdlib.h"
 #include "NMT_log.h"
-#include "PCA9685.h"
 
 /*--------------------------------------------------/
 /                    Macros                         /
