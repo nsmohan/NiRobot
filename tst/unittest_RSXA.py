@@ -31,7 +31,7 @@ import NMT_log_test
 class NMT_RSXA_test(unittest.TestCase):
     
     def setUp(self):
-        self.backup_file = "%s.backup"%RS_PATH
+        self.backup_file = "%s.backup.rsxa_test"%RS_PATH
         os.system("cp %s %s"%(RS_PATH, self.backup_file))
         NMT_log_test.NMT_log_test(__file__)
         print "Running Test:", self._testMethodName
