@@ -1,9 +1,15 @@
 #!/usr/bin/env python
 
-"""unittest_NMTlib.py: Test all NMT_stdlib functions
-
-__author__             = "Nitin Mohan
-__copyright__          = "Copy Right 2019. NM Technologies"
+"""
+"  @file      unittest_NMTlib.py
+"  @brief     Unittests for NMT_stdlib and NMT_log
+"  @details   Test NMT_stdlib and NMT_log Interfaces
+"  @author    Nitin Mohan
+"  @date      August 3, 2019
+"  @copyright 2020 - NM Technologies
+"
+"  @History DD/MM/YY Author Description
+"           14/10/20 NITM   Add Tests for SwapBytes
 """
 
 #---------------------------------------------------#
@@ -17,6 +23,7 @@ import re
 import json
 from ctypes import *
 from datetime import datetime
+import numpy as np
 
 #---------------------------------------------------#
 #                   Constants                       #
@@ -173,6 +180,20 @@ class NMT_stdlib_test(unittest.TestCase):
 
         #Clean-up
         os.system("rm -rf %s"%file_name)
+
+    def test_NMT_stdlib_SwapBytes(self):
+
+        #Description - Ensure SwapBytes is working
+
+        #-- Initialize Varibles --#
+        BytesToSwap = 0x1234
+        SwapBytes_expected = 0x3412
+
+        #-- Invoke Function --#
+        SwappedBytes = np.int16(NMT_stdlib.NMT_stdlib_swapBytes(BytesToSwap))
+
+        #-- Verify Result --#
+        self.assertEqual(SwapBytes_expected, SwappedBytes)
 
 class NMT_log_Test(unittest.TestCase):
 

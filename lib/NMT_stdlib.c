@@ -5,6 +5,9 @@
  *  @author    Nitin Mohan
  *  @date      Feb 7, 2019
  *  @copyright 2020 - NM Technologies
+ *
+ *  @History DD/MM/YY Author Description
+ *           14/10/20 NITM   Add Function SwapBytes
  */
 
 /*--------------------------------------------------/
@@ -174,4 +177,17 @@ size_t NMT_stdlib_get_file_size(char *filepath)
     //Close the file and exit the function
     fclose(fp);
     return size;
+}
+
+
+int16_t NMT_stdlib_swapBytes(int16_t Bytes) 
+{
+    /*!
+     *  @brief     Swap Bytes
+     *  @param[in] Bytes
+     *  @return    Bytes (Swapped)
+     */
+
+    /* Exit the Function */
+    return (int16_t)(Bytes << 8) + (int16_t)((Bytes >> 8) & 0x00FF);
 }

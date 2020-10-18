@@ -35,6 +35,7 @@ class TestRunner(object):
     def setup(self):
 
         #-- Copy Needed Files --#
+        print("Setting up System for tests .........")
         os.system("cp %s %s.backup"%(RSXA_FILE_PATH, RSXA_FILE_PATH))
         os.system("cp %s/dat/RSXA.json %s"%(TST_PATH, RSXA_FILE_PATH))
 
@@ -44,6 +45,7 @@ class TestRunner(object):
 
     def tearDown(self):
 
+        print("Tests Complete! Tearing down.........")
         os.system("python3 %s/nibot_mtr_ctrl.py -e"%TOOLS_PATH)
         os.system("mv %s.backup %s"%(RSXA_FILE_PATH, RSXA_FILE_PATH))
 

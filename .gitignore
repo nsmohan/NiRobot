@@ -7,6 +7,8 @@
 *.out
 *.so
 *.lock
+*.gcda
+*.gcno
 Obj
 bld
 tst/lib_py

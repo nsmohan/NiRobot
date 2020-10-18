@@ -5,10 +5,15 @@
  *  @author    Nitin Mohan
  *  @date      Feb 7, 2019
  *  @copyright 2020 - NM Technologies
+ *
+ *  @History DD/MM/YY Author Description
+ *           14/10/20 NITM   Add Function SwapBytes
  */
 
 #ifndef _NMT_stdlib_
 #define _NMT_stdlib_
+
+#include <stdint.h>
 
 
 /* --- Macros ----*/
@@ -48,6 +53,8 @@
 
     extern void NMT_stdlib_write_file(char *filepath,            //In  - Path to file
                                       char *file_content);       //In  - Content to write
+
+    extern int16_t NMT_stdlib_swapBytes(int16_t Bytes);                  //In   - Bytes
 
 #ifdef __cplusplus
     }

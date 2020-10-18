@@ -14,7 +14,7 @@ export TST_DIR     = $(PROJ_DIR)/tst
 export RUI_DIR     = $(PROJ_DIR)/rui
 export TOOLS_DIR   = $(PROJ_DIR)/tools
 export CFLAGS      = -g -Wall -Wextra -I $(INC_DIR) -I $(PY_DIR) \
-                     -Wno-missing-field-initializers 
+                     -Wno-missing-field-initializers --coverage
 export SFLAGS      = -fPIC -shared
 export RPATH       = -L$(OBJ_DIR) -Wl,-rpath=$(OBJ_DIR)
 
