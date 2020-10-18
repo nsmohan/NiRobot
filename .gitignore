@@ -14,5 +14,6 @@ bld
 tst/lib_py
 tools/lib_py
 rui/lib_py
+coverage_results/
 html
 latex

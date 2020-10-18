@@ -13,10 +13,17 @@ export BLD_DIR     = $(PROJ_DIR)/bld
 export TST_DIR     = $(PROJ_DIR)/tst
 export RUI_DIR     = $(PROJ_DIR)/rui
 export TOOLS_DIR   = $(PROJ_DIR)/tools
+export GTEST_OUTPUT = "xml:$(PROJ_DIR)/test_results/"
 export CFLAGS      = -g -Wall -Wextra -I $(INC_DIR) -I $(PY_DIR) \
-                     -Wno-missing-field-initializers --coverage
+                     -Wno-missing-field-initializers
 export SFLAGS      = -fPIC -shared
 export RPATH       = -L$(OBJ_DIR) -Wl,-rpath=$(OBJ_DIR)
+
+COVERAGE_RESULTS_DIR = $(PROJ_DIR)/coverage_results
+coverage_flag=false
+ifdef coverage_flag
+CFLAGS += --coverage
+endif
 
 ACTIONS =  mkdirs \
            bld_all
@@ -30,6 +37,15 @@ bld_all:
 	$(MAKE) -C $(RUI_DIR)
 	$(MAKE) -C $(TOOLS_DIR)
 
+coverage: coverage_flag=true
+coverage: $(ACTIONS)
+
+coverage:
+	if [ ! -d "coverage_results" ]; then mkdir $(COVERAGE_RESULTS_DIR); fi
+	python3 tst/run_tests.py
+	lcov --capture --directory . --output-file $(COVERAGE_RESULTS_DIR)/coverage.info
+	genhtml $(COVERAGE_RESULTS_DIR)/coverage.info --output-directory $(COVERAGE_RESULTS_DIR)
+
 mkdirs: 
 	if [ ! -d "Obj" ]; then mkdir $(OBJ_DIR); fi
 	if [ ! -f "Obj/__init__.py" ]; then touch $(OBJ_DIR)/__init__.py; fi
@@ -41,3 +57,7 @@ clean:
 	rm -rf $(TST_DIR)/bld/*
 	rm -rf $(BLD_DIR)/*
 	rm -rf $(LIBPY_DIR)/*pyc
+
+coverage_clean:
+	find -name "*.gcda" -type f -delete
+	find -name "*.gcno" -type f -delete
