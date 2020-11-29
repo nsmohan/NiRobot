@@ -11,6 +11,13 @@
                                 "server_p"  : 5600,
                                 "client_ip" : "",
                                 "client_p"  : 0
+                              },
+                              {
+                                "proc_name" : "RSDA",
+                                "server_ip" : "",
+                                "server_p"  : 0,
+                                "client_ip" : "224.1.1.1",
+                                "client_p"  : 5500
                              }],
     "hw"                   : [{
                                 "hw_name"     : "ADS115",

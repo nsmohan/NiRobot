@@ -36,11 +36,12 @@ RSDA_LIBS     = -lNMT_stdlib \
                 -lNMT_log \
                 -lRSXA \
                 -lNMT_sock_base \
+                -lNMT_sock_multi \
                 -ljsoncpp \
                 -lHCxSR04\
                 -lADS115 \
-                -lSensorDataAbstraction
-
+                -lSensorDataAbstraction \
+                -lpthread
 
 ultrasonic_test_LIBS = -lNMT_log \
                        -lRSXA \
