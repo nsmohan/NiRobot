@@ -82,7 +82,8 @@ class RSDASockConnect(object):
 if __name__ == '__main__':
 
     rsda = RSDASockConnect()
-    data, address = rsda.server_sock.recvfrom(1024)
+    while True:
+        data, address = rsda.server_sock.recvfrom(1024)
 
-    print (json.loads(data))
+        print (json.loads(data))
 

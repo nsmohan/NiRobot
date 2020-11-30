@@ -11,9 +11,11 @@
 /                   System Imports                  /
 /--------------------------------------------------*/
 #include <iostream>
-#include <thread>
 #include <mutex>
 #include <stdexcept>
+#include <chrono>
+#include <thread>
+#include <functional>
 #include <cstring>
 #include <string>
 #include <getopt.h>
@@ -45,7 +47,6 @@ const unsigned int SOCK_TIMEOUT = 600;
 /                Structs/Classes/Enums              /
 /--------------------------------------------------*/
 static void rsda_print_usage(int es);
-static NMT_sock_multi* setup_multicast_sockets(RSXA_procs *procs, int nrof_procs);
 
 /*--------------------------------------------------------------------/
 /                             Start of Program                        /
@@ -89,7 +90,6 @@ RobotSensorDataAcquisition::RobotSensorDataAcquisition(RSXA hw_settings, DataMod
 
     /* Refresh SensorData Object*/
     clear_sensor_data();
-
 }
 
 /*---------------------------------------------------------------------------------------------------------/
@@ -236,6 +236,88 @@ void RobotSensorDataAcquisition::update_sensor_data(const std::string key, Json:
     NMT_log_write(DEBUG, (char *)"< ");
 }
 
+class RSDA_Application : public RobotSensorDataAcquisition
+{
+    public:
+        RSDA_Application(RSXA hw_settings, DataMode mode);
+        ~RSDA_Application() {};
+        void get_and_transmit_sensor_data();
+
+    private:
+        NMT_sock_multi *client_sock;
+        int multi_cast_port;
+        std::string multi_cast_ip;
+        int tcp_port;
+        std::string tcp_ip;
+        void get_RSDA_parameters(RSXA_procs *procs, int nrof_procs);
+};
+
+RSDA_Application::RSDA_Application(RSXA hw_settings, DataMode mode) : RobotSensorDataAcquisition(hw_settings, mode)
+{
+    try
+    {
+        get_RSDA_parameters(hw_settings.procs, hw_settings.array_len_procs);
+
+        client_sock = new NMT_sock_multi(multi_cast_port,
+                                         multi_cast_ip,
+                                         SOCK_CLIENT);
+        
+    }
+    catch (const runtime_error& error)
+    {
+        throw;
+    }
+}
+
+void RSDA_Application::get_and_transmit_sensor_data() 
+{
+    /*!
+     *  @brief     Description
+     *  @param[in]
+     *  @param[out]
+     *  @return    0
+     */
+
+    NMT_log_write(DEBUG, (char *)"> ");
+
+    while (true)
+    {
+        auto x = std::chrono::steady_clock::now() + std::chrono::milliseconds(1000);
+        client_sock->NMT_write_socket((char *)get_sensor_data().toStyledString().c_str());
+        std::this_thread::sleep_until(x);
+    }
+
+    /* Exit the Function */
+    NMT_log_write(DEBUG, (char *)"< ");
+}
+
+void RSDA_Application::get_RSDA_parameters(RSXA_procs *procs, int nrof_procs)
+{
+    /*!
+     *  @brief    Setup Multi-Cast Socket for Program
+     *  parm[in]  procs
+     *  @return   void
+     */
+
+    /* Initialize Varibles */
+    bool found_rsda_elements = false;
+
+    for (int proc_index = 0; proc_index < nrof_procs; proc_index++)
+    {
+        if (strcmp(procs[proc_index].proc_name, MY_NAME) == 0)
+        {
+            multi_cast_port = procs[proc_index].client_p;
+            multi_cast_ip = procs[proc_index].client_ip;
+            tcp_port = procs[proc_index].server_p;
+            tcp_ip = procs[proc_index].server_ip;
+            
+            found_rsda_elements = true;
+            break;
+        }
+    }
+    if (!found_rsda_elements) {throw std::runtime_error("Error! Unable to find proc data in RSXA Json file");}
+}
+
 int main(int argc, char *argv[])
 {
     /*!
@@ -280,13 +362,11 @@ int main(int argc, char *argv[])
         NMT_log_init((char *)hw_settings.log_dir, verbosity);
 
         /* 4. Initialize Sensors */
-        RobotSensorDataAcquisition sensorData(hw_settings, ALL);
+        RSDA_Application *rsdaObj = new RSDA_Application(hw_settings, ALL);
 
-        /* 5. Join Multi-Cast Group */
-        NMT_sock_multi *client_sock = setup_multicast_sockets(hw_settings.procs, hw_settings.array_len_procs);
+        thread t1(&RSDA_Application::get_and_transmit_sensor_data, rsdaObj);
+        t1.detach();
 
-        SensorData = sensorData.get_sensor_data();
-        client_sock->NMT_write_socket((char *)(SensorData.toStyledString()).c_str());
     }
     return 0;
 }
@@ -303,31 +383,3 @@ static void rsda_print_usage(int es)
     exit(es);
 }
 
-static NMT_sock_multi* setup_multicast_sockets(RSXA_procs *procs, int nrof_procs)
-{
-    /*!
-     *  @brief    Setup Multi-Cast Socket for Program
-     *  parm[in]  procs
-     *  @return   void
-     */
-
-    /* Initialize Varibles */
-    bool proc_found = false;
-    for (int proc_index = 0; proc_index < nrof_procs; proc_index++)
-    {
-        if (strcmp(procs[proc_index].proc_name, MY_NAME) == 0)
-        {
-            proc_found = true;
-            return new NMT_sock_multi(procs[proc_index].client_p,
-                                      procs[proc_index].client_ip,
-                                      SOCK_CLIENT,
-                                      SOCK_TIMEOUT);
-        }
-    }
-
-    if (!proc_found)
-    {
-        cout << "Error! proc_name=" << MY_NAME " Not found in RSXA.json file. Exiting ..." << endl;
-        exit(1);
-    }
-}
