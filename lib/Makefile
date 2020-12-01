@@ -19,7 +19,8 @@ OBJS        = NMT_stdlib.so \
               L9110.so \
               RMCT_lib.so \
               ADS115.so \
-              SensorDataAbstraction.so
+              SensorDataAbstraction.so \
+              RSDA_handler.so
 
 #---------------------------------------#
 #                                       #
@@ -92,6 +93,11 @@ SensorDataAbstraction_LIBS = -lNMT_log \
                              -lRSXA \
                              -lADS115 \
                              -lHCxSR04 \
+
+RSDA_handler_LIBS          = -lNMT_log \
+                             -lRSXA \
+                             -lADS115 \
+                             -lHCxSR04
 
 
 # -------Update output file name ---------#

@@ -11,23 +11,18 @@
 /                   System Imports                  /
 /--------------------------------------------------*/
 #include <iostream>
-#include <mutex>
 #include <stdexcept>
 #include <chrono>
 #include <thread>
-#include <functional>
 #include <cstring>
 #include <string>
 #include <getopt.h>
-#include <jsoncpp/json/json.h>
 
 /*--------------------------------------------------/
 /                   Local Imports                   /
 /--------------------------------------------------*/
-#include "RSXA.h"
-#include "SensorDataAbstraction.hpp"
+#include "RSDA.hpp"
 #include "NMT_log.h"
-#include "NMT_sock_multi.hpp"
 
 /*--------------------------------------------------/
 /                    Macros                         /
@@ -51,208 +46,8 @@ static void rsda_print_usage(int es);
 /*--------------------------------------------------------------------/
 /                             Start of Program                        /
 /--------------------------------------------------------------------*/
-
-class RobotSensorDataAcquisition : public SensorDataAbstraction
-{
-    public:
-        /* Prototypes */
-        RobotSensorDataAcquisition(RSXA hw_settings, DataMode mode);
-        ~RobotSensorDataAcquisition() {};
-        Json::Value get_sensor_data();
-
-    private:
-        /** @var SensorData
-         *  Json Structure which is transmitted */
-        Json::Value SensorData;
-
-        /** @var DataUpdate_mtx
-         *  Mutex to access SensorData */
-        std::mutex  DataUpdate_mtx;
-
-        /* Prototypes */
-        void clear_sensor_data();
-        void get_and_update_distance(std::pair<std::string, HCxSR04*> const &sonar);
-        void get_and_update_voltage();
-        void update_sensor_data(const std::string key, Json::Value data);
-};
-
 using namespace std;
-
-RobotSensorDataAcquisition::RobotSensorDataAcquisition(RSXA hw_settings, DataMode mode) :
-            SensorDataAbstraction(hw_settings, mode)
-{
-    /*!
-     *  @brief     Constructor
-     *  @param[in] hw_settings
-     *  @param[in] mode
-     *  @return    N/A
-     */
-
-    /* Refresh SensorData Object*/
-    clear_sensor_data();
-}
-
-/*---------------------------------------------------------------------------------------------------------/
-/                                                                                                         /
-/                                             Public Methods                                             /
-/                                                                                                       /
-/-----------------------------------------------------------------------------------------------------*/
-Json::Value RobotSensorDataAcquisition::get_sensor_data() 
-{
-    /*!
-     *  @brief     Get Robot Sensor Data
-     *  @return    N/A
-     */
-
-    NMT_log_write(DEBUG, (char *)"> ");
-    
-    /* Initialize Variables */
-    vector<thread> distanceSensorThreads;
-
-    /* Reset Var */
-    clear_sensor_data();
-
-    /* Loop over Sonar Sensors and get distance */
-    for (auto const &sonar : ultrasonicSensors)
-    {
-        distanceSensorThreads.emplace_back([&](){RobotSensorDataAcquisition::get_and_update_distance(sonar);});
-    }
-
-    /* Get Voltage */
-    get_and_update_voltage();
-
-    /* Wait for Sonar Threads to finish */
-    for(auto& sonarThread: distanceSensorThreads)
-    {
-        sonarThread.join();
-    }
-
-    /* Exit the Function */
-    NMT_log_write(DEBUG, (char *)"< ");
-    return SensorData;
-}
-/*---------------------------------------------------------------------------------------------------------/
-/                                                                                                         /
-/                                             Private Methods                                            /
-/                                                                                                       /
-/-----------------------------------------------------------------------------------------------------*/
-void RobotSensorDataAcquisition::clear_sensor_data() 
-{
-    /*!
-     *  @brief     Reset SensorData Object
-     *  @return    void
-     */
-
-
-    NMT_log_write(DEBUG, (char *)"> ");
-
-    /* Set Default Values */
-    SensorData["type"] = "SensorData";
-    SensorData["Proximity"] = Json::arrayValue;
-    SensorData["Voltage"] = Json::arrayValue;
-    
-    /* Clear Arrays to Null */
-    SensorData["Proximity"].clear();
-    SensorData["Voltage"].clear();
-
-
-    /* Exit the Function */
-    NMT_log_write(DEBUG, (char *)"< ");
-}
-
-void RobotSensorDataAcquisition::get_and_update_distance(std::pair<std::string, HCxSR04*> const &sonar)
-{
-    /*!
-     *  @brief     Get updated distance data from Sonar Sensor
-     *  @return    void
-     */
-
-    NMT_log_write(DEBUG, (char *)"> ");
-
-    /* Initialize Varibles */
-    Json::Value distanceData;
-    const string key = "Proximity";
-
-    /* Get new Distance */
-    distanceData[sonar.first] = sonar.second->distance();
-
-    /* Update SensorData wtih new value */
-    update_sensor_data(key, distanceData);
-
-    /* Exit the function */
-    NMT_log_write(DEBUG, (char *)"< ");
-}
-
-void RobotSensorDataAcquisition::get_and_update_voltage() 
-{
-    /*!
-     *  @brief     Get updated voltage data
-     *  @return    void
-     */
-
-    NMT_log_write(DEBUG, (char *)"> ");
-
-    /* Initialize Variables */
-    string voltageDevices[] = {BATTERY_VOLTAGE, PI_INPUT_VOLTAGE};
-    Json::Value voltageData;
-    const string key = "Voltage";
-
-
-    /* Get updated voltage for each device */
-    for (const string &device : voltageDevices)
-    {
-        voltageData[device] = voltageSensor->ADS115_get_voltage(device);
-    }
-
-    /* Update SensorData with new values */
-    update_sensor_data(key, voltageData);
-
-    /* Exit the Function */
-    NMT_log_write(DEBUG, (char *)"< ");
-}
-
-void RobotSensorDataAcquisition::update_sensor_data(const std::string key, Json::Value data)
-{
-    /*!
-     *  @brief     Update the Sensor Data varible
-     *  @param[in] key
-     *  @param[in] data
-     *  @return    void
-     */
-
-
-    NMT_log_write(DEBUG, (char *)"> ");
-
-    /* Lock access to Sensor Data */
-    DataUpdate_mtx.lock();
-
-    /* Update value */
-    SensorData[key].append(data);
-
-    /* Unlock access */
-    DataUpdate_mtx.unlock();
-
-    /* Exit the Function */
-    NMT_log_write(DEBUG, (char *)"< ");
-}
-
-class RSDA_Application : public RobotSensorDataAcquisition
-{
-    public:
-        RSDA_Application(RSXA hw_settings, DataMode mode);
-        ~RSDA_Application() {};
-        void get_and_transmit_sensor_data();
-
-    private:
-        NMT_sock_multi *client_sock;
-        int multi_cast_port;
-        std::string multi_cast_ip;
-        int tcp_port;
-        std::string tcp_ip;
-        void get_RSDA_parameters(RSXA_procs *procs, int nrof_procs);
-};
-
-RSDA_Application::RSDA_Application(RSXA hw_settings, DataMode mode) : RobotSensorDataAcquisition(hw_settings, mode)
+RSDA::RSDA(RSXA hw_settings, DataMode mode) : SensorDataHandler(hw_settings, mode)
 {
     try
     {
@@ -261,6 +56,10 @@ RSDA_Application::RSDA_Application(RSXA hw_settings, DataMode mode) : RobotSenso
         client_sock = new NMT_sock_multi(multi_cast_port,
                                          multi_cast_ip,
                                          SOCK_CLIENT);
+
+        server_sock = new NMT_sock_tcp(tcp_port,
+                                       tcp_ip,
+                                       SOCK_SERVER);
         
     }
     catch (const runtime_error& error)
@@ -269,7 +68,7 @@ RSDA_Application::RSDA_Application(RSXA hw_settings, DataMode mode) : RobotSenso
     }
 }
 
-void RSDA_Application::get_and_transmit_sensor_data() 
+void RSDA::get_and_transmit_sensor_data(int interval) 
 {
     /*!
      *  @brief     Description
@@ -282,7 +81,7 @@ void RSDA_Application::get_and_transmit_sensor_data()
 
     while (true)
     {
-        auto x = std::chrono::steady_clock::now() + std::chrono::milliseconds(1000);
+        auto x = std::chrono::steady_clock::now() + std::chrono::milliseconds(interval);
         client_sock->NMT_write_socket((char *)get_sensor_data().toStyledString().c_str());
         std::this_thread::sleep_until(x);
     }
@@ -291,7 +90,51 @@ void RSDA_Application::get_and_transmit_sensor_data()
     NMT_log_write(DEBUG, (char *)"< ");
 }
 
-void RSDA_Application::get_RSDA_parameters(RSXA_procs *procs, int nrof_procs)
+
+void RSDA::server_listener()
+{
+    /*!
+     *  @brief     Description
+     *  @param[in]
+     *  @param[out]
+     *  @return    0
+     */
+
+
+    NMT_log_write(DEBUG, (char *)"> ");
+
+    /* Initialize Variables */
+    NMT_result result = OK;
+    string rx_message;
+    int client_id;
+    Json::Value  action;
+    Json::Reader reader;
+
+
+    tie(result, rx_message, client_id) = server_sock->NMT_read_socket(); 
+    /* Parse the message as JSON Object */
+    reader.parse(rx_message, action);
+
+    for (Json::Value::ArrayIndex i = 0; i != action.size() && result == OK; i++)
+    {
+        if (action[i]["type"].asString() == "proc_action")
+        {
+            /* Process proc_action */
+            if (action[i]["action"].asString() == "exit") 
+            
+            {
+                
+                NMT_log_write(DEBUG, (char *)"Request to terminate RMCT Recieved");
+                exit(0);
+            }
+        }
+    }
+
+    /* Exit the Function */
+    NMT_log_write(DEBUG, (char *)"< ");
+}
+
+void RSDA::get_RSDA_parameters(RSXA_procs *procs, int nrof_procs)
 {
     /*!
      *  @brief    Setup Multi-Cast Socket for Program
@@ -362,10 +205,12 @@ int main(int argc, char *argv[])
         NMT_log_init((char *)hw_settings.log_dir, verbosity);
 
         /* 4. Initialize Sensors */
-        RSDA_Application *rsdaObj = new RSDA_Application(hw_settings, ALL);
+        RSDA *rsdaObj = new RSDA(hw_settings, ALL);
 
-        thread t1(&RSDA_Application::get_and_transmit_sensor_data, rsdaObj);
-        t1.detach();
+        thread t1(&RSDA::get_and_transmit_sensor_data, rsdaObj, 1000);
+        thread t2(&RSDA::server_listener, rsdaObj);
+        t1.join();
+        t2.join();
 
     }
     return 0;

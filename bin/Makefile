@@ -37,10 +37,12 @@ RSDA_LIBS     = -lNMT_stdlib \
                 -lRSXA \
                 -lNMT_sock_base \
                 -lNMT_sock_multi \
+                -lNMT_sock_tcp \
                 -ljsoncpp \
                 -lHCxSR04\
                 -lADS115 \
                 -lSensorDataAbstraction \
+                -lRSDA_handler \
                 -lpthread
 
 ultrasonic_test_LIBS = -lNMT_log \
@@ -65,6 +67,9 @@ $(BLD_DIR)/%: $(BIN_DIR)/%.c
 
 # -----Build C++ Files ---------#
 $(BLD_DIR)/%: $(BIN_DIR)/%.cpp
+	g++ $(CFLAGS) $(RPATH) -o $@ $^ $($(*)_LIBS)
+
+$(BLD_DIR)/%: $(BIN_DIR)/%.hpp $(BIN_DIR)/%.cpp
 	g++ $(CFLAGS) $(RPATH) -o $@ $^ $($(*)_LIBS)
 
 clean:
