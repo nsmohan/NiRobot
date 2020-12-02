@@ -4,7 +4,7 @@
     "operational_settings" : {
                                "cam_mtr_step_size"  : 10,
                                "default_drive_speed": 50,
-                               "rsda_broadcast_freq": 60
+                               "rsda_broadcast_freq": 100
                              },
     "procs"                : [{ 
                                 "proc_name" : "RMCT",

@@ -18,9 +18,9 @@ OBJS        = NMT_stdlib.so \
               NMT_sock_tcp.so \
               L9110.so \
               RMCT_lib.so \
+              RSDA_lib.so \
               ADS115.so \
               SensorDataAbstraction.so \
-              RSDA_handler.so
 
 #---------------------------------------#
 #                                       #
@@ -94,9 +94,10 @@ SensorDataAbstraction_LIBS = -lNMT_log \
                              -lADS115 \
                              -lHCxSR04 \
 
-RSDA_handler_LIBS          = -lNMT_log \
+RSDA_lib_LIBS                = -lNMT_log \
                              -lRSXA \
                              -lADS115 \
+                             -lSensorDataAbstraction \
                              -lHCxSR04
 
 

@@ -1,5 +1,5 @@
 /** 
- *  @file      RSDA_handler.cpp
+ *  @file      RSDA_lib.cpp
  *  @brief     Sensor Data Abstraction Handler functions 
  *  @details   Functions to get and store Sensor Data 
  *  @author    Nitin Mohan

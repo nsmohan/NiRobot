@@ -1,5 +1,5 @@
 /** 
- *  @file     RSDA_handler.hpp 
+ *  @file     RSDA_lib.hpp 
  *  @brief    Interfaces to retrive sensor data from abstraction layer 
  *  @details  External interfaces to get sensor data
  *  @author   Nitin Mohan

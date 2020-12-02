@@ -14,6 +14,12 @@
 #define _NMT_stdlib_
 
 #include <stdint.h>
+#include <stdbool.h>
+#include <unistd.h>
+
+#ifndef __USE_XOPEN
+#define __USE_XOPEN
+#endif
 
 
 /* --- Macros ----*/
@@ -55,6 +61,10 @@
                                       char *file_content);       //In  - Content to write
 
     extern int16_t NMT_stdlib_swapBytes(int16_t Bytes);                  //In   - Bytes
+
+    extern NMT_result NMT_stdlib_timer_interrupt(void(*funcPtrcb)(),     //In Function to be called
+                                                 useconds_t interval,    //in Interval
+                                                 bool continous);        //In (True = loop, false = run once
 
 #ifdef __cplusplus
     }

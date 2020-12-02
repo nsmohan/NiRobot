@@ -92,6 +92,10 @@ const char *CAMERA_MOTOR_SENSITIVITY = "cam_mtr_step_size";
  *  default_drive_speed key */
 const char *DEFAULT_DRV_SPEED = "default_drive_speed";
 
+/**@var RSDA_BROADCAST_FREQ
+ *  Rate at which RSDA will transmit data */
+const char *RSDA_BROADCAST_FREQ = "rsda_broadcast_freq";
+
 /**@var SETTINGS
  *  general_settings key */
 const char *SETTINGS = "operational_settings";
@@ -196,6 +200,9 @@ static NMT_result RSXA_parse_json(char *data_to_parse, RSXA *RSXA_Object)
 
     /* Find Default Drive Speed */
     if (result == OK) {result = RSXA_find_key(jobj_settings, DEFAULT_DRV_SPEED, &jvalues);}
+
+    /* Find RSDA tx rate */
+    if (result == OK) {result = RSXA_find_key(jobj_settings, RSDA_BROADCAST_FREQ, &jvalues);}
 
     /* Copy default drive speed value */
     if (result == OK) {RSXA_Object->general_settings.default_drive_speed = json_object_get_int(jvalues);}
