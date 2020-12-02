@@ -42,7 +42,7 @@ RSDA_LIBS     = -lNMT_stdlib \
                 -lHCxSR04\
                 -lADS115 \
                 -lSensorDataAbstraction \
-                -lRSDA_handler \
+                -lRSDA_lib\
                 -lpthread
 
 ultrasonic_test_LIBS = -lNMT_log \

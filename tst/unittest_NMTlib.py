@@ -195,6 +195,20 @@ class NMT_stdlib_test(unittest.TestCase):
         #-- Verify Result --#
         self.assertEqual(SwapBytes_expected, SwappedBytes)
 
+    
+    def test_NMT_timer_interrupt(self):
+
+        #Description - Test NMT_timer_interrupt function
+        
+        cb = CFUNCTYPE(None) 
+        cb_func = cb(dummy_function)
+
+        print(cb, cb_func)
+
+        func = NMT_stdlib.NMT_stdlib_timer_interrupt
+        func(cb_func, 1000, False)
+
+
 class NMT_log_Test(unittest.TestCase):
 
     def setUp(self):
@@ -304,6 +318,9 @@ class NMT_log_Test(unittest.TestCase):
 
     def tearDown(self):
         os.system("rm -rf /tmp/*.log")
+
+def dummy_function():
+    print "I am a dummy function"
 
 if __name__ == '__main__':
     unittest.main()
