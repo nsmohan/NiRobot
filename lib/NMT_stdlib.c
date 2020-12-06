@@ -216,14 +216,17 @@ static void *nmt_stdlib_start_timer_interrupt(void *arguments)
      */
 
     /* Initialize Variables */
-    struct timer_args *args = arguments;
+    struct timer_args args = *((struct timer_args*)arguments);
+    
+    /* Free heap memory */
+    free(arguments);
 
     /* Run the method with delay */
     while (true)
     {
-        usleep(args->interval);
-        args->funcPtrcb();
-        if (!(args->continous)){break;}
+        usleep(args.interval);
+        args.funcPtrcb();
+        if (!(args.continous)){break;}
     }
 
     /* Exit the function */
@@ -242,20 +245,20 @@ NMT_result NMT_stdlib_timer_interrupt(void(*funcPtrcb)(), useconds_t interval, b
 
     /* Initialize Variables */
     NMT_result result      = OK;
-    struct timer_args args = {0};
+    struct timer_args *args = (struct timer_args*)malloc(sizeof(struct timer_args));
     int thread_status;
     pthread_t thread_id;
 
     /* Fill Struct */
-    args.continous = continous;
-    args.funcPtrcb = *funcPtrcb;
-    args.interval  = interval;
+    args->continous = continous;
+    args->funcPtrcb = *funcPtrcb;
+    args->interval  = interval;
 
     /* Start the thread */
     thread_status = pthread_create(&thread_id,
                                    NULL,
                                    nmt_stdlib_start_timer_interrupt,
-                                   &args);
+                                   args);
 
     /* Detach from thread */
     if (!thread_status) {pthread_detach(thread_id);}

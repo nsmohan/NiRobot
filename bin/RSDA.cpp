@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
     cout << "Starting Robot Sensor Data Acquisition........" << endl;
 
     /* 1. Parse Arguments */
-    while ((opt = getopt(argc, argv, ":hv")) != -1)
+    while ((opt = getopt(argc, argv, ":hsv")) != -1)
     {
         switch(opt)
         {
@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
         NMT_stdlib_timer_interrupt(&tx_sensor_data_cb, global_data.rsda_tx_rate, continous);
 
         /* Run Main Loop */
-        rsda_main_loop();
+        if (continous) {rsda_main_loop();}
     }
     else
     {

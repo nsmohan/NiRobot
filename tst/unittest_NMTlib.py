@@ -17,6 +17,7 @@
 #---------------------------------------------------#
 import sys
 import os
+import time
 import inspect
 import unittest
 import re
@@ -36,6 +37,8 @@ from lib_py import NMT_stdlib_py
 from lib_py.NMT_stdlib_py import NMT_stdlib
 from lib_py.NMT_stdlib_py import NMT_result
 from lib_py.NMT_log import logger
+
+test_flags = []
 
 class NMT_stdlib_test(unittest.TestCase):
     
@@ -195,20 +198,53 @@ class NMT_stdlib_test(unittest.TestCase):
         #-- Verify Result --#
         self.assertEqual(SwapBytes_expected, SwappedBytes)
 
+    def test_timer_interrupt(self):
+
+        #Description - Test stdlib timer function Single Run
+
+        #-- Initialize Variables --#
+        global test_flags
+
+        #-- Register Callback --#
+        cb_type   = CFUNCTYPE(None)
+        cb_ptr    = cb_type(dummy_func)
+        interval  = 1000000
+        continous = False
+
+        #-- Start the timer --#
+        NMT_stdlib.NMT_stdlib_timer_interrupt(cb_ptr, interval, continous)
+
+        #-- Sleep for 2 seconds to allow function call --#
+        time.sleep(2)
+
+        #-- Validate Results --#
+        self.assertEqual(len(test_flags), 1)
+        self.assertTrue(test_flags[0])
+
+        test_flags = []
+
+        continous = True
+
+        #-- Start the timer --#
+        NMT_stdlib.NMT_stdlib_timer_interrupt(cb_ptr, interval, continous)
+
+        #-- Sleep for 2 seconds to allow function call --#
+        time.sleep(5)
+
+        #-- Validate Results --#
+        self.assertEqual(len(test_flags), 5)
+        self.assertTrue(test_flags[0])
+
+def dummy_func():
+
+    #-- Dummy function --#
+
+    #-- Initialize Variables --#
+    global test_flags
+
+    #--Set value --#
+    test_flags.append(True)
     
-    def test_NMT_timer_interrupt(self):
-
-        #Description - Test NMT_timer_interrupt function
-        
-        cb = CFUNCTYPE(None) 
-        cb_func = cb(dummy_function)
-
-        print(cb, cb_func)
-
-        func = NMT_stdlib.NMT_stdlib_timer_interrupt
-        func(cb_func, 1000, False)
-
-
 class NMT_log_Test(unittest.TestCase):
 
     def setUp(self):
@@ -318,9 +354,6 @@ class NMT_log_Test(unittest.TestCase):
 
     def tearDown(self):
         os.system("rm -rf /tmp/*.log")
-
-def dummy_function():
-    print "I am a dummy function"
 
 if __name__ == '__main__':
     unittest.main()

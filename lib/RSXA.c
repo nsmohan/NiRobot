@@ -201,11 +201,14 @@ static NMT_result RSXA_parse_json(char *data_to_parse, RSXA *RSXA_Object)
     /* Find Default Drive Speed */
     if (result == OK) {result = RSXA_find_key(jobj_settings, DEFAULT_DRV_SPEED, &jvalues);}
 
+    /* Copy default drive speed value */
+    if (result == OK) {RSXA_Object->general_settings.default_drive_speed = json_object_get_int(jvalues);}
+
     /* Find RSDA tx rate */
     if (result == OK) {result = RSXA_find_key(jobj_settings, RSDA_BROADCAST_FREQ, &jvalues);}
 
     /* Copy default drive speed value */
-    if (result == OK) {RSXA_Object->general_settings.default_drive_speed = json_object_get_int(jvalues);}
+    if (result == OK) {RSXA_Object->general_settings.rsda_broadcast_rate = json_object_get_int(jvalues);}
 
     /* Get the procs object */
     if (result == OK) {result = RSXA_find_key(rsxa_root_obj, PROCS, &jobj_procs);}
