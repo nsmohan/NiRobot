@@ -37,6 +37,7 @@ class SensorDataHandler : public SensorDataAbstraction
         /* Prototypes */
         SensorDataHandler(RSXA hw_settings, DataMode mode);
         ~SensorDataHandler() {};
+        friend class RSDA_Test_Fixture;
         Json::Value get_sensor_data();
 
     private:

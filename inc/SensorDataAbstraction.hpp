@@ -31,6 +31,7 @@
 /--------------------------------------------------*/
 static const std::string BATTERY_VOLTAGE  = "BATTERY_VOLTAGE";
 static const std::string PI_INPUT_VOLTAGE = "PI_INPUT_VOLTAGE";
+
 /*--------------------------------------------------/
 /                Structs/Classes/Enums              /
 /--------------------------------------------------*/
