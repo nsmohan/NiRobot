@@ -20,7 +20,7 @@
 #include "NMT_log.h"
 #include "RSDA_lib.hpp"
 
-#define MAX_NROF_HW 2
+#define MAX_NROF_HW 3
 #define MAX_NROF_PINS 2
 
 /* @class MyEnvironment
@@ -42,7 +42,10 @@ class RSDA_Test_Fixture : public ::testing::Test
     public:
         RSXA hw_settings;
         SensorDataHandler *obj;
-
+        double default_voltage = 6.00;
+        double default_distance = 0.17150000000000001;
+        std::string HCxSR04_01 = HCxSR04_str + std::string("_01");
+        std::string HCxSR04_02 = HCxSR04_str + std::string("_02");
 
         RSDA_Test_Fixture()
         {
@@ -69,16 +72,53 @@ class RSDA_Test_Fixture : public ::testing::Test
             for (int i = 0; i < MAX_NROF_HW; i++)
             {
                 free(hw_settings.hw[i].hw_interface);
-                free(hw_settings.hw);
+            }
+            free(hw_settings.hw);
+        }
+
+        void fill_random_data_in_SensorData()
+        {
+            obj->SensorData["type"] = "TestData";
+            obj->SensorData["Proximity"] = 25;
+            obj->SensorData["Voltage"] = 42;
+        }
+
+        Json::Value get_sensor_data_var()
+        {
+            return obj->SensorData;
+        }
+
+        void clear_sensor_data()
+        {
+            obj->clear_sensor_data();
+        }
+
+        void get_and_update_voltage()
+        {
+            obj->get_and_update_voltage();
+        }
+
+        void get_distance()
+        {
+            /* Loop over Sonar Sensors and get distance */
+            for (auto const &sonar : obj->ultrasonicSensors)
+            {
+                obj->get_and_update_distance(sonar);;
             }
         }
 
+        void update_sensor_data(const std::string key, const std::string key2, Json::Value data)
+        {
+            obj->update_sensor_data(key, key2, data);
+        }
+
     private:
-        std::string hw[MAX_NROF_HW]           = {ADS115_str, HCxSR04_str};
+        std::string hw[MAX_NROF_HW]           = {ADS115_str, HCxSR04_01, HCxSR04_02};
         std::vector<std::string> ads_pins     = {BATTERY_VOLTAGE, PI_INPUT_VOLTAGE};
         std::vector<std::string> hcxsr04_pins = {echoPin_str, trigPin_str};
         std::map<std::string, std::vector<std::string> > hw_mapping = { {ADS115_str, ads_pins},
-                                                                      {HCxSR04_str, hcxsr04_pins}};
+                                                                      {HCxSR04_01, hcxsr04_pins},
+                                                                      {HCxSR04_02, hcxsr04_pins}};
 
 };
 
@@ -87,9 +127,120 @@ using namespace testing;
 
 TEST_F(RSDA_Test_Fixture, VerifyClearSensorDataGW) 
 {
+   /*!
+    *  @test Verify the clear_sensor_data method
+    *  @step Inject random data into SensorData buffer
+    *  @step Call clear_sensor_data method
+    *  @step Call Verfiy buffer is cleared and in clean state
+    */
 
-    //handler_obj.SensorData["Testing"] = "Test";
+    /* Fill Data */
+    fill_random_data_in_SensorData();
+
+    /* Act on SUT */
+    clear_sensor_data();
+
+    /* Get Buffer value */
+    Json::Value SensorData = get_sensor_data_var();
+
     
+    /* Verfiy Results */
+    ASSERT_EQ(SensorData["type"].asString(), "SensorData");
+    ASSERT_EQ(SensorData["Proximity"].size(), 0);
+    ASSERT_EQ(SensorData["Voltage"].size(), 0);
+}
+
+TEST_F(RSDA_Test_Fixture, VerifyGetVoltageGW) 
+{
+   /*!
+    *  @test Verfiy Get Voltage Method
+    *  @step Call Get Voltage
+    *  @step Verfiy result matches expected
+    */
+
+    /* Get Updated Voltage */
+    get_and_update_voltage();
+
+    /* Get Buffer value */
+    Json::Value SensorData = get_sensor_data_var();
+
+    /* Verfiy Results */
+    ASSERT_EQ(SensorData["type"].asString(), "SensorData");
+    ASSERT_EQ(SensorData["Proximity"].size(), 0);
+    ASSERT_DOUBLE_EQ(SensorData["Voltage"][BATTERY_VOLTAGE].asDouble(), default_voltage);
+    ASSERT_DOUBLE_EQ(SensorData["Voltage"][PI_INPUT_VOLTAGE].asDouble(), default_voltage);
+}
+
+TEST_F(RSDA_Test_Fixture, VerifyGetSonarData) 
+{
+   /*!
+    *  @test Verfiy Get Sonar Data
+    *  @step Call Get Distance
+    *  @step Verfiy result matches expected
+    */
+
+    /* Get Updated Distance */
+    get_distance();
+
+    /* Get Buffer value */
+    Json::Value SensorData = get_sensor_data_var();
+
+    /* Verfiy Results */
+    ASSERT_EQ(SensorData["type"].asString(), "SensorData");
+    ASSERT_EQ(SensorData["Voltage"].size(), 0);
+    ASSERT_DOUBLE_EQ(SensorData["Proximity"][HCxSR04_01].asDouble(), default_distance);
+    ASSERT_DOUBLE_EQ(SensorData["Proximity"][HCxSR04_02].asDouble(), default_distance);
+}
+
+TEST_F(RSDA_Test_Fixture, VerifyUpdateSensorData) 
+{
+   /*!
+    *  @test Verfiy Update Sensor Data Method
+    *  @step Call Get Update Sensor Data Method w/ different key/value pairs
+    *  @step Verfiy result matches expected
+    */
+
+    /* Test Data to Inject */
+    int maxkeys = 2;
+    std::string keys[maxkeys] = {"Proximity", "Voltage"};
+    std::string keys2[maxkeys] = {"key1", "key2"};
+    int values[maxkeys] = {1, 2};
+
+    /* Update Sensor Data */
+    for (int i = 0; i < maxkeys; i++)
+    {
+        /* Act on SUT */
+        update_sensor_data(keys[i], keys2[i], values[i]);
+    }
+
+    /* Get Buffer value */
+    Json::Value SensorData = get_sensor_data_var();
+
+    /* Verfiy Results */
+    ASSERT_EQ(SensorData["type"].asString(), "SensorData");
+    for (int i = 0; i < maxkeys; i++)
+    {
+        ASSERT_DOUBLE_EQ(SensorData[keys[i]][keys2[i]].asDouble(), values[i]);
+    }
+}
+
+TEST_F(RSDA_Test_Fixture, VerfiyGetSensorData) 
+{
+   /*!
+    *  @test Verify get_sensor_data Method
+    *  @step Call Get Sensor Data
+    *  @step Verfiy result matches expected
+    */
+
+    /* Get Buffer value */
+    Json::Value SensorData = obj->get_sensor_data();
+
+    /* Verfiy Results */
+    ASSERT_EQ(SensorData["type"].asString(), "SensorData");
+    ASSERT_DOUBLE_EQ(SensorData["Proximity"][HCxSR04_01].asDouble(),     default_distance);
+    ASSERT_DOUBLE_EQ(SensorData["Proximity"][HCxSR04_02].asDouble(),     default_distance);
+    ASSERT_DOUBLE_EQ(SensorData["Voltage"][BATTERY_VOLTAGE].asDouble(),  default_voltage);
+    ASSERT_DOUBLE_EQ(SensorData["Voltage"][PI_INPUT_VOLTAGE].asDouble(), default_voltage);
 }
 
 int main(int argc, char **argv) {

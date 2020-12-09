@@ -100,8 +100,8 @@ void SensorDataHandler::clear_sensor_data()
 
     /* Set Default Values */
     SensorData["type"] = "SensorData";
-    SensorData["Proximity"] = Json::arrayValue;
-    SensorData["Voltage"] = Json::arrayValue;
+    SensorData["Proximity"] = {};
+    SensorData["Voltage"] = {};
     
     /* Clear Arrays to Null */
     SensorData["Proximity"].clear();
@@ -126,10 +126,7 @@ void SensorDataHandler::get_and_update_distance(std::pair<std::string, HCxSR04*>
     const string key = "Proximity";
 
     /* Get new Distance */
-    distanceData[sonar.first] = sonar.second->distance();
-
-    /* Update SensorData wtih new value */
-    update_sensor_data(key, distanceData);
+    update_sensor_data(key, sonar.first,  sonar.second->distance());
 
     /* Exit the function */
     NMT_log_write(DEBUG, (char *)"< ");
@@ -146,24 +143,20 @@ void SensorDataHandler::get_and_update_voltage()
 
     /* Initialize Variables */
     string voltageDevices[] = {BATTERY_VOLTAGE, PI_INPUT_VOLTAGE};
-    Json::Value voltageData;
     const string key = "Voltage";
 
 
     /* Get updated voltage for each device */
     for (const string &device : voltageDevices)
     {
-        voltageData[device] = voltageSensor->ADS115_get_voltage(device);
+        update_sensor_data(key, device, voltageSensor->ADS115_get_voltage(device));
     }
-
-    /* Update SensorData with new values */
-    update_sensor_data(key, voltageData);
 
     /* Exit the Function */
     NMT_log_write(DEBUG, (char *)"< ");
 }
 
-void SensorDataHandler::update_sensor_data(const std::string key, Json::Value data)
+void SensorDataHandler::update_sensor_data(const std::string key1, const std::string key2, Json::Value data)
 {
     /*!
      *  @brief     Update the Sensor Data varible
@@ -179,7 +172,7 @@ void SensorDataHandler::update_sensor_data(const std::string key, Json::Value da
     DataUpdate_mtx.lock();
 
     /* Update value */
-    SensorData[key].append(data);
+    SensorData[key1][key2] = data;
 
     /* Unlock access */
     DataUpdate_mtx.unlock();

@@ -53,6 +53,6 @@ class SensorDataHandler : public SensorDataAbstraction
         void clear_sensor_data();
         void get_and_update_distance(std::pair<std::string, HCxSR04*> const &sonar);
         void get_and_update_voltage();
-        void update_sensor_data(const std::string key, Json::Value data);
+        void update_sensor_data(const std::string key1, const std::string key2, Json::Value data);
 };
 
