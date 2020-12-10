@@ -118,5 +118,5 @@ $(TBLD_DIR)/unittest_RMCT_lib: $(OBJ_DIR)/LD27MG_stub.o $(OBJ_DIR)/unittest_RMCT
                                $(OBJ_DIR)/wiringPi_stub.o
 	g++  $(LDFLAGS_T) $(RPATH) -I $(INC_DIR) -o $@ $^ $(GTST_LIBS) $(unittest_RMCT_lib_LIBS)
 
-$(TBLD_DIR)/unittest_RSDA_lib: $(OBJ_DIR)/unittest_sensordataabstraction.o
+$(TBLD_DIR)/unittest_RSDA_lib: $(OBJ_DIR)/unittest_RSDA_lib.o
 	g++  $(LDFLAGS_T) $(RPATH) -I $(INC_DIR) -o $@ $^ $(GTST_LIBS) $(unittest_RSDA_lib_LIBS)
