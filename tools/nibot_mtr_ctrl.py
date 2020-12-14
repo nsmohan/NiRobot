@@ -71,14 +71,14 @@ if __name__ == '__main__':
         rmct = RMCTSockConnect()
 
     if (args.exit):
-        tx_message = json.dumps([({"type": "proc_action", "action": "exit"})])
+        rmct.stop_proc()
     else:
         valid_tx_message(args.motor, args.direction, args.angle, args.speed)
         actions = [(args.motor, args.direction, args.angle, args.speed)]
         tx_message = rmct.construct_tx_message(actions)
 
-    # -- Send the Command -- #
-    rmct.tx_message(tx_message)
+        # -- Send the Command -- #
+        rmct.tx_message(tx_message)
     response = rmct.rx_message()
 
     if response:

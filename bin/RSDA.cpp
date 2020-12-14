@@ -31,6 +31,8 @@
  *  Name of this process */
 #define MY_NAME "RSDA"
 
+#define K 1000
+
 /*--------------------------------------------------/
 /                Structs/Classes/Enums              /
 /--------------------------------------------------*/
@@ -122,7 +124,7 @@ int main(int argc, char *argv[])
         try
         {
             get_rsda_proc_data(hw_settings.procs, hw_settings.array_len_procs);
-            global_data.rsda_tx_rate = hw_settings.general_settings.rsda_broadcast_rate;
+            global_data.rsda_tx_rate = K * (hw_settings.general_settings.rsda_broadcast_rate);
         }
         catch(std::exception &e)
         {
