@@ -61,7 +61,7 @@
                                                 },
                                                 {
                                                  "pin_name" : "trigPin",
-                                                 "pin_no"   : 4
+                                                 "pin_no"   : 6
                                                 }]
                               },
                               { "hw_name"     : "HCxSR04_Left",
@@ -72,7 +72,7 @@
                                                 },
                                                 {
                                                  "pin_name" : "trigPin",
-                                                 "pin_no"   : 4
+                                                 "pin_no"   : 10
                                                 }]
                               },
                               { "hw_name"     : "HCxSR04_Right",
@@ -83,7 +83,7 @@
                                                 },
                                                 {
                                                  "pin_name" : "trigPin",
-                                                 "pin_no"   : 4
+                                                 "pin_no"   : 5
                                                 }]
                               },
                               { "hw_name"     : "LEFT_DRV_MTR",

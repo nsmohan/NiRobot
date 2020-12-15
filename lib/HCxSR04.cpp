@@ -94,6 +94,6 @@ double HCxSR04::distance()
     distancecm = 100 * 171.5 * (this->travelTimeUsec/1000000.00);
 
     /*Exit the function */
-    NMT_log_write(DEBUG, (char *)"> distance=%.6fcm", distancecm);
+    NMT_log_write(DEBUG, (char *)"< Sonar=%s distance=%.6fcm", hw_name.c_str(), distancecm);
     return distancecm;
 }

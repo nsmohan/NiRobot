@@ -179,9 +179,10 @@ tuple<NMT_result, bool> NMT_sock_tcp::listen()
     NMT_result result = OK;
     bool time_out = false;
     int activity;
+    struct timeval tvlocal = this->tv;
 
     /* Wait for Activity on Socket */
-    activity = select(this->max_sd + 1, &this->readfds , NULL , NULL , &(this->tv));
+    activity = select(this->max_sd + 1, &this->readfds , NULL , NULL , &tvlocal);
 
     if (activity < 0)
     {
