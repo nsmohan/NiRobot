@@ -60,7 +60,7 @@ NMT_sock::NMT_sock(unsigned int port, string ip_address,
 NMT_result NMT_sock::NMT_init_client()
 {
     /*!
-     *  @brief     Initialize the multicast protocol in server mode
+     *  @brief     Initialize the multicast protocol in client mode
      *  @return    NMT_result
      */
 
@@ -116,7 +116,7 @@ NMT_result NMT_sock::NMT_init_client()
 NMT_result NMT_sock::NMT_init_server()
 {
     /*!
-     *  @brief     Initialize the multicast protocol in client mode
+     *  @brief     Initialize the multicast protocol in server mode
      *  @return    NMT_result
      */
 

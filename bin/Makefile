@@ -9,8 +9,9 @@
 #---------------------------------------#
 BLDS = regdump \
        RMCT \
+       ads115_test \
        ultrasonic_test \
-       ads115_test
+       RSDA 
 #---------------------------------------#
 #                                       #
 #              Sources/Libs             #
@@ -31,14 +32,28 @@ RMCT_LIBS     = -lNMT_stdlib \
                 -lRMCT_lib \
                 -lL9110
 
-ultrasonic_test_LIBS = -lNMT_stdlib \
-                       -lNMT_log \
+RSDA_LIBS     = -lNMT_stdlib \
+                -lNMT_log \
+                -lRSXA \
+                -lNMT_sock_base \
+                -lNMT_sock_multi \
+                -lNMT_sock_tcp \
+                -ljsoncpp \
+                -lHCxSR04\
+                -lADS115 \
+                -lSensorDataAbstraction \
+                -lRSDA_lib\
+                -lpthread
+
+ultrasonic_test_LIBS = -lNMT_log \
                        -lRSXA \
+                       -lSensorDataAbstraction \
                        -lHCxSR04
 
 ads115_test_LIBS     = -lNMT_log \
                        -lRSXA \
-                       -lADS115
+                       -lADS115 \
+                       -lSensorDataAbstraction
 
 # -------Update output file name ---------#
 TARGET_BLDS := $(foreach BLD,$(BLDS),$(BLD_DIR)/$(BLD))
@@ -52,6 +67,9 @@ $(BLD_DIR)/%: $(BIN_DIR)/%.c
 
 # -----Build C++ Files ---------#
 $(BLD_DIR)/%: $(BIN_DIR)/%.cpp
+	g++ $(CFLAGS) $(RPATH) -o $@ $^ $($(*)_LIBS)
+
+$(BLD_DIR)/%: $(BIN_DIR)/%.hpp $(BIN_DIR)/%.cpp
 	g++ $(CFLAGS) $(RPATH) -o $@ $^ $($(*)_LIBS)
 
 clean:

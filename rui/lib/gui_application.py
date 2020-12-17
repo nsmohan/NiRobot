@@ -157,7 +157,7 @@ class GUI_Application(object):
             if GUI_Application.is_task_running(self.nibot, "RMCT"):
 
                 print("Restarting RMCT Task.....")
-                self.rmct.stop_rmct()
+                self.rmct.stop_proc()
 
                 time.sleep(1)  #Delay to allow task to exit
 

@@ -14,41 +14,88 @@
 #include <iostream>
 #include <math.h>
 #include <unistd.h>
+#include <map>
 
 /*--------------------------------------------------/
 /                   Local Imports                   /
 /--------------------------------------------------*/
-#include "ADS115.hpp"
 #include "RSXA.h"
+#include "SensorDataAbstraction.hpp"
 #include "NMT_log.h"
 
 /*--------------------------------------------------/
 /                    Macros                         /
 /--------------------------------------------------*/
-#define ADS115_str "ADS115"
 
 /*--------------------------------------------------/
 /                    Global Varibles                /
 /--------------------------------------------------*/
-static const std::string BATTERY_VOLTAGE = "BATTERY_VOLTAGE";
-static const std::string PI_INPUT_VOLTAGE = "PI_INPUT_VOLTAGE";
 static const int NROF_DEVICES = 2;
-
-/*--------------------------------------------------/
-/                Structs/Classes/Enums              /
-/--------------------------------------------------*/
 
 /*--------------------------------------------------/
 /                   Prototypes                      /
 /--------------------------------------------------*/
 static void print_usage(int es);
-static void get_and_print_voltage(int timeout, ADS115 *ads115_devices);
-static ADS115* get_ADS115_devices(RSXA hw_settings);
 
 /*--------------------------------------------------------------------/
 /                             Start of Program                        /
 /--------------------------------------------------------------------*/
+class ads115_test : public SensorDataAbstraction
+{
+    public:
+        ads115_test(RSXA hw_settings, DataMode mode) : SensorDataAbstraction(hw_settings, mode) {};
+        ~ads115_test() {};
+        void get_and_print_voltage(int timeout);
+};
+
+
 using namespace std;
+void ads115_test::get_and_print_voltage(int timeout)
+{
+    /*!
+     *  @brief     Retrive Voltage and Print to Screen
+     *  @param[in] ads115_devices
+     *  @return    N/A
+     */
+
+    NMT_log_write(DEBUG, (char *)"> ");
+
+    /* Initialize Vtribles */
+    int delay = pow(10, 6);
+    string devices[NROF_DEVICES] = {BATTERY_VOLTAGE, PI_INPUT_VOLTAGE};
+
+    /* Main Loop */
+    while (1)
+    {
+        for (const string &device : devices)
+        {
+            cout << device 
+                 << " = " 
+                 << voltageSensor->ADS115_get_voltage(device) 
+                 << "v" 
+                 << " ";
+        }
+        cout << endl;
+        if(!timeout) {break;}
+        usleep(delay);
+    }
+
+    /* Exit the Function */
+    NMT_log_write(DEBUG, (char *)"< ");
+}
+
+static void print_usage(int es)
+{
+    /*!
+     *  @brief    Function to print Help Screen
+     *  parm[in]  es (Exit Status)
+     *  @return   status
+     */
+
+    cout << "-v verbosity || -h/help menu || -t No Timeout" << endl;
+    exit(es);
+}
+
 int main(int argc, char *argv[])
 {
     /* Initialize Varibles */
@@ -91,13 +138,10 @@ int main(int argc, char *argv[])
         try
         {
             /* 3. Get ADS Devices */
-            ADS115 *ads115_devices = get_ADS115_devices(hw_settings);
+            ads115_test voltReader(hw_settings, VOLTAGE);
 
             /* 4. Get and print Voltage */
-            get_and_print_voltage(timeout, ads115_devices);
-
-            /* Delete Object */
-            delete(ads115_devices);
+            voltReader.get_and_print_voltage(timeout);
         }
         catch (int e)
         {
@@ -113,83 +157,4 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-static ADS115* get_ADS115_devices(RSXA hw_settings)
-{
-    /*!
-     *  @brief     Get ADS115 Object
-     *  @return    ADS115 devices
-     */
-    
-    /* Initialize Variables */
-    ADS115 *ads115_devices;
 
-    
-    for (int i = 0; i < hw_settings.array_len_hw; i++)
-    {
-        string hw_name(hw_settings.hw[i].hw_name);
-
-        /* Find ADS115 Settings and create ADS115 object */
-        if (hw_name.find(ADS115_str) != string::npos)
-        {
-            try
-            {
-                ads115_devices = new ADS115(hw_settings.hw[i]);
-            }
-            catch (const runtime_error& error)
-            {
-                cout << "Error Configuring ADS115" << endl;
-                throw -1;
-            }
-            break;
-        }
-    }
-
-    /* Exit the Function */
-    return ads115_devices;
-}
-
-static void get_and_print_voltage(int timeout, ADS115 *ads115_devices)
-{
-    /*!
-     *  @brief     Retrive Voltage and Print to Screen
-     *  @param[in] ads115_devices
-     *  @return    N/A
-     */
-
-    NMT_log_write(DEBUG, (char *)"> ");
-
-    /* Initialize Vtribles */
-    int delay = pow(10, 6);
-    string devices[NROF_DEVICES] = {BATTERY_VOLTAGE, PI_INPUT_VOLTAGE};
-
-    /* Main Loop */
-    while (1)
-    {
-        for (const string &device : devices)
-        {
-            cout << device 
-                 << " = " 
-                 << ads115_devices->ADS115_get_voltage(device) 
-                 << "v" 
-                 << " ";
-        }
-        cout << endl;
-        if(!timeout) {break;}
-        usleep(delay);
-    }
-
-    /* Exit the Function */
-    NMT_log_write(DEBUG, (char *)"< ");
-}
-
-static void print_usage(int es)
-{
-    /*!
-     *  @brief    Function to print Help Screen
-     *  parm[in]  es (Exit Status)
-     *  @return   status
-     */
-
-    cout << "-v verbosity || -h/help menu || -t No Timeout" << endl;
-    exit(es);
-}

@@ -20,10 +20,6 @@ export SFLAGS      = -fPIC -shared
 export RPATH       = -L$(OBJ_DIR) -Wl,-rpath=$(OBJ_DIR)
 
 COVERAGE_RESULTS_DIR = $(PROJ_DIR)/coverage_results
-coverage_flag=false
-ifdef coverage_flag
-CFLAGS += --coverage
-endif
 
 ACTIONS =  mkdirs \
            bld_all
@@ -37,7 +33,7 @@ bld_all:
 	$(MAKE) -C $(RUI_DIR)
 	$(MAKE) -C $(TOOLS_DIR)
 
-coverage: coverage_flag=true
+coverage: CFLAGS += --coverage
 coverage: $(ACTIONS)
 
 coverage:

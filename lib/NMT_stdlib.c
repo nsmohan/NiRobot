@@ -13,16 +13,29 @@
 /*--------------------------------------------------/
 /                   System Imports                  /
 /--------------------------------------------------*/
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
-#include <unistd.h>
 
 /*--------------------------------------------------/
 /                   Local Imports                   /
 /--------------------------------------------------*/
 #include "NMT_stdlib.h"
+
+/*--------------------------------------------------/
+/                Structs/Classes/Enums              /
+/--------------------------------------------------*/
+struct timer_args
+{
+    void (*funcPtrcb)();
+    useconds_t interval;
+    bool continous;
+};
+
+/*--------------------------------------------------------------------/
+/                             Start of Program                        /
+/--------------------------------------------------------------------*/
 
 NMT_result NMT_stdlib_read_file(char *filepath, char **file_content)
 {
@@ -190,4 +203,67 @@ int16_t NMT_stdlib_swapBytes(int16_t Bytes)
 
     /* Exit the Function */
     return (int16_t)(Bytes << 8) + (int16_t)((Bytes >> 8) & 0x00FF);
+}
+
+static void *nmt_stdlib_start_timer_interrupt(void *arguments)
+{
+    /*!
+     *  @brief     Repeat action at a given interval
+     *  @param[in] funcPtrcb
+     *  @param[in] interval
+     *  @param[in] continous
+     *  @return    void
+     */
+
+    /* Initialize Variables */
+    struct timer_args args = *((struct timer_args*)arguments);
+    
+    /* Free heap memory */
+    free(arguments);
+
+    /* Run the method with delay */
+    while (true)
+    {
+        usleep(args.interval);
+        args.funcPtrcb();
+        if (!(args.continous)){break;}
+    }
+
+    /* Exit the function */
+    return NULL;
+}
+
+NMT_result NMT_stdlib_timer_interrupt(void(*funcPtrcb)(), useconds_t interval, bool continous)
+{
+    /*!
+     *  @brief     Start Thread which repeats action at given interval
+     *  @param[in] funcPtrcb
+     *  @param[in] interval
+     *  @param[in] continous
+     *  @return    void
+     */
+
+    /* Initialize Variables */
+    NMT_result result      = OK;
+    struct timer_args *args = (struct timer_args*)malloc(sizeof(struct timer_args));
+    int thread_status;
+    pthread_t thread_id;
+
+    /* Fill Struct */
+    args->continous = continous;
+    args->funcPtrcb = *funcPtrcb;
+    args->interval  = interval;
+
+    /* Start the thread */
+    thread_status = pthread_create(&thread_id,
+                                   NULL,
+                                   nmt_stdlib_start_timer_interrupt,
+                                   args);
+
+    /* Detach from thread */
+    if (!thread_status) {pthread_detach(thread_id);}
+    else {result = NOK;};
+
+    /* Exit the function */
+    return result;
 }

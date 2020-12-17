@@ -37,7 +37,7 @@ def parse_log_data(log_dir, log_name):
         item = items[4].split(":")
         log_line = {}
 
-        log_line["date"] = datetime.strptime(items[0], "%Y-%m-%d %H:%M:%S") 
+        log_line["date"] = datetime.strptime(items[0], "%m-%d-%Y %H:%M:%S.%f") 
         log_line["log_level"] = items[1]
         log_line["proc"] = items[2]
         log_line["method"] = items[3]

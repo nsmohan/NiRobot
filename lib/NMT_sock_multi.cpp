@@ -86,6 +86,7 @@ NMT_result NMT_sock_multi::NMT_write_socket(char *message)
      */
 
     NMT_log_write(DEBUG, (char *)"> ");
+
     /* Initialize Varibles */
     int messagelen = strlen(message);
     NMT_result result = OK;

@@ -24,7 +24,8 @@ TSTS            = $(TBLD_DIR)/unittest_PCA9685 \
                   $(TBLD_DIR)/unittest_RMCT_lib \
                   $(TBLD_DIR)/unittest_NMT_sock \
                   $(TBLD_DIR)/unittest_HCxSR04 \
-                  $(TBLD_DIR)/unittest_ADS115
+                  $(TBLD_DIR)/unittest_ADS115 \
+                  $(TBLD_DIR)/unittest_RSDA_lib
 
 unittest_PCA9685_LIBS = -lwiringPi \
                         -lcrypt \
@@ -68,8 +69,17 @@ unittest_HCxSR04_LIBS  = -lNMT_stdlib \
                          -lHCxSR04
                          
 unittest_ADS115_LIBS  = -lNMT_stdlib \
+                        -lNMT_log \
+                        -lADS115
+
+unittest_RSDA_lib_LIBS = -lNMT_stdlib \
                          -lNMT_log \
-                         -lADS115
+                         -lHCxSR04 \
+                         -lADS115 \
+                         -ljsoncpp \
+                         -lRSDA_lib \
+                         -lSensorDataAbstraction
+
 
 all: $(ACTIONS) \
      $(TSTS)
@@ -107,3 +117,6 @@ $(TBLD_DIR)/unittest_NMT_sock: $(OBJ_DIR)/unittest_NMT_sock.o
 $(TBLD_DIR)/unittest_RMCT_lib: $(OBJ_DIR)/LD27MG_stub.o $(OBJ_DIR)/unittest_RMCT_lib.o $(OBJ_DIR)/PCA9685_stub.o \
                                $(OBJ_DIR)/wiringPi_stub.o
 	g++  $(LDFLAGS_T) $(RPATH) -I $(INC_DIR) -o $@ $^ $(GTST_LIBS) $(unittest_RMCT_lib_LIBS)
+
+$(TBLD_DIR)/unittest_RSDA_lib: $(OBJ_DIR)/unittest_RSDA_lib.o
+	g++  $(LDFLAGS_T) $(RPATH) -I $(INC_DIR) -o $@ $^ $(GTST_LIBS) $(unittest_RSDA_lib_LIBS)

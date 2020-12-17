@@ -39,14 +39,17 @@ class TestRunner(object):
         os.system("cp %s %s.backup"%(RSXA_FILE_PATH, RSXA_FILE_PATH))
         os.system("cp %s/dat/RSXA.json %s"%(TST_PATH, RSXA_FILE_PATH))
 
-        #-- Start RMCT --#
+        #-- Start procs --#
         RMCT = os.path.join(PROC_PATH, "RMCT")
+        RSDA = os.path.join(PROC_PATH, "RSDA")
         os.system(RMCT + " &")
+        os.system(RSDA + " &")
 
     def tearDown(self):
 
         print("Tests Complete! Tearing down.........")
         os.system("python3 %s/nibot_mtr_ctrl.py -e"%TOOLS_PATH)
+        os.system("python3 %s/nibot_sensor_data.py -e"%TOOLS_PATH)
         os.system("mv %s.backup %s"%(RSXA_FILE_PATH, RSXA_FILE_PATH))
 
     def _get_tests_to_run(self, args):

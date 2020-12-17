@@ -105,6 +105,10 @@
          *  Default speed for which the motors move */
         unsigned int default_drive_speed;
 
+        /**@var rsda_broadcast_rate
+         *  Rate at which RSDA will transmit sensor data */
+        int rsda_broadcast_rate;
+
     }RSXA_general_settings;
 
     /** @struct RSXA

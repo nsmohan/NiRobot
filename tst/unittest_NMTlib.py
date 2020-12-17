@@ -17,6 +17,7 @@
 #---------------------------------------------------#
 import sys
 import os
+import time
 import inspect
 import unittest
 import re
@@ -36,6 +37,8 @@ from lib_py import NMT_stdlib_py
 from lib_py.NMT_stdlib_py import NMT_stdlib
 from lib_py.NMT_stdlib_py import NMT_result
 from lib_py.NMT_log import logger
+
+test_flags = []
 
 class NMT_stdlib_test(unittest.TestCase):
     
@@ -195,6 +198,53 @@ class NMT_stdlib_test(unittest.TestCase):
         #-- Verify Result --#
         self.assertEqual(SwapBytes_expected, SwappedBytes)
 
+    def test_timer_interrupt(self):
+
+        #Description - Test stdlib timer function Single Run
+
+        #-- Initialize Variables --#
+        global test_flags
+
+        #-- Register Callback --#
+        cb_type   = CFUNCTYPE(None)
+        cb_ptr    = cb_type(dummy_func)
+        interval  = 1000000
+        continous = False
+
+        #-- Start the timer --#
+        NMT_stdlib.NMT_stdlib_timer_interrupt(cb_ptr, interval, continous)
+
+        #-- Sleep for 2 seconds to allow function call --#
+        time.sleep(2)
+
+        #-- Validate Results --#
+        self.assertEqual(len(test_flags), 1)
+        self.assertTrue(test_flags[0])
+
+        test_flags = []
+
+        continous = True
+
+        #-- Start the timer --#
+        NMT_stdlib.NMT_stdlib_timer_interrupt(cb_ptr, interval, continous)
+
+        #-- Sleep for 2 seconds to allow function call --#
+        time.sleep(5)
+
+        #-- Validate Results --#
+        self.assertEqual(len(test_flags), 5)
+        self.assertTrue(test_flags[0])
+
+def dummy_func():
+
+    #-- Dummy function --#
+
+    #-- Initialize Variables --#
+    global test_flags
+
+    #--Set value --#
+    test_flags.append(True)
+    
 class NMT_log_Test(unittest.TestCase):
 
     def setUp(self):
@@ -268,7 +318,9 @@ class NMT_log_Test(unittest.TestCase):
                 current_time = datetime.now().replace(microsecond=0)
 
                 #Compare Actual vs Exppected --File
-                log_time = datetime.strptime(file_content[0].strip(), "%Y-%m-%d %H:%M:%S")
+                log_time = datetime.strptime(file_content[0].strip(),
+                                             "%m-%d-%Y %H:%M:%S.%f").replace(microsecond=0)
+
                 self.assertEqual(log_time, current_time)
                 self.assertEqual(file_content[1].strip(), log_level[level])
                 self.assertEqual(file_content[2].strip(), self.log_fname)
@@ -288,7 +340,8 @@ class NMT_log_Test(unittest.TestCase):
 
                     #Filter Date/Time
                     date_time = captured_output[0].replace("\x08", "").strip()
-                    log_time = datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S")
+                    log_time = datetime.strptime(date_time,
+                                                 "%m-%d-%Y %H:%M:%S.%f").replace(microsecond=0)
 
                     self.assertEqual(log_time, current_time)
                     self.assertEqual(captured_output[1].strip(), log_level[level])

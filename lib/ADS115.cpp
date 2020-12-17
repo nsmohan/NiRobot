@@ -96,8 +96,8 @@ ADS115::ADS115(RSXA_hw hw_config)
     if (hw_config.array_len_hw_int > MAX_DEVICES)
     {
         NMT_log_write(ERROR, (char *)"Too many devices provided!. Max=%d, Actual=%d",
-                     hw_config.array_len_hw_int,
-                     MAX_DEVICES);
+                     MAX_DEVICES,
+                     hw_config.array_len_hw_int);
         throw std::runtime_error("Error! Execeded Max Device Limit");
     }
 

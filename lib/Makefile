@@ -18,7 +18,9 @@ OBJS        = NMT_stdlib.so \
               NMT_sock_tcp.so \
               L9110.so \
               RMCT_lib.so \
-              ADS115.so
+              ADS115.so \
+              SensorDataAbstraction.so \
+              RSDA_lib.so \
 
 #---------------------------------------#
 #                                       #
@@ -87,6 +89,18 @@ ADS115_LIBS       = -lNMT_log \
                     -lm \
                     -lrt
 
+SensorDataAbstraction_LIBS = -lNMT_log \
+                             -lRSXA \
+                             -lADS115 \
+                             -lHCxSR04 \
+
+RSDA_lib_LIBS                = -lNMT_log \
+                             -lRSXA \
+                             -lADS115 \
+                             -lSensorDataAbstraction \
+                             -lHCxSR04
+
+
 # -------Update output file name ---------#
 TARGET_OBJS := $(foreach OBJ,$(OBJS),$(OBJ_DIR)/lib$(OBJ))
 TARGET_OBJS += $(foreach OBJ,$(PY_OBJS),$(OBJ_DIR)/$(OBJ))
@@ -104,7 +118,7 @@ $(OBJ_DIR)/lib%.so: $(LIB_DIR)/%.cpp $(INC_DIR)/%.hpp
 
 # -----Build C++ Files ---------#
 $(OBJ_DIR)/%.so: $(LIB_DIR)/%_py.cpp $(INC_DIR)/%.hpp
-	g++ $(CFLAGS) $(SFLAGS) $(RPATH) -o  $@ $<  $($(*)_py_LIBS) -lboost_python
+	g++ $(CFLAGS) $(SFLAGS) $(RPATH) -o  $@ $<  $($(*)_py_LIBS)
 
 clean:
 	rm -rf $(OBJ_DIR)/*.so

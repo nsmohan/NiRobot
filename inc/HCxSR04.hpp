@@ -57,18 +57,6 @@ class HCxSR04
      *  Simulation Mode */
     bool sim_mode;
     
-    /* @var startTimeUsec
-     *  Start time */
-    volatile long startTimeUsec;
-    
-    /* @var endTimeUsec
-     *  End Time */
-    volatile long endTimeUsec;
-
-    /* @var travelTimeUsec
-     *  Time Traveled*/
-    long travelTimeUsec;
-
     /* Prototypes */
     void init_hw();
 };
