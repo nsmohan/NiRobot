@@ -269,6 +269,7 @@ void tx_sensor_data_cb()
 
     NMT_log_write(DEBUG, (char *)"> ");
 
+    /* Lock Mutex */
     get_data_mtx.lock();
 
     /* Get Sensor Data */
@@ -277,6 +278,7 @@ void tx_sensor_data_cb()
     /* Transmit the data */
     global_data.client_sock->NMT_write_socket((char *)sensorData.toStyledString().c_str());
 
+    /* Unlock Mutex */
     get_data_mtx.unlock();
 
     /* Exit the Function */
