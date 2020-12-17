@@ -26,6 +26,11 @@
 #include "RSXA.h"
 
 /*--------------------------------------------------/
+/                  MACROS                           /
+/--------------------------------------------------*/
+#define MAX_WAIT_TIME 23000
+
+/*--------------------------------------------------/
 /                   Start of Program                /
 /--------------------------------------------------*/
 using namespace std;
@@ -38,12 +43,12 @@ void HCxSR04::init_hw()
      */
 
     /* Initialize Hardware if not in sim mode */
-    if (!(this->sim_mode))
+    if (!(sim_mode))
     {
         wiringPiSetup();
-        pinMode(this->trigger, OUTPUT);
-        pinMode(this->echo, INPUT);
-        digitalWrite(this->trigger, LOW);
+        pinMode(trigger, OUTPUT);
+        pinMode(echo, INPUT);
+        digitalWrite(trigger, LOW);
         delay(500);
     }
 }
@@ -56,42 +61,52 @@ double HCxSR04::distance()
      *  @return    distanceMeters (meters)
      */
 
-    NMT_log_write(DEBUG, (char *)"> Sonar=%s", this->hw_name.c_str());
+    NMT_log_write(DEBUG, (char *)"> Sonar=%s", hw_name.c_str());
+
+    /* Initialize Variables */
+    volatile unsigned long startTimeUsec = 0;
+    volatile unsigned long endTimeUsec   = 0;
+    unsigned long travelTimeUsec         = 0;
+    unsigned long startTimeInitial       = 0;
 
     /* Wait for hardware to settle */
     delay(10);
 
 
-    if (this->sim_mode)
+    if (sim_mode)
     {
-        this->endTimeUsec = 30.00;
-        this->startTimeUsec = 20.00;
+        endTimeUsec = 30.00;
+        startTimeUsec = 20.00;
     }
     else
     {
         /*Send the tigger pulse */
-        digitalWrite(this->trigger, HIGH);
+        digitalWrite(trigger, HIGH);
         delayMicroseconds(10);
-        digitalWrite(this->trigger, LOW);
+        digitalWrite(trigger, LOW);
 
         /*Wait for echo pin to turn high and 
          * capture the startTime */
-        while (digitalRead(this->echo) == LOW)
-            this->startTimeUsec = micros();
+
+        startTimeInitial = micros();
+        startTimeUsec = micros();
+        while ((digitalRead(echo) == LOW) && ((startTimeUsec - startTimeInitial) < MAX_WAIT_TIME))
+            startTimeUsec = micros();
 
         /*Wait for echo pin to turn low and 
          * capture the endTime */
-        while (digitalRead(this->echo) == HIGH)
-            this->endTimeUsec = micros();
+        while (digitalRead(echo) == HIGH)
+            endTimeUsec = micros();
     }
 
     /* Calculate the duration */
-    this->travelTimeUsec = this->endTimeUsec - this->startTimeUsec;
+    NMT_log_write(DEBUG, (char *)"start=%luus end=%luus", startTimeUsec, endTimeUsec);
+    travelTimeUsec = endTimeUsec - startTimeUsec;
 
     /* distance = Velocity * (Time/2)
      * Speed of sound  = 342 m/s = Velocity */
     /* Calculate the distance */
-    distancecm = 100 * 171.5 * (this->travelTimeUsec/1000000.00);
+    distancecm = 100 * 171.5 * (travelTimeUsec/1000000.00);
 
     /*Exit the function */
     NMT_log_write(DEBUG, (char *)"< Sonar=%s distance=%.6fcm", hw_name.c_str(), distancecm);

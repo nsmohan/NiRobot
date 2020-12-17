@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <sys/time.h>
 #include <string.h>
 #include <unistd.h>
 #include <json-c/json.h>
@@ -103,11 +104,13 @@ void NMT_log_write_m(int line_no, const char *func_name, log_level level, char *
      */
 
     //Initialize Variables
-    time_t  t       = time(NULL);
-    struct  tm tm   = *localtime(&t);
+    int     time_str_len = 100;
+    time_t  t            = time(NULL);
+    struct timeval tv;
     va_list args;
     char    *log_to_write;
-    char    time_now[100];
+    char    time_now[time_str_len];
+    char    time_now_mill[time_str_len];
     char    *out_file_name;
     char    *string;
 
@@ -119,19 +122,22 @@ void NMT_log_write_m(int line_no, const char *func_name, log_level level, char *
         va_end(args);
 
         //Allocate Memory
-        log_to_write = (char *)malloc(sizeof(line_no) + sizeof(time_now) + 
+        log_to_write = (char *)malloc(sizeof(line_no) + sizeof(time_now_mill) + 
                                      (sizeof(char *) * (strlen(func_name) + 
                                       strlen(string) + strlen(log_level_e2s[level]) + 
                                       strlen(log_settings.file_name) + 4)));
 
         out_file_name = (char *)malloc(sizeof(char *) * strlen(log_settings.log_dir) + 
                                        strlen(log_settings.file_name) + 5);
-        //Fill Variables with data
-        sprintf(time_now, "%d-%d-%d %d:%d:%d",tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
-                                               tm.tm_hour, tm.tm_min, tm.tm_sec);
+        
+        //Fill Variables with datatime_now
+        gettimeofday(&tv, NULL); 
+        t=tv.tv_sec;
+        strftime(time_now, time_str_len, "%m-%d-%Y %T.",localtime(&t));
+        sprintf(time_now_mill, "%s%ld", time_now, tv.tv_usec);
 
         sprintf(log_to_write, "%s->%s->%s->%s->%d: %s",
-                time_now, log_level_e2s[level], log_settings.file_name,
+                time_now_mill, log_level_e2s[level], log_settings.file_name,
                 func_name, line_no, string);
 
         sprintf(out_file_name, "%s/%s.log", log_settings.log_dir, log_settings.file_name);

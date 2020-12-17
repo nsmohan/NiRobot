@@ -15,6 +15,7 @@
 #include <cstring>
 #include <string>
 #include <getopt.h>
+#include <mutex>
 
 /*--------------------------------------------------/
 /                   Local Imports                   /
@@ -67,6 +68,8 @@ const unsigned int SOCK_TIMEOUT = 600;
 /** @var global_data
  *  Global Data struct for RSDA */
 struct RSDA_global_data global_data = {0};
+
+std::mutex get_data_mtx;
 
 /*--------------------------------------------------------------------/
 /                             Start of Program                        /
@@ -266,11 +269,15 @@ void tx_sensor_data_cb()
 
     NMT_log_write(DEBUG, (char *)"> ");
 
+    get_data_mtx.lock();
+
     /* Get Sensor Data */
     Json::Value sensorData = global_data.sensorObj->get_sensor_data();
 
     /* Transmit the data */
     global_data.client_sock->NMT_write_socket((char *)sensorData.toStyledString().c_str());
+
+    get_data_mtx.unlock();
 
     /* Exit the Function */
     NMT_log_write(DEBUG, (char *)"< ");
