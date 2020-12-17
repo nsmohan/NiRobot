@@ -67,6 +67,7 @@ class RSDA_Test(unittest.TestCase):
 
     def __validate_results(self, sensor_data):
 
+        print "rxdata = {}".format(sensor_data)
         try:
             self.assertEqual(sensor_data["Proximity"]["HCxSR04_Right"],   DEFAULT_SONAR_VAL)
             self.assertEqual(sensor_data["Proximity"]["HCxSR04_Left"],    DEFAULT_SONAR_VAL)

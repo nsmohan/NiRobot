@@ -318,7 +318,9 @@ class NMT_log_Test(unittest.TestCase):
                 current_time = datetime.now().replace(microsecond=0)
 
                 #Compare Actual vs Exppected --File
-                log_time = datetime.strptime(file_content[0].strip(), "%Y-%m-%d %H:%M:%S")
+                log_time = datetime.strptime(file_content[0].strip(),
+                                             "%m-%d-%Y %H:%M:%S.%f").replace(microsecond=0)
+
                 self.assertEqual(log_time, current_time)
                 self.assertEqual(file_content[1].strip(), log_level[level])
                 self.assertEqual(file_content[2].strip(), self.log_fname)
@@ -338,7 +340,8 @@ class NMT_log_Test(unittest.TestCase):
 
                     #Filter Date/Time
                     date_time = captured_output[0].replace("\x08", "").strip()
-                    log_time = datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S")
+                    log_time = datetime.strptime(date_time,
+                                                 "%m-%d-%Y %H:%M:%S.%f").replace(microsecond=0)
 
                     self.assertEqual(log_time, current_time)
                     self.assertEqual(captured_output[1].strip(), log_level[level])

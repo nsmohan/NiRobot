@@ -190,7 +190,6 @@ class NMT_sock(object):
         "  @param[in] listener_cb
         """
 
-        print("Listening for Socket Connections.....")
         try:
             while True:
 
