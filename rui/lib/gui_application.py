@@ -16,6 +16,7 @@
 import zope.event
 import json
 import time
+import os
 
 #---------------------------------------------------#
 #                   Local Imports                   #
@@ -27,8 +28,8 @@ from lib_py.rmct_sock_lib import RMCTSockConnect
 #---------------------------------------------------#
 #                   Constants                       #
 #---------------------------------------------------#
-LOCAL_RSXA_FILE  = "/etc/NiBot/RSXA.json"
-REMOTE_RSXA_FILE = "/etc/NiBot/RSXA.json"
+LOCAL_RSXA_FILE  = os.environ["RSXA_SETTINGS"]
+REMOTE_RSXA_FILE = os.environ["RSXA_SETTINGS"]
 RMCT_TASK        = "/home/nibot/NiRobot/bld/RMCT"
 RUIxSETTINGS     = "/etc/NiBot/RUIxSettings.json"
 

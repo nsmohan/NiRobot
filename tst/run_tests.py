@@ -20,7 +20,7 @@ PROC_PATH      = os.path.join(ROOT_PATH, "bld")
 TOOLS_PATH     = os.path.join(ROOT_PATH, "tools")
 TST_PATH       = os.path.join(ROOT_PATH, "tst")
 BLD_TST_PATH   = os.path.join(ROOT_PATH, "tst/bld")
-RSXA_FILE_PATH = "/etc/NiBot/RSXA.json"
+RSXA_FILE_PATH = os.environ["RSXA_SETTINGS"]
 
 PATTERNS = ["unittest_*.py", "functest_*.py"]
 
