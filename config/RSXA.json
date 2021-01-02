@@ -1,7 +1,7 @@
 {
     "_comment"             : "Robot Operation Settings",
     "log_dir"              : "/var/log/NiBot",
-    "operational_settings" : {
+    "general_settings" : {
                                "cam_mtr_step_size"  : 10,
                                "default_drive_speed": 50,
                                "rsda_broadcast_freq": 1000
