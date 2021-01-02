@@ -18,7 +18,7 @@ import sys
 #---------------------------------------------------#
 #                   Constants                       #
 #---------------------------------------------------#
-RS_PATH     = "/etc/NiBot/RSXA.json"
+RS_PATH = os.environ["RSXA_SETTINGS"]
 
 #---------------------------------------------------#
 #                   Local Imports                   #
@@ -37,49 +37,37 @@ class NMT_RSXA_test(unittest.TestCase):
         print "Running Test:", self._testMethodName
     
     def test_RSXA_init_GW(self):
-        #Description - Create custom RSXA.json file and confrim
+        #Description - Read RSXA.json file and verify
         #              that structures are populated properly
 
         #Initialize Variables
         RSXA_Object = RSXA()
 
-        # -- Prepare Test -- #
-        test_data = {"log_dir": "/test/test_file",
-                     "procs"  : [{"proc_name": "UnitTest", "server_ip": "224.1.1.1",
-                                  "server_p": 1000, "client_ip": "224.1.2.3", "client_p": 2000}],
-                     "operational_settings" : {"cam_mtr_step_size"  : 10,
-                                               "default_drive_speed": 50,
-                                               "rsda_broadcast_freq": 100},
-                     "hw": [{"hw_name": "UnitTest_HW1", "hw_sim_mode": False, 
-                             "hw_interface":[{"pin_name": "p1", "pin_no": 1}, 
-                                             {"pin_name": "p2", "pin_no": 2}]},
-                            {"hw_name": "UnitTest_HW2", "hw_sim_mode": True,
-                             "hw_interface": [{"pin_name": "p3", "pin_no": 3}, 
-                                              {"pin_name": "p4", "pin_no": 4}]},
-                            {"hw_name": "UnitTest_HW2", "hw_sim_mode": True,
-                             "hw_interface": []}]}
-
-        with open(RS_PATH, "w") as n_rsxa_file:
-            json.dump(test_data, n_rsxa_file)
-
+        #-- Initialize RSXA --#
         result = rsxa.RSXA_init(byref(RSXA_Object))
         self.assertEqual(result, NMT_result.OK)
 
-        # Check log_dir
-        self.assertEqual(test_data["log_dir"], RSXA_Object.log_dir)
+        #-- Read Json File --#
+        rsxa_file = open(RS_PATH, "r")
+        rsxa_data = json.loads(rsxa_file.read())
+        rsxa_file.close()
 
-        # Check hw structure 
-        for i in range(0, len(test_data["hw"])):
-            self.assertEqual(len(test_data["hw"]), RSXA_Object.array_len_hw)
-            self.assertEqual(test_data["hw"][i]["hw_name"], RSXA_Object.hw[i].hw_name)
-            self.assertEqual(test_data["hw"][i]["hw_sim_mode"], RSXA_Object.hw[i].hw_sim_mode)
-            for j in range(0, len(test_data["hw"][i]["hw_interface"])):
-                self.assertEqual(len(test_data["hw"][i]["hw_interface"]),
-                                 RSXA_Object.hw[i].array_len_hw_int)
-                self.assertEqual(test_data["hw"][i]["hw_interface"][j]["pin_name"],
-                                 RSXA_Object.hw[i].hw_interface[j].pin_name)
-                self.assertEqual(test_data["hw"][i]["hw_interface"][j]["pin_no"], 
-                                 RSXA_Object.hw[i].hw_interface[j].pin_no)
+        rsxa_data.pop("_comment")
+        self.verify_struct_results(rsxa_data, RSXA_Object)
+
+    def verify_struct_results(self, json_obj, rsxa_obj):
+
+        #Description - Parse json file and struct to compare
+
+        for key in json_obj.keys():
+            if type(json_obj[key]) is dict:
+                self.verify_struct_results(json_obj[key], getattr(rsxa_obj, key))
+            elif type(json_obj[key]) is list:
+                for i in range(len(json_obj[key])):
+                    self.verify_struct_results(json_obj[key][i], getattr(rsxa_obj, key)[i])
+            else:
+                self.assertEqual(json_obj[key], getattr(rsxa_obj, key))
+                
 
     def test_RSXA_init_BW_1(self):
         #Description - Verify result is NOK if log_dir key is missing
