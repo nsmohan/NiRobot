@@ -73,7 +73,7 @@ tuple<NMT_result, string> NMT_sock_multi::NMT_read_socket()
     }
 
     /* Exit the Function */
-    NMT_log_write(DEBUG, (char *)"< result=%s", result_e2s[result]);
+    NMT_log_write(DEBUG, (char *)"< result=%s", enum2str(result));
     return make_tuple(result, message);
 }
 
@@ -97,6 +97,6 @@ NMT_result NMT_sock_multi::NMT_write_socket(char *message)
             result = NOK;
 
     /* Exit the function */
-    NMT_log_write(DEBUG, (char *)"< result=%s", result_e2s[result]);
+    NMT_log_write(DEBUG, (char *)"< result=%s", enum2str(result));
     return result;
 }

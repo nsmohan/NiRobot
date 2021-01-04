@@ -109,7 +109,7 @@ NMT_result NMT_sock::NMT_init_client()
     }
 
     /* Exit the function */
-    NMT_log_write(DEBUG, (char *)"< result=%s", result_e2s[result]);
+    NMT_log_write(DEBUG, (char *)"< result=%s", enum2str(result));
     return result;
 }
 
@@ -186,7 +186,7 @@ NMT_result NMT_sock::NMT_init_server()
 
 
     /* Exit the function */
-    NMT_log_write(DEBUG, (char *)"< result=%s", result_e2s[result]);
+    NMT_log_write(DEBUG, (char *)"< result=%s", enum2str(result));
     return result;
 }
 
@@ -220,7 +220,7 @@ NMT_result NMT_sock::NMT_sock_set_multi_cast()
     }
 
     /* Exit the function */
-    NMT_log_write(DEBUG, (char *)"< result=%s", result_e2s[result]);
+    NMT_log_write(DEBUG, (char *)"< result=%s", enum2str(result));
     return result;
 }
 
@@ -262,7 +262,7 @@ SOCK_STATE NMT_sock::NMT_sock_check_message(int nbytes, int client)
     }
 
     /* Exit the Function */
-    NMT_log_write(DEBUG, (char *)"< state=%s", result_e2s[result]);
+    NMT_log_write(DEBUG, (char *)"< state=%s", enum2str(result));
     return state;
 }
 

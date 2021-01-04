@@ -95,7 +95,7 @@ tuple<NMT_result, string, int> NMT_sock_tcp::NMT_read_socket()
     }
         
     /* Exit the Function */
-    NMT_log_write(DEBUG, (char *)"< result=%s", result_e2s[result]);
+    NMT_log_write(DEBUG, (char *)"< result=%s", enum2str(result));
     return make_tuple(result, rx_message, client);
 } 
 
@@ -125,7 +125,7 @@ NMT_result NMT_sock_tcp::NMT_write_socket(string message, int sock_id)
     }
 
     /* Exit the function */
-    NMT_log_write(DEBUG, (char *)"< result=%s", result_e2s[result]);
+    NMT_log_write(DEBUG, (char *)"< result=%s", enum2str(result));
     return result;
 }
 
@@ -199,7 +199,7 @@ tuple<NMT_result, bool> NMT_sock_tcp::listen()
         /* Do Nothing */
     }
 
-    NMT_log_write(DEBUG, (char *)"< result=%s time_out=%s", result_e2s[result], btoa(time_out));
+    NMT_log_write(DEBUG, (char *)"< result=%s time_out=%s", enum2str(result), btoa(time_out));
     return make_tuple(result, time_out);
 }
 
@@ -231,7 +231,7 @@ tuple<NMT_result, bool> NMT_sock_tcp::accept_new_connection()
         }
     }
 
-    NMT_log_write(DEBUG, (char *)"< result=%s", result_e2s[result]);
+    NMT_log_write(DEBUG, (char *)"< result=%s", enum2str(result));
     return make_tuple(result, new_connection);
 }
 

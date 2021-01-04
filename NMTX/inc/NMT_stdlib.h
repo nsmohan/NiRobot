@@ -25,6 +25,8 @@
 /* --- Macros ----*/
 #define btoa(x) ((x)?"true":"false")
 
+#define enum2str(x) #x
+
 #ifdef __cplusplus
     extern "C" 
     {
@@ -35,11 +37,6 @@
     /** enum NMT_result
      *  OK/NOK enumeration */
     typedef enum {OK, NOK} NMT_result;                           //Standard return of function
-
-    //--------------Global Definitions----------------//
-    /** enum result_e2s
-     *  OK/NOK enum_to_string */
-    const char* const result_e2s[] = {"OK","NOK"};               //Convert NMT_result to string
 
     //------------------Prototypes----------------------//
     extern void       NMT_stdlib_split(char *string,             //In  - String to Split

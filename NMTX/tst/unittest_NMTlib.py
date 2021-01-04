@@ -248,7 +248,7 @@ def dummy_func():
 class NMT_log_Test(unittest.TestCase):
 
     def setUp(self):
-        self.NMT_log   = CDLL("Obj/libNMT_log.so")
+        self.NMT_log   = NMT_stdlib
         self.log_fname = __file__.split("/")[-1].split(".")[0]
         self.log_dir   = "/tmp"
     
