@@ -19,6 +19,8 @@ export CFLAGS      = -g -Wall -Wextra -I $(INC_DIR) -I $(PY_DIR) \
 export SFLAGS      = -fPIC -shared
 export RPATH       = -L$(OBJ_DIR) -Wl,-rpath=$(OBJ_DIR)
 
+export NMTX_DIR    = $(PROJ_DIR)/NMTX
+
 COVERAGE_RESULTS_DIR = $(PROJ_DIR)/coverage_results
 
 ACTIONS =  mkdirs \
@@ -27,11 +29,12 @@ ACTIONS =  mkdirs \
 all: $(ACTIONS)
 
 bld_all:
-	$(MAKE) -C $(LIB_DIR)
-	$(MAKE) -C $(BIN_DIR)
-	$(MAKE) -C $(TST_DIR)
-	$(MAKE) -C $(RUI_DIR)
-	$(MAKE) -C $(TOOLS_DIR)
+	$(MAKE) -C $(NMTX_DIR)
+	#$(MAKE) -C $(LIB_DIR)
+	#$(MAKE) -C $(BIN_DIR)
+	#$(MAKE) -C $(TST_DIR)
+	#$(MAKE) -C $(RUI_DIR)
+	#$(MAKE) -C $(TOOLS_DIR)
 
 coverage: CFLAGS += --coverage
 coverage: $(ACTIONS)
@@ -48,11 +51,12 @@ mkdirs:
 	if [ ! -d "bld" ]; then mkdir $(BLD_DIR); fi
 
 clean:
-	rm -rf $(OBJ_DIR)/*.so
-	rm -rf $(OBJ_DIR)/*.o
-	rm -rf $(TST_DIR)/bld/*
-	rm -rf $(BLD_DIR)/*
-	rm -rf $(LIBPY_DIR)/*pyc
+	$(RM) $(OBJ_DIR)/*.so
+	$(RM) $(OBJ_DIR)/*.o
+	$(RM) $(OBJ_DIR)/*.d
+	$(RM) $(TST_DIR)/bld/*
+	$(RM) $(BLD_DIR)/*
+	$(RM) $(LIBPY_DIR)/*pyc
 
 coverage_clean:
 	find -name "*.gcda" -type f -delete

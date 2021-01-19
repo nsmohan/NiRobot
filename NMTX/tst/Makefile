@@ -27,15 +27,15 @@ all: $(ACTIONS) \
 .PHONY: all
 
 mkdirs:
-	if [ ! -d "Obj" ];    then ln -s $(NMTX_OBJ_DIR) $(NMTX_TST_DIR); fi
+	if [ ! -d "Obj" ];    then ln -s $(OBJ_DIR) $(NMTX_TST_DIR); fi
 	if [ ! -d "lib_py" ]; then ln -s $(NMTX_LIBPY_DIR) $(NMTX_TST_DIR); fi
 	if [ ! -d "bld" ];    then mkdir $(NMTX_TST_DIR)/bld; fi
 
-$(NMTX_OBJ_DIR)/%.o: $(NMTX_TST_DIR)/%.cc
+$(OBJ_DIR)/%.o: $(NMTX_TST_DIR)/%.cc
 	g++ $(CFLAGS_T) -I $(NMTX_INC_DIR) -c $^ -o $@ 
 
 $(TBLD_DIR)/%:
 	echo $*
 	g++ $(LDFLAGS_T) $(RPATH) -I $(NMTX_INC_DIR) -o $@ $^ $(GTST_LIBS) $($*,DEPS)
 
-$(TBLD_DIR)/unittest_NMT_sock: $(NMTX_OBJ_DIR)/unittest_NMT_sock.o
+$(TBLD_DIR)/unittest_NMT_sock: $(OBJ_DIR)/unittest_NMT_sock.o
