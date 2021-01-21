@@ -18,9 +18,14 @@ export CFLAGS         += -I $(NMTX_INC_DIR)
 #                                 Main                                          #
 #                                                                               #
 #-------------------------------------------------------------------------------#
-ACTIONS = bld_all
+ACTIONS = bld_all \
+          cpxifs
 
 all: $(ACTIONS)
+
+cpxifs:
+	ln -fs $(NMTX_INC_DIR)/* $(XIFS_DIR)/NMTX/
+	ln -fs $(NMTX_LIBPY_DIR)/* $(XIFS_DIR)/NMTX/
 
 bld_all: 
 	$(MAKE) -C $(NMTX_LIB_DIR)

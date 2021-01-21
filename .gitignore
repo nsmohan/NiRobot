@@ -17,3 +17,4 @@ rui/lib_py
 coverage_results/
 html
 latex
+.xifs/
