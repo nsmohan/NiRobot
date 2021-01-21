@@ -18,3 +18,9 @@ coverage_results/
 html
 latex
 .xifs/
+NMTX/tst/lib_py
+NMTX/tst/lib_py*
+RSXA/tst/NMTX
+RSXA/tst/NMTX*
+RSXA/tst/lib_py
+RSXA/tst/lib_py*
