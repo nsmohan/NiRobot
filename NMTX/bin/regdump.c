@@ -14,14 +14,19 @@ __copyright__    = "Copy Right 2019. NM Technologies" */
 #include <wiringPiI2C.h>
 
 /*--------------------------------------------------/
-/                   Local Imports                   /
+/                   Macros                          /
 /--------------------------------------------------*/
-#include "NMT_stdlib.h"
-
 #define MAX_ADDR    0xFF
+
+/*--------------------------------------------------/
+/                   Prototypes                      /
+/--------------------------------------------------*/
 static void register_dump_getreg(int i2c_address);
 static void print_usage(int es);
 
+/*--------------------------------------------------/
+/                   Start of Program                /
+/--------------------------------------------------*/
 int main(int argc, char *argv[])
 {
     //Initialize Variables

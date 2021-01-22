@@ -17,6 +17,7 @@ export TOOLS_DIR    = $(PROJ_DIR)/tools
 export GTEST_OUTPUT = "xml:$(PROJ_DIR)/test_results/"
 export NMTX_DIR     = $(PROJ_DIR)/NMTX
 export RSXA_DIR     = $(PROJ_DIR)/RSXA
+export RMCT_DIR     = $(PROJ_DIR)/RMCT
 export CFLAGS       = -g -Wall -Wextra -I $(INC_DIR) -I $(PY_DIR) \
                       -Wno-missing-field-initializers
 export SFLAGS       = -fPIC -shared
