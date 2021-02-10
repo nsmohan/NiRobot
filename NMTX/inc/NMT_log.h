@@ -35,10 +35,6 @@
      * Logging Levels Enumeration */
     typedef enum {DEBUG, WARNING, ERROR} log_level;
 
-    /** @var log_level_e2s
-     *  Convert Enum to string for log_level */
-    const char* const log_level_e2s[] = {"DEBUG", "WARNING", "ERROR"};
-
     //------------------Prototypes----------------------//
     extern void NMT_log_finish(void);
     extern NMT_result NMT_log_init_m(char *fname,           //In - Source file name

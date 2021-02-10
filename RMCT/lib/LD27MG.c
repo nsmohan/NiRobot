@@ -17,7 +17,7 @@
 /*--------------------------------------------------/
 /                   Local Imports                   /
 /--------------------------------------------------*/
-#include "NMT_log.h"
+#include "NMTX/NMT_log.h"
 #include "LD27MG.h"
 
 //---------------------Macros----------------------//
@@ -141,7 +141,7 @@ NMT_result LD27MG_init(RSXA_hw hw_config)
         }
     }
 
-    NMT_log_write(DEBUG, "< result=%s", result_e2s[result]);
+    NMT_log_write(DEBUG, "< result=%s", enum2str(result));
     return result;
 }
 
@@ -173,7 +173,7 @@ NMT_result LD27MG_get_current_position(LD27MG_MOTORS motor, double *angle)
         *angle = LD27MG_get_angle(duty_cycle, PCA9685_get_curret_freq());
     }
 
-    NMT_log_write(DEBUG, "< angle=%.2f result=%s", *angle, result_e2s[result]);
+    NMT_log_write(DEBUG, "< angle=%.2f result=%s", *angle, enum2str(result));
     return result;
 }
 
@@ -208,7 +208,7 @@ NMT_result LD27MG_move_motor(LD27MG_MOTORS motor, double angle)
         result = PCA9685_setPWM(duty_cycle, delay_time, channel);
     }
 
-    NMT_log_write(DEBUG, "< result=%s",result_e2s[result]);
+    NMT_log_write(DEBUG, "< result=%s",enum2str(result));
     return result;
 }
 
@@ -241,7 +241,7 @@ static PCA9685_PWM_CHANNEL LD27MG_m2c(LD27MG_MOTORS motor)
     }
 
     /* Exit the Function */
-    NMT_log_write(DEBUG, "< channel=%s", PCA9685_PWM_CHANNEL_e2s[channel]);
+    NMT_log_write(DEBUG, "< channel=%s", enum2str(channel));
     return channel;
 }
 
@@ -332,6 +332,6 @@ static NMT_result LD27MG_mtr_str2enum(char *mtr_str, LD27MG_MOTORS *mtr_enum)
     }
 
     /* Exit the function */
-    NMT_log_write(DEBUG, "< result=%s",result_e2s[result]);
+    NMT_log_write(DEBUG, "< result=%s",enum2str(result));
     return result;
 }

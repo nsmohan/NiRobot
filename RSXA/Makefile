@@ -1,4 +1,4 @@
-#Makfile:        NMTX Main Makefile
+#Makfile:        RSXA Main Makefile
 #__author__      = "Nitin Mohan
 #__copyright__   = "Copy Right 2018. NM Technologies"
 
@@ -18,9 +18,14 @@ export CFLAGS         += -I $(RSXA_INC_DIR)
 #                                 Main                                          #
 #                                                                               #
 #-------------------------------------------------------------------------------#
-ACTIONS = bld_all
+ACTIONS = bld_all \
+          cpxifs
 
 all: $(ACTIONS)
+
+cpxifs:
+	ln -fs $(RSXA_INC_DIR)/* $(XIFS_DIR)/RSXA/
+	ln -fs $(RSXA_LIBPY_DIR)/* $(XIFS_DIR)/RSXA/
 
 bld_all: 
 	$(MAKE) -C $(RSXA_LIB_DIR)

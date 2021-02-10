@@ -33,6 +33,7 @@ all: $(ACTIONS)
 bld_all:
 	$(MAKE) -C $(NMTX_DIR)
 	$(MAKE) -C $(RSXA_DIR)
+	$(MAKE) -C $(RMCT_DIR)
 	#$(MAKE) -C $(LIB_DIR)
 	#$(MAKE) -C $(BIN_DIR)
 	#$(MAKE) -C $(TST_DIR)

@@ -19,7 +19,7 @@
 /--------------------------------------------------*/
 #include "RMCT_lib.hpp"
 #include "PCA9685.h"
-#include "RSXA.h"
+#include "RSXA/RSXA.h"
 
 /*--------------------------------------------------/
 /                   Globals                         /
@@ -146,7 +146,7 @@ NMT_result RobotMotorController::process_motor_action(std::string motor, std::st
     }
 
     /* Exit the function */
-    NMT_log_write(DEBUG, (char *)"< result=%s", result_e2s[result]);
+    NMT_log_write(DEBUG, (char *)"< result=%s", enum2str(result));
     return result;
 }
 
@@ -215,6 +215,6 @@ NMT_result RobotMotorController::move_camera_motor(CAMERA_MOTOR_DIRECTIONS direc
     }
 
     /* Exit the Function */
-    NMT_log_write(DEBUG, (char * )"< result=%s", result_e2s[result]);
+    NMT_log_write(DEBUG, (char * )"< result=%s", enum2str(result));
     return result; 
 }

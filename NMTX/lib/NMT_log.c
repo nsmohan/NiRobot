@@ -124,7 +124,7 @@ void NMT_log_write_m(int line_no, const char *func_name, log_level level, char *
         //Allocate Memory
         log_to_write = (char *)malloc(sizeof(line_no) + sizeof(time_now_mill) + 
                                      (sizeof(char *) * (strlen(func_name) + 
-                                      strlen(string) + strlen(log_level_e2s[level]) + 
+                                      strlen(string) + strlen(enum2str(level)) + 
                                       strlen(log_settings.file_name) + 4)));
 
         out_file_name = (char *)malloc(sizeof(char *) * strlen(log_settings.log_dir) + 
@@ -137,7 +137,7 @@ void NMT_log_write_m(int line_no, const char *func_name, log_level level, char *
         sprintf(time_now_mill, "%s%ld", time_now, tv.tv_usec);
 
         sprintf(log_to_write, "%s->%s->%s->%s->%d: %s",
-                time_now_mill, log_level_e2s[level], log_settings.file_name,
+                time_now_mill, enum2str(level), log_settings.file_name,
                 func_name, line_no, string);
 
         sprintf(out_file_name, "%s/%s.log", log_settings.log_dir, log_settings.file_name);

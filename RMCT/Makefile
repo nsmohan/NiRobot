@@ -19,14 +19,9 @@ export CFLAGS         += -I $(RMCT_INC_DIR)
 #                                 Main                                          #
 #                                                                               #
 #-------------------------------------------------------------------------------#
-ACTIONS = bld_all \
-          cpxifs
+ACTIONS = bld_all
 
 all: $(ACTIONS)
-
-cpxifs:
-	ln -fs $(RMCT_INC_DIR)/*   $(XIFS_DIR)/RMCT/
-	ln -fs $(RMCT_LIBPY_DIR)/* $(XIFS_DIR)/RMCT/
 
 bld_all: 
 	#$(MAKE) -C $(RMCT_BIN_DIR)

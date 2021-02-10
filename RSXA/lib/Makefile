@@ -54,10 +54,10 @@ $(OBJ_DIR)/libRSXA.so: $(OBJ_DIR)/RSXA.o
 #                                                                               #
 #-------------------------------------------------------------------------------#
 $(OBJ_DIR)/%.o: $(RSXA_LIB_DIR)/%.c
-	$(CC) -I $(RSXA_INC_DIR) -fPIC $(DEPFLAGS) -c $^ -o $@ 
+	$(CC) $(CFLAGS) -I $(RSXA_INC_DIR) -fPIC $(DEPFLAGS) -c $^ -o $@ 
 
 $(OBJ_DIR)/%.o: $(RSXA_LIB_DIR)/%.cpp
-	$(CC) -I $(RSXA_INC_DIR) -fPIC $(DEPFLAGS) -c $^ -o $@ 
+	$(CC) $(CFLAGS) -I $(RSXA_INC_DIR) -fPIC $(DEPFLAGS) -c $^ -o $@ 
 
 $(OBJ_DIR)/%.so:
 	$(CC) $(CFLAGS) $(SFLAGS) $(RPATH) -o $@ $^ $($(*).so,DEPS)

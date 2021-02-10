@@ -19,9 +19,9 @@
 /*--------------------------------------------------/
 /                   Local Imports                   /
 /--------------------------------------------------*/
-#include "NMT_log.h"
+#include "NMTX/NMT_log.h"
 #include "PCA9685.h"
-#include "RSXA.h"
+#include "RSXA/RSXA.h"
 
 /*--------------------------------------------------/
 /                   Constants                       /
@@ -125,7 +125,7 @@ NMT_result PCA9685_init(PCA9685_settings settings)
     }
 
     /* Exit the functin */
-    NMT_log_write(DEBUG, "< result=%s fd: %d",result_e2s[result], FD);
+    NMT_log_write(DEBUG, "< result=%s fd: %d",enum2str(result), FD);
     return result;
 }
 
@@ -168,7 +168,7 @@ NMT_result PCA9685_chgFreq(float freq)
     }
 
     /* Exit Function */
-    NMT_log_write(DEBUG, "< result=%s", result_e2s[result]);
+    NMT_log_write(DEBUG, "< result=%s", enum2str(result));
     return result;
 }
 
@@ -203,7 +203,7 @@ static NMT_result PCA9685_setFreq(float freq)
         wiringPiI2CWriteReg8(FD, PRE_SCALE, pre_scale);
     }
 
-    NMT_log_write(DEBUG, "< %s pre_scale: %d",result_e2s[result], pre_scale);
+    NMT_log_write(DEBUG, "< %s pre_scale: %d",enum2str(result), pre_scale);
 
     //Exit Function
     return result;
@@ -261,7 +261,7 @@ NMT_result PCA9685_setPWM(double duty_cycle, double delay_time,
     }
 
     /* Exit function */
-    NMT_log_write(DEBUG, "< %s", result_e2s[result]);
+    NMT_log_write(DEBUG, "< %s", enum2str(result));
     return result;
 }
 
@@ -282,7 +282,7 @@ NMT_result PCA9685_getPWM(double *duty_cycle,
     if (FD < 0)
         return result = NOK;
 
-    NMT_log_write(DEBUG, "> channel=%s", PCA9685_PWM_CHANNEL_e2s[channel]);
+    NMT_log_write(DEBUG, "> channel=%s", enum2str(channel));
 
     if (!SIM_MODE)
     {
@@ -304,7 +304,7 @@ NMT_result PCA9685_getPWM(double *duty_cycle,
     *duty_cycle = ((tics_on_duration - 0.5)/MAX_TICS) * 100;
 
     //Exit the function
-    NMT_log_write(DEBUG, "< duty_cycle=%f result=%s", *duty_cycle, result_e2s[result]);
+    NMT_log_write(DEBUG, "< duty_cycle=%f result=%s", *duty_cycle, enum2str(result));
     return result;
 
 }
@@ -353,7 +353,7 @@ NMT_result PCA9685_get_init_status(bool *initialized)
         *initialized = true;
     }
 
-    NMT_log_write(DEBUG, "< initialized=%s result=%s", btoa(*initialized), result_e2s[result]);
+    NMT_log_write(DEBUG, "< initialized=%s result=%s", btoa(*initialized), enum2str(result));
     return result;
 }
 

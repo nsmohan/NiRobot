@@ -19,7 +19,7 @@
 /                   Local Imports                   /
 /--------------------------------------------------*/
 #include "L9110.hpp"
-#include "NMT_log.h"
+#include "NMTX/NMT_log.h"
 
 /*--------------------------------------------------/
 /                   Constants                       /
@@ -115,7 +115,7 @@ NMT_result L9110::L9110_move_motor(L9110_DIRECTIONS direction, int speed)
                 break;
         }
     }
-    NMT_log_write(DEBUG, (char *)"< result=%s", result_e2s[result]);
+    NMT_log_write(DEBUG, (char *)"< result=%s", enum2str(result));
     return result;
 }
 
